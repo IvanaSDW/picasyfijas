@@ -90,7 +90,7 @@ class SystemStatusView extends StatelessWidget {
                         children: [
                           Expanded(flex: 32,
                             child: AutoSizeText(
-                              "Network:",
+                              'network'.tr,
                               style: TextStyle(
                                 color: originalColors.textColor2,
                                 fontSize: 18,
@@ -116,7 +116,7 @@ class SystemStatusView extends StatelessWidget {
                         children: [
                           Expanded(flex: 32,
                             child: AutoSizeText(
-                              "Users Online:",
+                              'players_online'.tr,
                               style: TextStyle(
                                 color: originalColors.textColor2,
                                 fontSize: 18,

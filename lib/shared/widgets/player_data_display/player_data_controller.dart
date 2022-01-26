@@ -1,5 +1,4 @@
 import 'package:get/get.dart';
-// import 'package:getwidget/components/alert/gf_alert.dart';
 
 
 class PlayerDataDisplayController extends GetxController {
@@ -18,19 +17,4 @@ class PlayerDataDisplayController extends GetxController {
   String get vmWinRate => _vmWinRate.value;
   String get vmWorldRank => _vmWorldRank.value;
 
-
-  @override
-  void onInit() {
-    super.onInit();
-
-  }
-
-  signOut() {
-    // Get.dialog(
-    //     GFAlert(
-    //       title: 'Signing Out...',
-    //     )
-    // );
-    // authController.signOut();
-  }
 }

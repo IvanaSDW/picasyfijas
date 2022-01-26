@@ -1,12 +1,6 @@
 //English Translations
 const Map<String, String> enUS = {
   'instructions': 'Instructions',
-  // 'instructions_detail_1':
-  //     'Your goal is to decipher a secret number consisting of 4 different digits.'
-  //         ' For that, you will try guessing 4-digit numbers.'
-  //         ' For each guess you\'ll get a matching result.'
-  //         ' If matching digits are in their right positions, they are \'Bulls\','
-  //         ' if on different positions, they are \'Cows\'.',
   'instructions_detail_1': 'Your goal is to decipher a secret number consisting of 4 different digits.',
   'instructions_detail_2': 'To discover it, you shall try guessing 4-digit numbers until you find secret number.',
   'instructions_detail_3': 'For each guess, system will search for digits contained in the secret number, and give you a result:',
@@ -22,5 +16,18 @@ const Map<String, String> enUS = {
   'two cows': 'Two cows ( 5,4 )',
   '1B2C': '"5 2 9 4 -- 1b : 2c"',
   'player_status': 'Auth status:',
-  'requires_google': 'Google sign-in req\'d',
+  'requires_google': 'only Google users',
+  'play_as_guest' : 'Play as guest',
+  'basic_features' : '(Basic features)',
+  'solo_mode' : 'Solo Mode',
+  'vs_mode' : 'VS Mode',
+  'time_average' : '  Time average',
+  'guesses_average' : '  Guesses average',
+  'world_ranking' : '  World ranking',
+  'win_rate' : '  Win rate %',
+  'network' : 'Network:',
+  'connected' : 'Connected to internet',
+  'not_connected' : 'No Internet connection',
+  'players_online' : 'Players online:',
+
 };

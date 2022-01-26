@@ -44,9 +44,9 @@ class SplashWidget extends StatelessWidget {
                             child: Get.locale.toString().substring(0, 2) ==
                                 'es'
                                 ? Image.asset(
-                                'assets/images/logo_spanish.png')
+                                'assets/images/logo_spanish_on.png')
                                 : Image.asset(
-                                'assets/images/logo_english.png'),
+                                'assets/images/logo_english_on.png'),
                           ),
                         ),
                       ),
@@ -67,7 +67,7 @@ class SplashWidget extends StatelessWidget {
                       Widget? child) {
                     return Opacity(
                       opacity: opacity,
-                      child: GuestHomePage(),
+                      child: HomeView(),
                     );
                   })
           ),

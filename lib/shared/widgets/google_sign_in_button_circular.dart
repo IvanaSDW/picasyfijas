@@ -18,11 +18,9 @@ class GoogleSignInButtonCircular extends GetWidget<AuthController> {
           : InkWell(
               onTap: () async =>
                   await controller.upgradeAnonymousToGoogle(),
-              child: const Image(
-                image: AssetImage(
-                  'assets/images/google_button_circular.png',
-                ),
-              ),
+              child: Get.locale.toString().substring(0, 2) == 'es'
+                  ? Image.asset('assets/images/google_button_circular_spanish.png')
+                  : Image.asset('assets/images/google_button_circular.png')
             ),
     );
   }

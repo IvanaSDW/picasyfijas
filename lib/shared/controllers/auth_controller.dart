@@ -20,10 +20,11 @@ class AuthController extends GetxController {
       // Get.offAllNamed('/');
     } else if (currentUser.isAnonymous) {
       authState = AuthState.anonymous;
+      if(!appController.isFirstRun) appController.refreshPlayer();
       // Get.offAllNamed('/GuestHome');
     } else if (currentUser.providerData.first.providerId == 'google.com'){
       authState = AuthState.google;
-      appController.currentPlayer = await firestoreService.fetchPlayer(currentUser.uid);
+      appController.refreshPlayer();
       // Get.offAllNamed('/Home');
     } else {
       logger.e('Could not check sign in method');
@@ -56,6 +57,7 @@ class AuthController extends GetxController {
     try {
       final User user = (await auth.signInAnonymously()).user!;
       logger.i('Signed in as ${user.uid}');
+      await firestoreService.checkInAnonymousUser(user);
     } catch (e) {
       logger.e('Error signing in anonymously: $e');
     }

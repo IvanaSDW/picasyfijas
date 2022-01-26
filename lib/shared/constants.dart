@@ -1,5 +1,5 @@
 
-import 'package:bulls_n_cows_reloaded/shared/firestore_service.dart';
+import 'package:bulls_n_cows_reloaded/repo/firestore_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -47,6 +47,7 @@ const String resultCowsFN = 'cows';
 
 ColorPalette originalColors = ColorPalette(
   backgroundColor: Colors.black,
+  backPanelColor: const Color(0xFF252525),
   mainTitleColor: const Color(0xFF00FF00),
   textColor1: const Color(0xFF00FF00),
   textColor2: const Color(0xFF00D600),
@@ -66,6 +67,7 @@ ColorPalette originalColors = ColorPalette(
 
 class ColorPalette {
   Color? backgroundColor;
+  Color? backPanelColor;
   Color? mainTitleColor;
   Color? textColor1;
   Color? textColor2;
@@ -84,6 +86,7 @@ class ColorPalette {
 
   ColorPalette({
     this.backgroundColor,
+    this.backPanelColor,
     this.mainTitleColor,
     this.textColor1,
     this.textColor2,

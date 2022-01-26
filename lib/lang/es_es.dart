@@ -1,10 +1,5 @@
 const Map<String, String> esES = {
   'instructions' : 'Instrucciones',
-  // 'instructions_detail' : 'Tu misión es descifrar un número secreto compuesto por 4 dígitos diferentes.'
-  //     ' Para ello, debes intentar ingresando números de 4 dígitos.'
-  //     ' En cada intento recibirás un resultado de comparación de dígitos.'
-  //     ' Los dígitos que coincidan en la posición excata, se llaman \'Fijas\','
-  //     ' los que estén en posición diferente se llaman \'Picas\'.',
   'instructions_detail_1': 'Tu objetivo es descifrar un número secreto compuesto por 4 dígitos diferentes.',
   'instructions_detail_2': 'Para descubrirlo, deberás intentar con números de 4 dígitos hasta dar con el número secreto.',
   'instructions_detail_3': 'En cada intento, el sistema buscará los dígitos que estén en el número secreto y devolverá un resultado...',
@@ -20,5 +15,18 @@ const Map<String, String> esES = {
   'two cows': 'Dos picas ( 5,4 )',
   '1B2C': '"5 2 9 4 -- 1f : 2p"',
   'player_status': 'Auth status:',
-  'requires_google': 'Google sign-in req\'d',
+  'requires_google': 'Solo usuario Google',
+  'play_as_guest' : 'Invitado',
+  'basic_features' : '(opciones básicas)',
+  'solo_mode' : 'Contra Reloj',
+  'vs_mode' : 'Multijugador',
+  'time_average' : '  Tiempo promedio',
+  'guesses_average' : '  Intentos promedio',
+  'world_ranking' : '  Ranking mundial',
+  'win_rate' : '  Victorias %',
+  'network' : 'Red:',
+  'connected' : 'Conectado a internet',
+  'not_connected' : 'Sin conexión a internet',
+  'players_online' : 'Judadores:',
+
 };

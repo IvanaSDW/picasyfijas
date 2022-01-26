@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class StartVsModeMatchButton extends StatelessWidget {
   final VoidCallback onTapAction;
@@ -11,9 +12,9 @@ class StartVsModeMatchButton extends StatelessWidget {
     return InkWell(
       borderRadius: const BorderRadius.all(Radius.circular(120)),
       onTap: onTapAction,
-      child: const Image(
-        image: AssetImage('assets/images/vs_mode_button.png'),
-      ),
-    );
+      child: Get.locale.toString().substring(0, 2) == 'es'
+          ? Image.asset('assets/images/vsm_button_spanish.png')
+          : Image.asset('assets/images/vs_mode_button.png')
+      );
   }
 }

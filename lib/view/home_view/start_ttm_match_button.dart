@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/utils.dart';
 
 class StartTimeTrialMatchButton extends StatelessWidget {
 
@@ -11,7 +12,9 @@ class StartTimeTrialMatchButton extends StatelessWidget {
     return InkWell(
       borderRadius: const BorderRadius.all(Radius.circular(120.0)),
       onTap: onTapAction,
-      child: const Image(image: AssetImage('assets/images/time_trial_button.png'),),
+      child: Get.locale.toString().substring(0, 2) == 'es'
+          ? Image.asset('assets/images/ttm_button_spanish.png')
+          : Image.asset('assets/images/time_trial_button.png')
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import '../../constants.dart';
 import '../google_sign_in_button_circular.dart';
@@ -8,7 +9,9 @@ import 'player_data_controller.dart';
 class PlayerDataDisplay extends StatelessWidget {
   final PlayerDataDisplayController controller = Get.put(PlayerDataDisplayController());
 
-  PlayerDataDisplay({Key? key}) : super(key: key);
+  PlayerDataDisplay({Key? key, required this.onAvatarTapped}) : super(key: key);
+
+  final Function onAvatarTapped;
 
   @override
   Widget build(BuildContext context) {
@@ -40,23 +43,9 @@ class PlayerDataDisplay extends StatelessWidget {
                         children: [
                           Expanded(
                             flex: 80,
-                            child: Hero(
-                              tag: 'add_photo_icon',
-                              child: authController.authState == AuthState.anonymous
-                                  ? GoogleSignInButtonCircular()
-                                  : appController.currentPlayer.photoUrl != null
-                                  ? InkWell(
-                                onTap: () => authController.signOut(),
-                                    child: FadeInImage.assetNetwork(
-                                placeholder:
-                                'assets/images/user_photo_bg.png',
-                                image: appController.currentPlayer.photoUrl,
-                              ),
-                                  )
-                                  : const Image(
-                                  image: AssetImage(
-                                      'assets/images/user_photo_bg.png')
-                              ),
+                            child: InkWell(
+                              onTap: () => onAvatarTapped(),
+                                child: const PlayerAvatar()
                             ),
                           ),
                           Expanded(
@@ -64,17 +53,14 @@ class PlayerDataDisplay extends StatelessWidget {
                               child: Hero(
                                 tag: 'user_name',
                                 child: Center(
-                                    child: authController.authState == AuthState.anonymous
-                                        ? AutoSizeText('Guest',
-                                      style: statsSubTitle,
-                                      textAlign: TextAlign.center,
-                                    )
-                                        : Padding(
+                                    child: Padding(
                                       padding:
                                       const EdgeInsets.symmetric(
                                           horizontal: 14.0),
                                       child: FittedBox(
-                                        child: Text(
+                                        child: appController.currentPlayer.name == null
+                                            ? const SpinKitChasingDots(color: Colors.white,)
+                                            : Text(
                                           appController.currentPlayer.name!
                                               .split(' ')
                                               .first,
@@ -114,7 +100,7 @@ class PlayerDataDisplay extends StatelessWidget {
                     Expanded(
                       flex: 13,
                       child: AutoSizeText(
-                        'Time Trial Mode',
+                        'solo_mode'.tr,
                         style: statsTitle,
                         textAlign: TextAlign.start,
                       ),
@@ -126,7 +112,7 @@ class PlayerDataDisplay extends StatelessWidget {
                           Expanded(
                               flex: 50,
                               child: AutoSizeText(
-                                '  Time Average:',
+                                'time_average'.tr,
                                 style: statsSubTitle,
                               )),
                           Expanded(
@@ -145,7 +131,7 @@ class PlayerDataDisplay extends StatelessWidget {
                           Expanded(
                               flex: 50,
                               child: AutoSizeText(
-                                '  Guesses Average:',
+                                'guesses_average'.tr,
                                 style: statsSubTitle,
                                 textAlign: TextAlign.start,
                               )),
@@ -166,7 +152,7 @@ class PlayerDataDisplay extends StatelessWidget {
                           Expanded(
                               flex: 50,
                               child: AutoSizeText(
-                                '  World Ranking:',
+                                'world_ranking'.tr,
                                 style: statsSubTitle,
                                 textAlign: TextAlign.start,
                               )),
@@ -188,7 +174,7 @@ class PlayerDataDisplay extends StatelessWidget {
                     Expanded(
                       flex: 13,
                       child: AutoSizeText(
-                        'VS Mode',
+                        'vs_mode'.tr,
                         style: statsTitle,
                         textAlign: TextAlign.start,
                       ),
@@ -200,7 +186,7 @@ class PlayerDataDisplay extends StatelessWidget {
                           Expanded(
                               flex: 50,
                               child: AutoSizeText(
-                                '  Win rate%:',
+                                'win_rate'.tr,
                                 style: statsSubTitle,
                                 textAlign: TextAlign.start,
                               )),
@@ -221,7 +207,7 @@ class PlayerDataDisplay extends StatelessWidget {
                           Expanded(
                               flex: 50,
                               child: AutoSizeText(
-                                '  World Ranking:',
+                                'world_ranking'.tr,
                                 style: statsSubTitle,
                                 textAlign: TextAlign.start,
                               )),
@@ -242,6 +228,29 @@ class PlayerDataDisplay extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class PlayerAvatar extends StatelessWidget {
+  const PlayerAvatar({
+    Key? key,
+  }) : super(key: key);
+
+
+  @override
+  Widget build(BuildContext context) {
+    return authController.authState == AuthState.anonymous
+        ? GoogleSignInButtonCircular()
+        : appController.currentPlayer.photoUrl != null
+        ? FadeInImage.assetNetwork(
+          placeholder:
+          'assets/images/user_photo_bg.png',
+          image: appController.currentPlayer.photoUrl,
+        )
+        : const Image(
+        image: AssetImage(
+            'assets/images/user_photo_bg.png')
     );
   }
 }

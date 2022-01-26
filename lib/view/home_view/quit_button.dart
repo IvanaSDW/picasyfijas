@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class QuitButton extends StatelessWidget {
 
@@ -11,7 +12,9 @@ class QuitButton extends StatelessWidget {
     return InkWell(
       borderRadius: const BorderRadius.all(Radius.circular(40.0)),
       onTap: onTapAction,
-      child: const Image(image: AssetImage('assets/images/quit_button.png'),),
+      child: Get.locale.toString().substring(0, 2) == 'es'
+          ? Image.asset('assets/images/quit_button_spanish.png')
+          : Image.asset('assets/images/quit_button.png')
     );
   }
 }

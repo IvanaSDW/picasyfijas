@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:bulls_n_cows_reloaded/shared/constants.dart';
-import 'package:bulls_n_cows_reloaded/view/home_view/home_screen.dart';
 import 'package:bulls_n_cows_reloaded/view/splash_view/vertical_text_line.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

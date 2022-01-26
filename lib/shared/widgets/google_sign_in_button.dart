@@ -14,16 +14,14 @@ class GoogleSignInButtonSquared extends GetWidget<AuthController> {
     return Material(
       color: Colors.transparent,
       child: appController.isBusy
-          ? SpinKitChasingDots()
+          ? const SpinKitChasingDots(color: Colors.white,)
           : InkWell(
               onTap: () async => authController.authState == AuthState.signedOut
                   ? await controller.signInWithGoogle()
                   : await controller.upgradeAnonymousToGoogle(),
-              child: const Image(
-                image: AssetImage(
-                  'assets/images/google_button.png',
-                ),
-              ),
+              child: appController.locale.toString().substring(0, 2) == 'es'
+                  ? Image.asset('assets/images/google_square_button_spanish.png')
+                  : Image.asset('assets/images/google_square_button.png')
             ),
     );
   }

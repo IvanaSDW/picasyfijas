@@ -1,7 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.ivana.sdw.bulls_n_cows_reloaded">
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
    <application
-        android:label="bulls_n_cows_reloaded"
+        android:label="Bulls 'n Cows Reloaded"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

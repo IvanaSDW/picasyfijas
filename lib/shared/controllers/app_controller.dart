@@ -39,15 +39,21 @@ class AppController extends GetxController {
     internetListener = InternetConnectionChecker().onStatusChange.listen((status) {
       switch (status) {
         case InternetConnectionStatus.connected:
-          internetStatus.value = "Connected to Internet";
+          internetStatus.value = 'connected'.tr;
           logger.i('Internet status is: ${internetStatus.value}');
           break;
         case InternetConnectionStatus.disconnected:
-          internetStatus.value = "No Internet connection";
+          internetStatus.value = 'not_connected'.tr;
           logger.i('Internet status is: ${internetStatus.value}');
           break;
       }
     });
+  }
+
+  void refreshPlayer() async {
+    currentPlayer = auth.currentUser == null
+        ? Player.empty()
+        : await firestoreService.fetchPlayer(auth.currentUser!.uid);
   }
 
   @override
