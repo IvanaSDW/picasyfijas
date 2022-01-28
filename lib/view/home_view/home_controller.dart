@@ -77,7 +77,6 @@ class HomeController extends GetxController {
   }
 
   void togglePanelOnOff() async {
-    // await Future.delayed(const Duration(milliseconds: 500));
     if (backPanelOn) {
       playEffect('button-36.wav');
       backPanelOn = false;

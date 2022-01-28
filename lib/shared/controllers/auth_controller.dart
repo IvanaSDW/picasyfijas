@@ -34,22 +34,18 @@ class AuthController extends GetxController {
 
   @override
   void onInit() {
+    // auth
+    //     .authStateChanges()
+    //     .listen((User? user) {
+    //   logger.i('AuthStateChanges event occurred...');
+    //   updateAuthState(user);
+    // });
     auth
-        .authStateChanges()
+        .userChanges()
         .listen((User? user) {
+      logger.i('UserChanges event occurred...');
       updateAuthState(user);
     });
-    // auth
-    //     .userChanges()
-    //     .listen((User? user) {
-    //   if (user == null) {
-    //     logger.i('Signing in anonymously...');
-    //     appController.isFirstRun = true;
-    //     signInAnonymously();
-    //   } else {
-    //     logger.i('User is signed in!');
-    //   }
-    // });
     super.onInit();
   }
 
@@ -103,7 +99,7 @@ class AuthController extends GetxController {
       User? googleUser;
       final GoogleSignInAccount? signInAccount = await _googleSignIn.signIn();
       if (signInAccount != null) {
-        logger.i('signInAccount is: ${signInAccount.email}');
+        logger.i('Google account to link: ${signInAccount.email}');
         final GoogleSignInAuthentication signInAuthentication =
         await signInAccount.authentication;
         credential = GoogleAuthProvider.credential(
@@ -111,17 +107,17 @@ class AuthController extends GetxController {
           idToken: signInAuthentication.idToken,
         );
         logger.i('credential is $credential');
-        await auth.currentUser!.linkWithCredential(credential).then((value) {
+        await auth.currentUser!.linkWithCredential(credential).then((value) async {
           googleUser = value.user!;
-          firestoreService.checkInGoogleUser(googleUser!);
+          await firestoreService.checkInGoogleUser(googleUser!);
           appController.isBusy = false;
           firestoreService.deletePlayer(oldId);
         }).catchError((error) async {
           logger.e('error linking with credential: $error, hashcode: ${error.hashCode}');
           removeUserAccount();
-          await auth.signInWithCredential(credential).then((value) {
+          await auth.signInWithCredential(credential).then((value) async {
             googleUser = value.user!;
-            firestoreService.checkInGoogleUser(googleUser!);
+            await firestoreService.checkInGoogleUser(googleUser!);
             appController.isBusy = false;
             firestoreService.deletePlayer(oldId);
           }).catchError((error) {

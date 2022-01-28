@@ -44,7 +44,7 @@ class SystemStatusView extends StatelessWidget {
                           ),
                           Expanded(flex: 60,
                             child: AutoSizeText(
-                              "${authController.authState}",
+                              authController.authState.toString(),
                               textAlign: TextAlign.left,
                               style: TextStyle(
                                 color: originalColors.textColor3,

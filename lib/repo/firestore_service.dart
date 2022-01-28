@@ -14,7 +14,7 @@ class FirestoreService {
       firestore.collection(ttmMatchesTableName);
 
   Future<void> checkInGoogleUser(User user) async {
-    logger.i('called');
+    logger.i('called for user: ${user.uid}');
     DocumentReference playerRef = players.doc(user.uid);
     DocumentSnapshot firestoreUser = await playerRef.get();
     UserInfo userInfo = user.providerData[0];
@@ -61,7 +61,7 @@ class FirestoreService {
         playerNameFN: 'Guest',
         playerIsNewPlayerFN: true,
         playerCreatedAtFN: Timestamp.now()
-      }).then((value) => appController.refreshPlayer())
+      }).then((value) async => await appController.refreshPlayer())
           .catchError(
           (error) => logger.e("Failed to create user in firestore: $error"));
     } else {
@@ -100,7 +100,16 @@ class FirestoreService {
         fromFirestore: (snapshot, _) => Player.fromJson(snapshot.data()!),
         toFirestore: (player, _) => player.toJson())
         .get()
-        .then((value) => value.data());
+        .then((value) {
+          logger.i('fetched player from firestore: ${value.data().toString()}');
+          if (value.data() == null) {
+            logger.e('Player might have been deleted from firestore..');
+            authController.authState = AuthState.signedOut;
+          }
+        })
+    .catchError((error) {
+      logger.e('Error fetching player from firestore: $error');
+    });
     return fetchedPlayer;
   }
 

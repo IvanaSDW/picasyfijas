@@ -24,8 +24,8 @@ class LandingSignedOutScreen extends StatelessWidget {
                   color: Colors.black.withOpacity(0.7),
                 ),
                 child: Get.locale.toString().substring(0, 2) == 'es'
-                    ? Image.asset('assets/images/logo_spanish.png')
-                    : Image.asset('assets/images/logo_english.png'),
+                    ? Image.asset('assets/images/logo_spanish_on.png')
+                    : Image.asset('assets/images/logo_english_on.png'),
               ),
             ),
             const SizedBox(height: 20,),

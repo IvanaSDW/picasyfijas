@@ -50,7 +50,8 @@ class AppController extends GetxController {
     });
   }
 
-  void refreshPlayer() async {
+  Future<void> refreshPlayer() async {
+    logger.i('called');
     currentPlayer = auth.currentUser == null
         ? Player.empty()
         : await firestoreService.fetchPlayer(auth.currentUser!.uid);
