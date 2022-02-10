@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:ui';
-
+import 'package:audioplayers/audioplayers.dart';
 import 'package:bulls_n_cows_reloaded/model/player.dart';
 import 'package:get/get.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
@@ -10,9 +10,13 @@ import '../constants.dart';
 class AppController extends GetxController {
   static AppController instance = Get.find();
 
+  final RxBool _needLand = false.obs;
+  bool get needLand => _needLand.value;
+  set needLand(bool value) => _needLand.value = value;
+
   final Rx<Player> _currentPlayer = Player.empty().obs;
-  set currentPlayer(value) => _currentPlayer.value = value;
-  get currentPlayer => _currentPlayer.value;
+  set currentPlayer(Player value) => _currentPlayer.value = value;
+  Player get currentPlayer => _currentPlayer.value;
 
   final RxBool _isBusy = false.obs;
   bool get isBusy => _isBusy.value;
@@ -50,7 +54,12 @@ class AppController extends GetxController {
     });
   }
 
-  Future<void> refreshPlayer() async {
+  void resetState() {
+    drawerSlideValue = 0.0;
+    backPanelOn = true;
+  }
+
+  void refreshPlayer() async {
     logger.i('called');
     currentPlayer = auth.currentUser == null
         ? Player.empty()
@@ -61,6 +70,27 @@ class AppController extends GetxController {
   void onInit() {
     super.onInit();
     checkInternet();
+  }
+
+  final RxDouble _drawerSlideValue = 0.0.obs;
+  set drawerSlideValue(value) => _drawerSlideValue.value = value;
+  double get drawerSlideValue => _drawerSlideValue.value;
+  final panelWidth = Get.width * 0.58;
+  final _backPanelOn = true.obs;
+  set backPanelOn(bool value) => _backPanelOn.value = value;
+  bool get backPanelOn => _backPanelOn.value;
+
+  final _isMuted = false.obs;
+  set isMuted(bool value) => _isMuted.value = value;
+  bool get isMuted => _isMuted.value;
+
+  final RxDouble _volumeLevel = 1.0.obs;
+  set volumeLevel(double value) => _volumeLevel.value = value;
+  double get volumeLevel => _volumeLevel.value;
+
+  Future<AudioPlayer> playEffect(String fileName) async {
+    AudioCache cache = AudioCache();
+    return await cache.play(fileName, volume: isMuted ? 0.0: volumeLevel);
   }
 
   @override

@@ -1,5 +1,11 @@
+
 import 'package:bulls_n_cows_reloaded/shared/constants.dart';
+import 'package:bulls_n_cows_reloaded/view/home_view/home_screen.dart';
+import 'package:bulls_n_cows_reloaded/view/landing_signed_out_view/landing_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/animation.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -8,45 +14,68 @@ class AuthController extends GetxController {
 
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
-  final Rx<AuthState> _authState = AuthState.signedOut.obs;
+
+  final Rx<AuthState> _authState = AuthState.booting.obs;
   AuthState get authState => _authState.value;
   set authState(AuthState state) => _authState.value = state;
 
   updateAuthState(User? currentUser) async {
     logger.i('called');
     if (currentUser == null) {
-      authState = AuthState.signedOut;
-      appController.isFirstRun = true;
-      // Get.offAllNamed('/');
+      logger.i('authState is: $authState and current user is now null, needLand is: ${appController.needLand}');
+      if (authState != AuthState.signedOut) {
+        authState = AuthState.signedOut;
+        appController.isFirstRun = true;
+        if (appController.needLand) Get.offAll(() => LandingUnsignedScreen());
+      } else {
+        logger.i('called again for same auth event. ignoring...');
+      }
     } else if (currentUser.isAnonymous) {
-      authState = AuthState.anonymous;
-      if(!appController.isFirstRun) appController.refreshPlayer();
-      // Get.offAllNamed('/GuestHome');
+      if (authState != AuthState.anonymous) {
+        authState = AuthState.anonymous;
+        if(!appController.isFirstRun) appController.refreshPlayer();
+        await Future.delayed(const Duration(seconds: 3));
+        // Get.offAllNamed('home');
+        Get.offAll(() => HomeView(), curve: Curves.easeIn);
+      } else {
+        logger.i('called again for same auth event. ignoring...');
+      }
     } else if (currentUser.providerData.first.providerId == 'google.com'){
-      authState = AuthState.google;
-      appController.refreshPlayer();
-      // Get.offAllNamed('/Home');
+      if (authState != AuthState.google) {
+        authState = AuthState.google;
+        appController.refreshPlayer();
+        await Future.delayed(const Duration(seconds: 3));
+        Get.offAll(() => HomeView(), curve: Curves.easeIn);
+        appController.resetState();
+      } else {
+        logger.i('called again for same auth event. ignoring...');
+      }
     } else {
       logger.e('Could not check sign in method');
     }
-    logger.i('Auth state is changed to: $authState');
   }
 
   @override
   void onInit() {
-    // auth
-    //     .authStateChanges()
-    //     .listen((User? user) {
-    //   logger.i('AuthStateChanges event occurred...');
-    //   updateAuthState(user);
-    // });
-    auth
-        .userChanges()
+    // subscribeToUserChanges();
+    listenToAuthStateChanges();
+    super.onInit();
+  }
+
+  void listenToUserChanges() {
+    auth.userChanges()
         .listen((User? user) {
       logger.i('UserChanges event occurred...');
       updateAuthState(user);
     });
-    super.onInit();
+  }
+
+  void listenToAuthStateChanges() {
+    auth.authStateChanges()
+        .listen((User? user) {
+      logger.i('AuthStateChanges event occurred...');
+      updateAuthState(user);
+    });
   }
 
   Future<void> signInAnonymously() async {
@@ -111,7 +140,7 @@ class AuthController extends GetxController {
           googleUser = value.user!;
           await firestoreService.checkInGoogleUser(googleUser!);
           appController.isBusy = false;
-          firestoreService.deletePlayer(oldId);
+          // firestoreService.deletePlayer(oldId);
         }).catchError((error) async {
           logger.e('error linking with credential: $error, hashcode: ${error.hashCode}');
           removeUserAccount();
@@ -146,15 +175,20 @@ class AuthController extends GetxController {
   void signOut() async {
     logger.i('called');
     appController.isBusy = true;
+    appController.needLand = true;
     if (auth.currentUser!.isAnonymous) {
       firestoreService.deletePlayer(auth.currentUser!.uid);
-      removeUserAccount();
+      await removeUserAccount();
     }
-    await auth.signOut().then((value) {
-      logger.i('Successfully signed out)');
-    }).catchError((error) {
-      logger.e('Error signing out: $error');
-    });
+
+
+      try {
+        await auth.signOut();
+        logger.i('Successfully signed out');
+      } on PlatformException catch (e) {
+        logger.e('Error signing out: ${e.toString()}');
+      }
+
     appController.isBusy = false;
   }
 }

@@ -28,6 +28,6 @@ const Map<String, String> enUS = {
   'network' : 'Network:',
   'connected' : 'Connected to internet',
   'not_connected' : 'No Internet connection',
-  'players_online' : 'Players online:',
+  'players_online' : 'Players:',
 
 };

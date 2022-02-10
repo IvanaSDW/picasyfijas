@@ -3,11 +3,11 @@ import 'package:bulls_n_cows_reloaded/shared/widgets/anonymous_sign_in_button.da
 import 'package:bulls_n_cows_reloaded/shared/widgets/google_sign_in_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'landing_signed_out_controller.dart';
+import 'landing_controller.dart';
 
-class LandingSignedOutScreen extends StatelessWidget {
-  final LandingSignedOutController controller = Get.put(LandingSignedOutController());
-  LandingSignedOutScreen({Key? key}) : super(key: key);
+class BootingWidget extends StatelessWidget {
+  final LandingController controller = Get.put(LandingController());
+  BootingWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

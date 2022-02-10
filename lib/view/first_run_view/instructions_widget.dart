@@ -47,7 +47,7 @@ class InstructionsWidget extends StatelessWidget {
                         width: Get.width,
                         decoration: const BoxDecoration(
                           image: DecorationImage(image: AssetImage(
-                              'assets/images/single_match_header.png'),
+                              'assets/images/instructions_header.png'),
                               fit: BoxFit.fitWidth),
                         ),
                         child: Center(
@@ -73,8 +73,6 @@ class InstructionsWidget extends StatelessWidget {
                         visible: controller.instructionsTextVisible,
                         child: SizedBox(
                             width: Get.width - 48.0,
-                            // padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
-                            // alignment: Alignment.center,
                             child: DefaultTextStyle(
                               style: defaultTextStyle,
                               child: AnimatedTextKit(animatedTexts: [
@@ -136,12 +134,14 @@ class InstructionsWidget extends StatelessWidget {
                   ),
                   Expanded(flex: 52,
                       child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 6.0),
-                        decoration: const BoxDecoration(
+                        padding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 4.0),
+                        decoration: controller.exampleTitleVisible ?
+                        const BoxDecoration(
                             image: DecorationImage(image: AssetImage(
                                 'assets/images/brackets_red_grid.png'),
                                 fit: BoxFit.fill)
-                        ),
+                        )
+                        : null ,
                         child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [

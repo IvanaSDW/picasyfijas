@@ -1,18 +1,16 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:bulls_n_cows_reloaded/shared/constants.dart';
-import 'package:bulls_n_cows_reloaded/shared/controllers/auth_controller.dart';
 import 'package:bulls_n_cows_reloaded/shared/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 
-class AnonymousSignInButton extends GetWidget<AuthController> {
+class AnonymousSignInButton extends StatelessWidget {
   const AnonymousSignInButton({Key? key}) : super(key: key);
 
-
-  void onTapAction() {
+  void onTapAction() async {
     appController.isBusy = true;
-    controller.signInAnonymously();
+    await authController.signInAnonymously();
     appController.isBusy = false;
   }
 

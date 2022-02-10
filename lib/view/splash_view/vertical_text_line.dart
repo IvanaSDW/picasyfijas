@@ -24,15 +24,22 @@ class _VerticalTextLineState extends State<VerticalTextLine> {
   late int _maxLength;
   late Duration _stepInterval;
   final List<String> _characters = [];
-  List<int> charCodes = [48, 49, 50, 51, 52, 53, 54, 55, 56, 57];
+  List<int> charCodes = [48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 70, 80, 102, 112];
   late Timer timer;
   double fontSize = Random().nextInt(12)+8.toDouble();
+  // List<Color> colors = [];
 
   @override
   void initState() {
     _maxLength = widget.maxLength;
     _stepInterval = Duration(milliseconds: (1000 ~/ widget.speed));
     _startTimer();
+    // colors = [
+    //   Colors.primaries[Random().nextInt(Colors.primaries.length)],
+    //   Colors.primaries[Random().nextInt(Colors.primaries.length)],
+    //   Colors.primaries[Random().nextInt(Colors.primaries.length)],
+    //   Colors.primaries[Random().nextInt(Colors.primaries.length)],
+    // ];
     super.initState();
   }
 
@@ -40,8 +47,8 @@ class _VerticalTextLineState extends State<VerticalTextLine> {
     timer = Timer.periodic(_stepInterval, (timer) {
       final _random = Random();
       String element = String.fromCharCode(
-          charCodes[_random.nextInt(10)]
-          // _random.nextInt(512)
+          charCodes[_random.nextInt(14)]
+        // _random.nextInt(512)
       );
 
       final box = context.findRenderObject() as RenderBox;
@@ -101,8 +108,9 @@ class _VerticalTextLineState extends State<VerticalTextLine> {
       textWidgets.add(
           Text(character,
               style: TextStyle(
-                  fontFamily: "Monospace",
-                  fontSize: fontSize))
+                  fontFamily: 'Mainframe',
+                  fontSize: fontSize)
+          )
       );
     }
 

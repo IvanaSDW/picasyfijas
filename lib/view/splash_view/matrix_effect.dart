@@ -6,7 +6,6 @@ class MatrixEffect extends StatelessWidget {
   MatrixEffect({Key? key}) : super(key: key);
   final MatrixEffectController controller = Get.put(MatrixEffectController());
 
-
   @override
   Widget build(BuildContext context) {
     controller.startTimer();

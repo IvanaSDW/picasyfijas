@@ -1,4 +1,3 @@
-
 import 'package:bulls_n_cows_reloaded/shared/constants.dart';
 import 'package:bulls_n_cows_reloaded/view/first_run_view/instructions_widget.dart';
 import 'package:bulls_n_cows_reloaded/view/home_view/back_panel.dart';
@@ -14,18 +13,18 @@ class HomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(() {
-      return Material(
-        color: originalColors.backgroundColor,
-        child: AnimatedSwitcher(
+    return Material(
+      color: Colors.transparent,
+      child: Obx(() {
+        return AnimatedSwitcher(
           duration: const Duration(milliseconds: 2000),
           child: appController.isFirstRun
               ? InstructionsWidget(onContinueTappedAction: () {appController.isFirstRun = false;})
               : Stack(
             children: [
-              BackPanelWidget(controller: controller),
+              BackPanelWidget(),
               TweenAnimationBuilder(
-                  tween: Tween<double>(begin: 0, end: controller.drawerSlideValue),
+                  tween: Tween<double>(begin: 0, end: appController.drawerSlideValue),
                   duration: const Duration(milliseconds: 1300),
                   curve: Curves.easeInCirc,
                   builder: (_, double val, __) {
@@ -33,7 +32,7 @@ class HomeView extends StatelessWidget {
                         Transform(
                           transform: Matrix4.identity()
                             ..setEntry(3, 2, 0.001)
-                            ..setEntry(0, 3, controller.panelWidth*val),
+                            ..setEntry(0, 3, appController.panelWidth*val),
                           // ..rotateY((pi/6)*val),
                           child: FrontPanelWidget(controller: controller),
                         )
@@ -45,9 +44,9 @@ class HomeView extends StatelessWidget {
               ),
             ],
           ),
-        ),
-      );
-    });
+        );
+      }),
+    );
   }
 }
 

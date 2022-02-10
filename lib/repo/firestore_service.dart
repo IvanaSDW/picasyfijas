@@ -7,9 +7,10 @@ import 'package:logger/logger.dart';
 
 class FirestoreService {
   final logger = Logger();
-  // FirestoreService instance = Get.find();
 
   CollectionReference get players => firestore.collection(playersTableName);
+  // .withConverter<Player>(fromFirestore: (snapshot, _) => Player.fromJson(snapshot.data()!),
+  //     toFirestore: (player, _) => player.toJson());
   CollectionReference get ttmMatches =>
       firestore.collection(ttmMatchesTableName);
 
@@ -31,20 +32,19 @@ class FirestoreService {
         playerGoogleAvatarFN: userInfo.photoURL,
         playerCreatedAtFN: Timestamp.now()
       }).catchError(
-          (error) => logger.e("Failed to create user in firestore: $error"));
+              (error) => logger.e("Failed to create user in firestore: $error"));
     } else {
       //user exists in firestore
       logger.i('user already in firestore, lets update it...');
       await playerRef
           .update({
-            playerNameFN: userInfo.displayName,
-            playerEmailFN: userInfo.email,
-            playerPhoneFN: userInfo.phoneNumber,
-            playerGoogleAvatarFN: userInfo.photoURL,
-          })
-          .then((_) {})
+        playerNameFN: userInfo.displayName,
+        playerEmailFN: userInfo.email,
+        playerPhoneFN: userInfo.phoneNumber,
+        playerGoogleAvatarFN: userInfo.photoURL,
+      })
           .catchError((error) {
-              logger.e("Failed to update user in firestore: $error");});
+        logger.e("Failed to update user in firestore: $error");});
     }
   }
 
@@ -61,16 +61,26 @@ class FirestoreService {
         playerNameFN: 'Guest',
         playerIsNewPlayerFN: true,
         playerCreatedAtFN: Timestamp.now()
-      }).then((value) async => await appController.refreshPlayer())
+      }).then(
+              (_) =>
+                // logger.i('User created in firestore. Refreshing player object in appController');
+                appController.refreshPlayer()
+
+      )
           .catchError(
-          (error) => logger.e("Failed to create user in firestore: $error"));
+              (error) => logger.e("Error creating user in firestore: $error")
+      );
     } else {
       //user exists in firestore
       logger.i('user already in firestore, lets update it...');
       await playerRef.update({
         playerNameFN: 'Guest',
-      }).catchError(
-          (error) => logger.e("Failed to update user in firestore: $error"));
+      }).then(
+              (value) => appController.refreshPlayer()
+      )
+          .catchError(
+              (error) => logger.e("Failed to update user in firestore: $error")
+      );
     }
   }
 
@@ -87,30 +97,32 @@ class FirestoreService {
     await players
         .doc(playerId)
         .delete()
-        .then((value) => logger.i('Player account deleted!'))
+        .then((value) {logger.i('Player account deleted!');})
         .catchError(
-            (error) => logger.e('Error deleting player account: $error'));
+            (error) {logger.e('Error deleting player account: $error');});
   }
 
-  Future<Player?> fetchPlayer(String playerId) async {
-    logger.i('called');
-    final fetchedPlayer = await players
+  Future<Player> fetchPlayer(String playerId) async {
+    logger.i('called for user with id: $playerId');
+    final fetchedPlayer = players
         .doc(playerId)
         .withConverter<Player>(
         fromFirestore: (snapshot, _) => Player.fromJson(snapshot.data()!),
-        toFirestore: (player, _) => player.toJson())
-        .get()
-        .then((value) {
-          logger.i('fetched player from firestore: ${value.data().toString()}');
-          if (value.data() == null) {
-            logger.e('Player might have been deleted from firestore..');
-            authController.authState = AuthState.signedOut;
-          }
-        })
-    .catchError((error) {
-      logger.e('Error fetching player from firestore: $error');
-    });
-    return fetchedPlayer;
+        toFirestore: (player, _) => player.toJson());
+    // return (
+    //     await fetchedPlayer.get()
+    //     .catchError((error) {logger.e('Error when fetching player from firestore: $error');})
+    // ).data()!;
+    Player? player = (await fetchedPlayer.get()
+        .catchError((error) {logger.e('Error when fetching player from firestore: $error');})
+    ).data();
+    if (player == null) {
+      logger.wtf('Player may have been deleted from firestore. Exiting...');
+      authController.authState = AuthState.signedOut;
+      return Player.empty();
+    } else {
+      return player;
+    }
   }
 
   //
@@ -158,7 +170,7 @@ class FirestoreService {
     await ttmMatches
         .add(match.toJson())
         .then((value) => logger
-            .i('Successfully saved match to firestore with id: ${value.id}'))
+        .i('Successfully saved match to firestore with id: ${value.id}'))
         .catchError(
             (error) => logger.e('Error saving match to firestore: $error'));
   }

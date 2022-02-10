@@ -1,21 +1,18 @@
 import 'package:bulls_n_cows_reloaded/shared/constants.dart';
-import 'package:bulls_n_cows_reloaded/view/home_view/home_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class BackPanelMenu extends StatelessWidget {
-  const BackPanelMenu({
-    Key? key, required this.controller,
-  }) : super(key: key);
-
-  final HomeController controller;
+  const BackPanelMenu({Key? key,}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      bool enabled = controller.backPanelOn;
+      bool enabled = appController.backPanelOn;
+      Color iconColor = enabled ? Colors.white : Colors.black45;
+      Color menuTextColor = enabled ? originalColors.textColor2! : Colors.black45;
       return Container(
-        width: controller.panelWidth,
+        width: appController.panelWidth,
         padding: const EdgeInsets.all(8.0),
         child: Column(
           // mainAxisAlignment: MainAxisAlignment.center,
@@ -26,27 +23,22 @@ class BackPanelMenu extends StatelessWidget {
                 ListTile(
                   enabled: enabled,
                   onTap: () {},
-                  leading: enabled
-                      ? const Icon(Icons.person, color: Colors.white,)
-                      : const Icon(Icons.person, color: Colors.grey,),
+                  leading: Icon(Icons.person, color: iconColor,),
                   title: Text('Profile',
-                    style: TextStyle(color: enabled ? originalColors.textColor2 : Colors.grey),),
+                    style: TextStyle(color: menuTextColor,),
+                  ),
                 ),
                 ListTile(
                   onTap: () {},
-                  leading: enabled
-                      ? const Icon(Icons.settings, color: Colors.white,)
-                      : const Icon(Icons.settings, color: Colors.grey,),
+                  leading: Icon(Icons.settings, color: iconColor,),
                   title: Text('Settings',
-                    style: TextStyle(color: enabled ? originalColors.textColor2 : Colors.grey),),
+                    style: TextStyle(color: menuTextColor),),
                 ),
                 ListTile(
-                  onTap: () {},
-                  leading: enabled
-                      ? const Icon(Icons.logout, color: Colors.white,)
-                      : const Icon(Icons.logout, color: Colors.grey,),
+                  onTap: () => authController.signOut(),
+                  leading: Icon(Icons.logout, color: iconColor,),
                   title: Text('Logout',
-                    style: TextStyle(color: enabled ? originalColors.textColor2 : Colors.grey),),
+                    style: TextStyle(color: menuTextColor),),
                 ),
               ],
             )

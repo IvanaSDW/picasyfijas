@@ -8,7 +8,7 @@ import 'package:logger/logger.dart';
 import 'controllers/app_controller.dart';
 import 'controllers/auth_controller.dart';
 
-enum AuthState { anonymous, google, signedOut }
+enum AuthState { booting, anonymous, google, signedOut }
 enum TtmMatchState { created, started, finished }
 
 AuthController authController = AuthController.instance;
@@ -47,6 +47,7 @@ const String resultCowsFN = 'cows';
 
 ColorPalette originalColors = ColorPalette(
   backgroundColor: Colors.black,
+  // backPanelColor: const Color(0xFF191D19),
   backPanelColor: const Color(0xFF252525),
   mainTitleColor: const Color(0xFF00FF00),
   textColor1: const Color(0xFF00FF00),
