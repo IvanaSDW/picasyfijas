@@ -1,10 +1,7 @@
 
+import 'package:bulls_n_cows_reloaded/navigation/routes.dart';
 import 'package:bulls_n_cows_reloaded/shared/constants.dart';
-import 'package:bulls_n_cows_reloaded/view/home_view/home_screen.dart';
-import 'package:bulls_n_cows_reloaded/view/landing_signed_out_view/landing_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/animation.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -26,7 +23,7 @@ class AuthController extends GetxController {
       if (authState != AuthState.signedOut) {
         authState = AuthState.signedOut;
         appController.isFirstRun = true;
-        if (appController.needLand) Get.offAll(() => LandingUnsignedScreen());
+        if (appController.needLand) Get.offAllNamed(Routes.landing);
       } else {
         logger.i('called again for same auth event. ignoring...');
       }
@@ -36,7 +33,7 @@ class AuthController extends GetxController {
         if(!appController.isFirstRun) appController.refreshPlayer();
         await Future.delayed(const Duration(seconds: 3));
         // Get.offAllNamed('home');
-        Get.offAll(() => HomeView(), curve: Curves.easeIn);
+        Get.offAllNamed(Routes.home);
       } else {
         logger.i('called again for same auth event. ignoring...');
       }
@@ -45,13 +42,13 @@ class AuthController extends GetxController {
         authState = AuthState.google;
         appController.refreshPlayer();
         await Future.delayed(const Duration(seconds: 3));
-        Get.offAll(() => HomeView(), curve: Curves.easeIn);
+        Get.offAllNamed(Routes.home);
         appController.resetState();
       } else {
         logger.i('called again for same auth event. ignoring...');
       }
     } else {
-      logger.e('Could not check sign in method');
+      logger.i('Could not check sign in method');
     }
   }
 
@@ -84,7 +81,7 @@ class AuthController extends GetxController {
       logger.i('Signed in as ${user.uid}');
       await firestoreService.checkInAnonymousUser(user);
     } catch (e) {
-      logger.e('Error signing in anonymously: $e');
+      logger.i('Error signing in anonymously: $e');
     }
   }
 
@@ -138,6 +135,7 @@ class AuthController extends GetxController {
         logger.i('credential is $credential');
         await auth.currentUser!.linkWithCredential(credential).then((value) async {
           googleUser = value.user!;
+          updateAuthState(googleUser);
           await firestoreService.checkInGoogleUser(googleUser!);
           appController.isBusy = false;
           // firestoreService.deletePlayer(oldId);
@@ -148,6 +146,7 @@ class AuthController extends GetxController {
             googleUser = value.user!;
             await firestoreService.checkInGoogleUser(googleUser!);
             appController.isBusy = false;
+            firestoreService.moveOldIdSoloMatches(oldId, googleUser!.uid);
             firestoreService.deletePlayer(oldId);
           }).catchError((error) {
             logger.i('Error signing in with google: $error');
@@ -180,14 +179,12 @@ class AuthController extends GetxController {
       firestoreService.deletePlayer(auth.currentUser!.uid);
       await removeUserAccount();
     }
-
-
-      try {
-        await auth.signOut();
-        logger.i('Successfully signed out');
-      } on PlatformException catch (e) {
-        logger.e('Error signing out: ${e.toString()}');
-      }
+    try {
+      await auth.signOut();
+      logger.i('Successfully signed out');
+    } on PlatformException catch (e) {
+      logger.e('Error signing out: ${e.toString()}');
+    }
 
     appController.isBusy = false;
   }

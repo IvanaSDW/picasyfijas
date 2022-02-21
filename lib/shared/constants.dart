@@ -1,5 +1,6 @@
 
 import 'package:bulls_n_cows_reloaded/repo/firestore_service.dart';
+import 'package:bulls_n_cows_reloaded/repo/player_stats_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,7 @@ enum TtmMatchState { created, started, finished }
 AuthController authController = AuthController.instance;
 AppController appController = AppController.instance;
 FirestoreService firestoreService = FirestoreService();
+PlayerStatsService statsService = PlayerStatsService();
 
 final Logger logger = Logger();
 FirebaseAuth auth = FirebaseAuth.instance;
@@ -31,11 +33,11 @@ const String playerGoogleAvatarFN = 'google_avatar';
 const String playerIsNewPlayerFN = 'is_new_user';
 const String playerCreatedAtFN = 'created_at';
 
-const String ttmMatchesTableName = 'ttm_matches';
-const String ttmMatchPlayerIdFN = 'player_id';
-const String ttmMatchSecretNumberFN = 'secret_num';
-const String ttmMatchMovesFN = 'moves';
-const String ttmMatchCreatedAtFN = 'created_at';
+const String soloMatchesTableName = 'solo_matches';
+const String soloMatchPlayerIdFN = 'player_id';
+const String soloMatchSecretNumberFN = 'secret_num';
+const String soloMatchMovesFN = 'moves';
+const String soloMatchCreatedAtFN = 'created_at';
 
 const String moveGuessFN = 'guess';
 const String moveResultFN = 'move_result';

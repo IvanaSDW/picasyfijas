@@ -1,17 +1,23 @@
-import 'package:bulls_n_cows_reloaded/firebase_options.dart';
 import 'package:bulls_n_cows_reloaded/lang/translator.dart';
+import 'package:bulls_n_cows_reloaded/navigation/routes.dart';
+import 'package:bulls_n_cows_reloaded/shared/constants.dart';
 import 'package:bulls_n_cows_reloaded/shared/controllers/app_controller.dart';
 import 'package:bulls_n_cows_reloaded/shared/controllers/auth_controller.dart';
-import 'package:bulls_n_cows_reloaded/view/home_view/home_screen.dart';
 import 'package:bulls_n_cows_reloaded/view/splash_view/splash_widget.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:get/get.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky, overlays: []);
+  try {
+    WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+    FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky, overlays: []);
+  } on Exception catch (e) {
+    logger.i('Error at booting: $e');
+  }
   runApp(const MyApp());
 }
 
@@ -29,10 +35,9 @@ class MyApp extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             locale: Get.deviceLocale,
             translations: Translator(),
+            // initialRoute: '/',
             home: SplashWidget(snapshot: snapshot,),
-            getPages: [
-              GetPage(name: '/Home', page: () => HomeView())
-            ],
+            getPages: appPages,
           );
         }
     );
@@ -44,10 +49,12 @@ class Init {
   static final instance = Init._();
 
   Future initialize() async {
-    await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform);
+    // await Firebase.initializeApp(
+    //     options: DefaultFirebaseOptions.currentPlatform);
+    await Firebase.initializeApp();
     Get.put(AuthController(), permanent: true);
     Get.put(AppController(), permanent: true);
     await Future.delayed(const Duration(seconds: 3));
+    FlutterNativeSplash.remove();
   }
 }

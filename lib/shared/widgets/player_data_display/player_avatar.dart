@@ -15,58 +15,61 @@ class PlayerAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(() {
-      Player player = appController.currentPlayer;
-      return Stack(
-        children: [
-          authController.authState == AuthState.anonymous
-              ? Container()
-              : Center(
-            child: Image.asset('assets/images/user_image_frame.png'),
-          ),
-          Column(
-            children: [
-              Expanded(flex: 80,
-                child: authController.authState == AuthState.anonymous
-                    ? GoogleSignInButtonCircular()
-                    :  player.photoUrl != null
-                    ? FadeInImage.assetNetwork(
-                  placeholder: 'assets/images/user_photo_bg.png',
-                  image: player.photoUrl!,
-                )
-                    : const Image(
-                    image: AssetImage('assets/images/user_photo_bg.png')
-                ),
-              ),
-              Expanded(flex: 16,
-                child: Center(
-                    child: player.name == null
-                        ? const SpinKitThreeBounce(
-                      color: Colors.white,
-                      size: 14,
-                    )
-                        : Text(
-                      player.name!
-                          .split(' ')
-                          .first,
-                      style: profilePlayerStatsSubTitleKeyStyle,
-                      textAlign: TextAlign.center,
-                    )
-                ),
-              ),
-              Expanded(flex: 4, child: Container()),
-            ],
-          ),
-          Positioned(top: 4.0, left: 4.0,
-            child: SizedBox(
-                width: 32,
-                child: Image.asset(
-                    'icons/flags/png/${appController.countryCode}.png',
-                    package: 'country_icons')
+    return Material(
+      color: Colors.transparent,
+      child: Obx(() {
+        Player player = appController.currentPlayer;
+        return Stack(
+          children: [
+            authController.authState == AuthState.anonymous
+                ? Container()
+                : Center(
+              child: Image.asset('assets/images/user_image_frame.png'),
             ),
-          ),
-        ],
-      );
-    });
+            Column(
+              children: [
+                Expanded(flex: 80,
+                  child: authController.authState == AuthState.anonymous
+                      ? GoogleSignInButtonCircular()
+                      :  player.photoUrl != null
+                      ? FadeInImage.assetNetwork(
+                    placeholder: 'assets/images/user_photo_bg.png',
+                    image: player.photoUrl!,
+                  )
+                      : const Image(
+                      image: AssetImage('assets/images/user_photo_bg.png')
+                  ),
+                ),
+                Expanded(flex: 16,
+                  child: Center(
+                      child: player.name == null
+                          ? const SpinKitThreeBounce(
+                        color: Colors.white,
+                        size: 14,
+                      )
+                          : Text(
+                        player.name!
+                            .split(' ')
+                            .first,
+                        style: profilePlayerStatsSubTitleKeyStyle,
+                        textAlign: TextAlign.center,
+                      )
+                  ),
+                ),
+                Expanded(flex: 4, child: Container()),
+              ],
+            ),
+            Positioned(top: 4.0, left: 4.0,
+              child: SizedBox(
+                  width: 32,
+                  child: Image.asset(
+                      'icons/flags/png/${appController.countryCode}.png',
+                      package: 'country_icons')
+              ),
+            ),
+          ],
+        );
+      }),
+    );
   }
 }

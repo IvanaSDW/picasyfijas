@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:ui';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:bulls_n_cows_reloaded/model/player.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 
@@ -13,6 +14,8 @@ class AppController extends GetxController {
   final RxBool _needLand = false.obs;
   bool get needLand => _needLand.value;
   set needLand(bool value) => _needLand.value = value;
+
+  final RxBool needUpdateSoloStats = true.obs;
 
   final Rx<Player> _currentPlayer = Player.empty().obs;
   set currentPlayer(Player value) => _currentPlayer.value = value;
@@ -55,6 +58,7 @@ class AppController extends GetxController {
   }
 
   void resetState() {
+    logger.i('called');
     drawerSlideValue = 0.0;
     backPanelOn = true;
   }
@@ -97,6 +101,10 @@ class AppController extends GetxController {
   void dispose() {
     internetListener.cancel();
     super.dispose();
+  }
+
+  quitApp() {
+    SystemNavigator.pop(animated: true);
   }
 
 }

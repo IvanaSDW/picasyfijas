@@ -102,3 +102,12 @@ final correctGuessStyle = GoogleFonts.robotoMono(
         color: originalColors.correctGuessColor,
         fontSize: 24,
         fontWeight: FontWeight.bold));
+
+final TextStyle statsTitle =
+TextStyle(color: originalColors.accentColor2, fontFamily: 'Mainframe');
+
+final TextStyle statsSubTitle = TextStyle(
+    color: originalColors.textColorLight, fontFamily: 'Mainframe');
+
+final TextStyle statsText =
+TextStyle(color: originalColors.textColor3, fontFamily: 'Mainframe');

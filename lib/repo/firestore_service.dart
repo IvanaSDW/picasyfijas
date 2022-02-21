@@ -1,5 +1,5 @@
 import 'package:bulls_n_cows_reloaded/model/player.dart';
-import 'package:bulls_n_cows_reloaded/model/time_trial_mode_match.dart';
+import 'package:bulls_n_cows_reloaded/model/solo_match.dart';
 import 'package:bulls_n_cows_reloaded/shared/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -9,10 +9,12 @@ class FirestoreService {
   final logger = Logger();
 
   CollectionReference get players => firestore.collection(playersTableName);
-  // .withConverter<Player>(fromFirestore: (snapshot, _) => Player.fromJson(snapshot.data()!),
-  //     toFirestore: (player, _) => player.toJson());
-  CollectionReference get ttmMatches =>
-      firestore.collection(ttmMatchesTableName);
+  CollectionReference get soloMatches =>
+      firestore.collection(soloMatchesTableName)
+          .withConverter<SoloMatch>(
+          fromFirestore: (snapshot, _) => SoloMatch.fromData(snapshot.data()!),
+          toFirestore: (ttmMatch, _) => ttmMatch.toJson()
+      );
 
   Future<void> checkInGoogleUser(User user) async {
     logger.i('called for user: ${user.uid}');
@@ -63,9 +65,8 @@ class FirestoreService {
         playerCreatedAtFN: Timestamp.now()
       }).then(
               (_) =>
-                // logger.i('User created in firestore. Refreshing player object in appController');
-                appController.refreshPlayer()
-
+          // logger.i('User created in firestore. Refreshing player object in appController');
+          appController.refreshPlayer()
       )
           .catchError(
               (error) => logger.e("Error creating user in firestore: $error")
@@ -84,13 +85,17 @@ class FirestoreService {
     }
   }
 
-  // Future<Player?> getPlayerInfo(String playerId) async {
-  //   DocumentSnapshot snapshot =
-  //       await players.doc(playerId).get().catchError((error) {
-  //     logger.e('Error fetching player data: $error');
-  //   });
-  //   return snapshot.data() == null ? null : playerFromSnapshot(snapshot);
-  // }
+  Future<void> moveOldIdSoloMatches(String oldId, String newId) async {
+    logger.i('called to move matches from $oldId to $newId');
+    firestore.collection(soloMatchesTableName)
+        .where(soloMatchPlayerIdFN, isEqualTo: oldId)
+        .get()
+        .then((value) => {
+    for (var doc in value.docs) {
+        doc.reference.update({soloMatchPlayerIdFN : newId})
+  }
+    });
+  }
 
   Future<void> deletePlayer(String playerId) async {
     logger.i('called');
@@ -119,28 +124,13 @@ class FirestoreService {
     if (player == null) {
       logger.wtf('Player may have been deleted from firestore. Exiting...');
       authController.authState = AuthState.signedOut;
+      appController.needLand = true;
+      authController.signOut();
       return Player.empty();
     } else {
       return player;
     }
   }
-
-  //
-  // TtmMatch? ttmMatchFromSnapshot(DocumentSnapshot matchSnapshot) {
-  //   Map<String, dynamic>? data = matchSnapshot.data();
-  //   return data == null
-  //       ? null
-  //       : TtmMatch(
-  //           userId: data[PLAYER_ID_FN],
-  //           secretNum:
-  //               // BandCNumber(data[TTM_MATCH_SECRET_NUM_FN][NUMBER_DIGITS_FN]),
-  //               FourDigits.fromData(data[TTM_MATCH_SECRET_NUM_FN][NUMBER_DIGITS_FN]),
-  //           moves: data[TTM_MATCH_MOVES_FN].map<MatchMove>((move) {
-  //             return MatchMove.fromData(move);
-  //           }).toList(),
-  //           createdAt: data[TTM_MATCH_CREATED_AT_FN],
-  //         );
-  // }
 
   Future<void> falseIsNewPlayer(String playerId) {
     logger.i('Called');
@@ -158,31 +148,11 @@ class FirestoreService {
     return timestamp.toDate();
   }
 
-  // Stream<Player?> playerSnapshots(String playerId) {
-  //   return players
-  //       .doc(playerId)
-  //       .snapshots()
-  //       .map((event) => fetchPlayer(event.id));
-  // }
-
-  Future<void> saveTtmMatchToFirestore(TtmMatch match) async {
-    logger.i('called');
-    await ttmMatches
-        .add(match.toJson())
-        .then((value) => logger
-        .i('Successfully saved match to firestore with id: ${value.id}'))
-        .catchError(
-            (error) => logger.e('Error saving match to firestore: $error'));
+  Future<void> saveSoloMatchToFirestore(SoloMatch match) async {
+    logger.i('called with object: ${match.toJson()}');
+    await soloMatches.add(match)
+        .then((value) => logger.i('Successfully saved match to firestore with id: ${value.id}'))
+        .catchError((error) => logger.e('Error saving match to firestore: $error'));
   }
 
-  Future<QuerySnapshot?> getTtmMatches(String playerId) async {
-    return await ttmMatches
-        .where(playerIdFN, isEqualTo: playerId)
-        .get()
-        .then((value) {
-      logger.i('Successfully returned matches: $value');
-    }).catchError((error) {
-      logger.e('error returning ttm matches: $error');
-    });
-  }
 }

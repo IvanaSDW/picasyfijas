@@ -1,9 +1,11 @@
 import 'dart:ui';
+
 import 'package:bulls_n_cows_reloaded/shared/constants.dart';
 import 'package:bulls_n_cows_reloaded/view/landing_signed_out_view/booting_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'matrix_effect.dart';
+
+import '../../shared/widgets/matrix_effect/matrix_effect.dart';
 
 class SplashWidget extends StatelessWidget {
   final AsyncSnapshot snapshot;
@@ -12,17 +14,21 @@ class SplashWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    logger.i('AsyncSnapshot state: ${snapshot.connectionState}, Current route: ${Get.currentRoute}');
-
-    return Get.currentRoute == '/HomeView' && snapshot.connectionState == ConnectionState.done ? Container() : Material(
-      color: Colors.transparent,
-      child: Stack(
+    logger.i(
+        'AsyncSnapshot state: ${snapshot.connectionState}, Current route: ${Get
+            .currentRoute}');
+    return Get.currentRoute == '/HomeView' &&
+        snapshot.connectionState == ConnectionState.done
+        ? Container(color: Colors.transparent,)
+        : Material(
+        color: Colors.transparent,
+        child: Stack(
           children: [
             MatrixEffect(),
             snapshot.connectionState == ConnectionState.waiting
                 ? TweenAnimationBuilder(
                 tween: Tween<double>(begin: 0, end: 1),
-                duration: const Duration(seconds: 3),
+                duration: const Duration(seconds: 2),
                 curve: Curves.easeInCirc,
                 builder: (BuildContext context, double opacity,
                     Widget? child) {
@@ -54,10 +60,11 @@ class SplashWidget extends StatelessWidget {
                   );
                 }
             )
-                : authController.authState == AuthState.booting ||
+                : Obx(() => authController.authState == AuthState.booting ||
                 authController.authState == AuthState.signedOut
-            ? BootingWidget()
-            : Container(),
+                ? const BootingWidget()
+                : Container(color: Colors.transparent,),
+            ),
           ],
         )
     );
