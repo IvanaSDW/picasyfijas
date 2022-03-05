@@ -1,8 +1,9 @@
 import 'dart:math';
 
-import 'package:bulls_n_cows_reloaded/model/digit_match_result.dart';
-import 'package:bulls_n_cows_reloaded/model/four_digits.dart';
-import 'package:bulls_n_cows_reloaded/model/solo_match.dart';
+import 'package:bulls_n_cows_reloaded/data/models/digit_match_result.dart';
+import 'package:bulls_n_cows_reloaded/data/models/four_digits.dart';
+import 'package:bulls_n_cows_reloaded/data/models/solo_game.dart';
+import 'package:bulls_n_cows_reloaded/shared/constants.dart';
 
 DigitMatchResult getMatchResult(FourDigits secret, FourDigits guess) {
   var bulls = 0;
@@ -47,11 +48,11 @@ FourDigits generateSecretNum() {
     }
     if (isOk) digits.add(newDigit);
   } while (digits.length <= 3);
-
+  logger.i('Number generated: $digits');
   return FourDigits(digit0: digits[0], digit1: digits[1], digit2: digits[2], digit3: digits[3]);
 }
 
-Map<String, int> ttmStats(List<SoloMatch> matches) {
+Map<String, int> ttmStats(List<SoloGame> matches) {
   int matchQty = matches.length;
   int accumulatedTime = 0;
   int accumulatedMoves = 0;

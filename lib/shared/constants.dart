@@ -1,21 +1,24 @@
-
-import 'package:bulls_n_cows_reloaded/repo/firestore_service.dart';
-import 'package:bulls_n_cows_reloaded/repo/player_stats_service.dart';
+import 'package:bulls_n_cows_reloaded/data/backend_services/firebase_auth_service.dart';
+import 'package:bulls_n_cows_reloaded/data/backend_services/firestore_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
 import 'controllers/app_controller.dart';
 import 'controllers/auth_controller.dart';
 
 enum AuthState { booting, anonymous, google, signedOut }
-enum TtmMatchState { created, started, finished }
+enum SoloGameStatus { created, started, finished }
+enum PlayerSide { self, opponent }
+enum VersusPlayer { unknown, player1, player2, none }
+enum WinnerPlayer { unknown, player1, player2, draw }
+enum WinByMode { unknown, moves, time}
+enum VersusGameStatus { unknown, created, started, semiFinished, finished}
 
-AuthController authController = AuthController.instance;
-AppController appController = AppController.instance;
-FirestoreService firestoreService = FirestoreService();
-PlayerStatsService statsService = PlayerStatsService();
+final AuthController authController = AuthController.instance;
+final AppController appController = AppController.instance;
+final FirestoreService firestoreService = FirestoreService.instance;
+final FirebaseAuthService authService = FirebaseAuthService.instance;
 
 final Logger logger = Logger();
 FirebaseAuth auth = FirebaseAuth.instance;
@@ -32,12 +35,14 @@ const String playerPhoneFN = 'phone';
 const String playerGoogleAvatarFN = 'google_avatar';
 const String playerIsNewPlayerFN = 'is_new_user';
 const String playerCreatedAtFN = 'created_at';
+const String playerTimeAverageFN = 'time_average';
+const String playerGuessesAverageFN = 'guesses_average';
 
-const String soloMatchesTableName = 'solo_matches';
-const String soloMatchPlayerIdFN = 'player_id';
-const String soloMatchSecretNumberFN = 'secret_num';
-const String soloMatchMovesFN = 'moves';
-const String soloMatchCreatedAtFN = 'created_at';
+const String soloGamesTableName = 'solo_matches';
+const String soloGamePlayerIdFN = 'player_id';
+const String soloGameSecretNumberFN = 'secret_num';
+const String soloGameMovesFN = 'moves';
+const String soloGameCreatedAtFN = 'created_at';
 
 const String moveGuessFN = 'guess';
 const String moveResultFN = 'move_result';
@@ -47,80 +52,24 @@ const String moveDigitsFN = 'digits';
 const String resultBullsFN = 'bulls';
 const String resultCowsFN = 'cows';
 
-ColorPalette originalColors = ColorPalette(
-  backgroundColor: Colors.black,
-  // backPanelColor: const Color(0xFF191D19),
-  backPanelColor: const Color(0xFF252525),
-  mainTitleColor: const Color(0xFF00FF00),
-  textColor1: const Color(0xFF00FF00),
-  textColor2: const Color(0xFF00D600),
-  textColor3: const Color(0xFF39B54A),
-  textColorLight: const Color(0xFFD2E0D4),
-  accentColor1: const Color(0xFFFF0000),
-  accentColor2: const Color(0xFFAA00AA),
-  keyOnColor: const Color(0xFF286E02),
-  keyOffColor: const Color(0xFF1C3415),
-  reverseTextBg: const Color(0xFF084A00),
-  reverseTextColor: Colors.black,
-  screenColor: const Color(0xFFD6E2E2),
-  screenTextOnColor: const Color(0xFF0B1808),
-  screenTextOffColor: const Color(0xFF393939),
-  correctGuessColor: const Color(0xFFACF896),
-);
+const String versusGamesTableName = 'versus_games';
+const String versusGamePlayerOneIdFN = 'player_one_id';
+const String versusGamePlayerTwoIdFN = 'player_two_id';
+const String versusGamePlayerOneMatchFN = 'player_one_match';
+const String versusGamePlayerTwoMatchFN = 'player_two_match';
+const String versusGameWinnerIdFN = 'winner_id';
+const String versusGameWhoIsToMoveFN = 'player_to_move';
+const String versusGameCreatedAtFN = 'created_at';
+const String versusGameStatusFN = 'state';
+const String versusGameWinnerPlayerFN = 'winner_player';
+const String versusGameWinByModeFN = 'winner_by_mode';
+const String versusGamePlayerOneFoundFN = 'player_one_found';
+const String versusGamePlayerTwoFoundFN = 'player_two_found';
+const String versusChallengesTableName = 'versus_challenges_queue';
+const String versusChallengeChallengerIdFN = 'player_one_id';
+const String versusChallengeOpponentIdFN = 'player_two_id';
+const String versusChallengeAssignedGameIdFN = 'assigned_match_id';
+const String versusChallengeCreatedAtFN = 'created_at';
 
-class ColorPalette {
-  Color? backgroundColor;
-  Color? backPanelColor;
-  Color? mainTitleColor;
-  Color? textColor1;
-  Color? textColor2;
-  Color? textColor3;
-  Color? textColorLight;
-  Color? accentColor1;
-  Color? accentColor2;
-  Color? keyOnColor;
-  Color? keyOffColor;
-  Color? reverseTextBg;
-  Color? reverseTextColor;
-  Color? screenColor;
-  Color? screenTextOnColor;
-  Color? screenTextOffColor;
-  Color? correctGuessColor;
+const int versusModeTimePresetMillis = 300000;
 
-  ColorPalette({
-    this.backgroundColor,
-    this.backPanelColor,
-    this.mainTitleColor,
-    this.textColor1,
-    this.textColor2,
-    this.textColor3,
-    this.textColorLight,
-    this.accentColor1,
-    this.accentColor2,
-    this.keyOnColor,
-    this.keyOffColor,
-    this.reverseTextBg,
-    this.reverseTextColor,
-    this.screenColor,
-    this.screenTextOnColor,
-    this.screenTextOffColor,
-    this.correctGuessColor,
-  }) {
-    backgroundColor = backgroundColor;
-    mainTitleColor = mainTitleColor;
-    textColor1 = textColor1;
-    textColor2 = textColor2;
-    textColor3 = textColor3;
-    textColorLight = textColorLight;
-    accentColor1 = accentColor1;
-    accentColor2 = accentColor2;
-    keyOnColor = keyOnColor;
-    keyOffColor = keyOffColor;
-    reverseTextBg = reverseTextBg;
-    reverseTextColor = reverseTextColor;
-    screenColor = screenColor;
-    screenTextOnColor = screenTextOnColor;
-    screenTextOffColor = screenTextOffColor;
-    correctGuessColor = correctGuessColor;
-  }
-}

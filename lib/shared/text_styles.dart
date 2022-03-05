@@ -1,8 +1,7 @@
+import 'package:bulls_n_cows_reloaded/shared/theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-import 'constants.dart';
 
 final TextStyle titleTextStyle = TextStyle(
     color: originalColors.textColor1, fontSize: 24, fontFamily: 'Mainframe');
@@ -101,6 +100,27 @@ final correctGuessStyle = GoogleFonts.robotoMono(
     textStyle: TextStyle(
         color: originalColors.correctGuessColor,
         fontSize: 24,
+        fontWeight: FontWeight.bold));
+
+final resultTextStyleVersus = GoogleFonts.robotoMono(
+    textStyle: TextStyle(
+      color: originalColors.textColor3,
+      fontSize: 21,
+    ));
+final guessTextStyleVersusPlayer1 = GoogleFonts.robotoMono(
+    textStyle: TextStyle(
+      color: originalColors.textColor1,
+      fontSize: 21,
+    ));
+final guessTextStyleVersusPlayer2 = GoogleFonts.robotoMono(
+    textStyle: TextStyle(
+      color: originalColors.textColor1,
+      fontSize: 21,
+    ));
+final correctGuessStyleVersus = GoogleFonts.robotoMono(
+    textStyle: TextStyle(
+        color: originalColors.correctGuessColor,
+        fontSize: 21,
         fontWeight: FontWeight.bold));
 
 final TextStyle statsTitle =
