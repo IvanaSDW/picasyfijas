@@ -7,7 +7,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../shared/constants.dart';
-import '../../controllers/numeric_keyboard_controller.dart';
+import '../../widgets/numeric_keyboard/numeric_keyboard_controller.dart';
 
 
 class MoveItemWidget extends StatelessWidget {
@@ -30,7 +30,7 @@ class MoveItemWidget extends StatelessWidget {
     if (moveItem.moveResult.bulls == 4) {
       return CorrectMoveWidgetVersus(textHeight: textHeight, move: moveItem, side: side,);
     } else {
-      if(moveItem.guess.isFake()) {
+      if(moveItem.guess.isDummy()) {
         return side == PlayerSide.opponent
             ? PendingMoveWidgetVersusOpponent(textHeight: textHeight)
             : PendingMoveWidgetVersusThisPlayer(textHeight: textHeight, move: moveItem, side: side,);

@@ -1,8 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:bulls_n_cows_reloaded/data/models/player_solo_stats.dart';
+import 'package:bulls_n_cows_reloaded/data/models/player_stats.dart';
 import 'package:bulls_n_cows_reloaded/presentation/widgets/player_data_display/player_stats_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 
@@ -17,7 +16,7 @@ class PlayerStatsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      PlayerSoloStats? stats = controller.playerSoloStats;
+      PlayerStats? stats = controller.playerStats;
       return Column(
         // Stats
         mainAxisAlignment: MainAxisAlignment.center,
@@ -25,7 +24,7 @@ class PlayerStatsWidget extends StatelessWidget {
         children: [
           Expanded(flex: 13,
             child: AutoSizeText(
-              'solo_mode'.tr + ' (${stats?.qtyMatches} games)',
+              'solo_mode'.tr + ' (${stats.soloGamesCount} games)',
               style: statsTitle,
               textAlign: TextAlign.start,
             ),
@@ -40,9 +39,7 @@ class PlayerStatsWidget extends StatelessWidget {
                     )
                 ),
                 Expanded(flex: 25,
-                    child: stats == null
-                        ? const SpinKitThreeBounce(color: Colors.white, size: 14,)
-                        : AutoSizeText(
+                    child: AutoSizeText(
                       stats.timeAverage == double.infinity
                           ? '---'
                           : StopWatchTimer.getDisplayTime(
@@ -54,10 +51,8 @@ class PlayerStatsWidget extends StatelessWidget {
                     )
                 ),
                 Expanded(flex: 25,
-                    child: stats == null
-                        ? const SpinKitThreeBounce(color: Colors.white, size: 14,)
-                        : AutoSizeText(
-                      'Rank: ${stats.timeRank}',
+                    child: AutoSizeText(
+                      'Rank: ${stats.soloGamesCount == 0 ? "--" : stats.timeRank}',
                       style: statsSubTitle,
                     )
                 ),
@@ -75,9 +70,7 @@ class PlayerStatsWidget extends StatelessWidget {
                     )
                 ),
                 Expanded(flex: 25,
-                    child: stats == null
-                        ? const SpinKitThreeBounce(color: Colors.white, size: 14,)
-                        : AutoSizeText(
+                    child: AutoSizeText(
                       stats.guessesAverage == double.infinity
                           ? '---'
                           : stats.guessesAverage.toStringAsFixed(2),
@@ -86,10 +79,8 @@ class PlayerStatsWidget extends StatelessWidget {
                     )
                 ),
                 Expanded(flex: 25,
-                    child: stats == null
-                        ? const SpinKitThreeBounce(color: Colors.white, size: 14,)
-                        : AutoSizeText(
-                      'Rank: ${stats.guessesRank}',
+                    child: AutoSizeText(
+                      'Rank: ${stats.soloGamesCount == 0 ? "--" : stats.guessesRank}',
                       style: statsSubTitle,
                     )
                 ),
@@ -107,10 +98,8 @@ class PlayerStatsWidget extends StatelessWidget {
                     )
                 ),
                 Expanded(flex: 50,
-                    child: stats == null
-                        ? const SpinKitThreeBounce(color: Colors.white, size: 14)
-                        : AutoSizeText(
-                      stats.timeRank.toString(),
+                    child: AutoSizeText(
+                      stats.soloGamesCount == 0 ? "--" : stats.soloWorldRank.toString(),
                       style: statsText,
                       textAlign: TextAlign.start,
                     )
@@ -122,7 +111,7 @@ class PlayerStatsWidget extends StatelessWidget {
           Expanded(
             flex: 13,
             child: AutoSizeText(
-              'vs_mode'.tr,
+              'vs_mode'.tr + ' (${stats.vsGamesCount} games)',
               style: statsTitle,
               textAlign: TextAlign.start,
             ),
@@ -139,7 +128,9 @@ class PlayerStatsWidget extends StatelessWidget {
                     )),
                 Expanded(flex: 50,
                     child: AutoSizeText(
-                      'requires_google'.tr,
+                      stats.vsWinRate == double.infinity
+                          ? '---'
+                          : stats.vsWinRate.toStringAsFixed(2),
                       style: statsText,
                       textAlign: TextAlign.start,
                     )
@@ -159,7 +150,7 @@ class PlayerStatsWidget extends StatelessWidget {
                 ),
                 Expanded(flex: 50,
                     child: AutoSizeText(
-                      'requires_google'.tr,
+                      stats.vsGamesCount == 0 ? "--" : stats.vsWorldRank.toString(),
                       style: statsText,
                       textAlign: TextAlign.start,
                     )

@@ -43,17 +43,20 @@ GoogleFonts.robotoMono(fontSize: 20, color: originalColors.textColor2);
 final TextStyle userNameStyle =
 TextStyle(color: originalColors.textColorLight, fontFamily: 'Mainframe');
 final TextStyle numberKeyOnStyle = TextStyle(
-    color: originalColors.keyOnColor, fontFamily: 'Digital', fontSize: 42);
+    color: originalColors.keyOnColor,
+    fontFamily: 'Digital', fontSize: 42
+);
 final TextStyle numberKeyOffStyle = TextStyle(
     color: originalColors.keyOffColor, fontFamily: 'Digital', fontSize: 42);
 final TextStyle screenDigitOnStyle = TextStyle(
     color: originalColors.screenTextOnColor,
     fontFamily: 'Digital',
-    fontSize: 48);
+    fontSize: 42);
 final TextStyle screenDigitOffStyle = TextStyle(
+  // color: const Color(0xFF6E7261),
     color: originalColors.screenTextOffColor,
     fontFamily: 'Digital',
-    fontSize: 48);
+    fontSize: 42);
 final TextStyle profilePlayerDataKeyStyle = GoogleFonts.abel(
     textStyle: TextStyle(
       fontFamily: 'Mainframe',

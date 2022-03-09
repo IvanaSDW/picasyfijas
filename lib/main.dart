@@ -55,10 +55,10 @@ class Init {
     // await Firebase.initializeApp(
     //     options: DefaultFirebaseOptions.currentPlatform);
     await Firebase.initializeApp();
-    Get.put(AuthController(), permanent: true);
-    Get.put(AppController(), permanent: true);
     Get.lazyPut(() => FirestoreService(),);
     Get.lazyPut(() => FirebaseAuthService(),);
+    Get.put(AuthController(), permanent: true);
+    Get.put(AppController(), permanent: true);
     await Future.delayed(const Duration(seconds: 3));
     FlutterNativeSplash.remove();
   }

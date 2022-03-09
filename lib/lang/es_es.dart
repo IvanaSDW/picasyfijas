@@ -28,5 +28,14 @@ const Map<String, String> esES = {
   'connected' : 'Conectado a internet',
   'not_connected' : 'Sin conexión a internet',
   'players_online' : 'Judadores:',
+  'skip' : '-Skip-',
+  'cancel' : 'Cancel',
+  'waiting_opponent_to_move' : 'Esperando intento de tu oponente...',
+  'be_ready_for_your_first_guess' : 'Prepara tu primer intento...',
+  'time_is running_input_your_guess' : 'El tiempo corre!! digita tu número',
+  'think_your_next_guess' : 'Ve pensando tu próximo intento',
+  'you_can_do_it_try_your_guess' : 'Tu puedes! pon tu nuevo intento',
+  'be_ready_for_your_second_guess' : 'Be ready for your second guess',
+  'think_of_a_smart_guess_for_your next_move' : 'Think of a smart guess for your next move',
 
 };

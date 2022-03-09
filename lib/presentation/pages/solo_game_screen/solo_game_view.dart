@@ -94,14 +94,17 @@ class SoloGamePage extends StatelessWidget {
               const Spacer(flex: 1,),
               Expanded(flex: 26,
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Spacer(flex: 1,),
                     Expanded(flex: 40, //Intercom box
-                      child: IntercomBoxPage(textHeight: logic.textHeight),
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 4.0),
+                        child: IntercomBoxWidget(textHeight: logic.textHeight),
+                      ),
                     ),
-                    const Spacer(flex: 1),
-                    Expanded(flex: 59, //Keyboard area
+                    // const Spacer(flex: 1),
+                    Expanded(flex: 60, //Keyboard area
                       child: AspectRatio(
                         aspectRatio: 1,
                         child: logic.matchState ==
@@ -139,7 +142,10 @@ class SoloGamePage extends StatelessWidget {
                             ),
                           ],
                         )
-                            : const NumericKeyboardWidget(),
+                            : const Padding(
+                          padding: EdgeInsets.only(left: 4.0, bottom: 4.0),
+                          child: NumericKeyboardWidget(),
+                        ),
                       ),
                     ),
                   ],

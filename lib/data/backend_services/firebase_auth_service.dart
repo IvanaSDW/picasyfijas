@@ -43,6 +43,12 @@ class FirebaseAuthService {
         appController.isBusy = false;
       }).catchError((error) {
         logger.e('Error signing in with google: $error');
+        if (error.toString().contains('The supplied auth credential is malformed or has expired')) {
+          Get.defaultDialog(
+              title: 'Authentication error.',
+            middleText: 'Is possible that your device time zone is not correctly set. Please check and try again.'
+          );
+        }
         appController.isBusy = false;
       });
     } else {
@@ -103,6 +109,7 @@ class FirebaseAuthService {
   // }
 
   Future<dynamic> signAnonymousToGoogle(User user) async {
+    logger.i('Upgrading user ${user.uid} to Google account...');
     AuthCredential credential;
     dynamic userOrCredential;
     await _googleSignIn.signIn()
@@ -118,9 +125,12 @@ class FirebaseAuthService {
         await user.linkWithCredential(credential)
             .then((credential) {
           userOrCredential = credential.user;
+          logger.i('Account linked successfully. Returning user: $userOrCredential');
         })
         .catchError((error) {
           userOrCredential = credential;
+          logger.e('Error linking with credential: $error');
+          logger.i('Returning credential: $userOrCredential');
         });
       } else {
         logger.i('Account null when signing in to google');

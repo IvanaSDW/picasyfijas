@@ -98,13 +98,11 @@ class VersusMatchMaker {
         playerTwoId: challenge.playerTwoId!,
         playerOneGame: SoloGame(
           playerId: challenge.playerOneId,
-          // secretNum: generateSecretNum(),
           moves: <GameMove>[],
           createdAt: Timestamp.now(),
         ),
         playerTwoGame: SoloGame(
           playerId: challenge.playerTwoId!,
-          // secretNum: generateSecretNum(),
           moves: <GameMove>[],
           createdAt: Timestamp.now(),
         ),
@@ -158,17 +156,26 @@ class VersusMatchMaker {
 
   void cancelChallenge() {
     logger.i('called');
+    Object? error;
     try {
       acceptedChallengeReference.delete();
     } catch (e) {
+      error = e;
       logger.e('error deleting accepted challenge from queue: $e');
     }
     try {
       postedChallengeReference.delete();
+      error = null;
     } catch (e) {
+      error = e;
       logger.e('error deleting posted challenge from queue: $e');
     }
-    // Get.back();
+    if (error != null) {
+      Get.back();
+    } else {
+      logger.i('Removing game from gameCount in firestore...');
+      firestoreService.removeVsGameFromCount();
+    }
   }
 
 }

@@ -29,5 +29,14 @@ const Map<String, String> enUS = {
   'connected' : 'Connected to internet',
   'not_connected' : 'No Internet connection',
   'players_online' : 'Players:',
+  'skip' : '-Skip-',
+  'cancel' : 'Cancel',
+  'waiting_opponent_to_move' : 'Waiting opponent to move',
+  'be_ready_for_your_first_guess' : 'Be ready for your first guess',
+  'time_is running_input_your_guess' : 'Time is running!! input your guess',
+  'think_your_next_guess' : 'Think your next guess',
+  'you_can_do_it_try_your_guess' : 'You can do it! try your guess',
+  'be_ready_for_your_second_guess' : 'Be ready for your second guess',
+  'think_of_a_smart_guess_for_your next_move' : 'Think of a smart guess for your next move',
 
 };

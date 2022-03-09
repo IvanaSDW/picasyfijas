@@ -1,9 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:bulls_n_cows_reloaded/presentation/widgets/stop_watch_widget/chronometer_controller.dart';
 import 'package:bulls_n_cows_reloaded/shared/chronometer.dart';
+import 'package:bulls_n_cows_reloaded/shared/theme.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../data/models/digit_match_result.dart';
@@ -15,14 +14,15 @@ import '../../../data/models/versus_game.dart';
 import '../../../presentation/widgets/intercom_box/intercom_box_logic.dart';
 import '../../../shared/constants.dart';
 import '../../../shared/game_logic.dart';
-import '../../controllers/numeric_keyboard_controller.dart';
+import '../../widgets/chronometer_widget/chronometer_controller.dart';
+import '../../widgets/numeric_keyboard/numeric_keyboard_controller.dart';
 
 class VersusGameLogic extends GetxController {
-  final NumericKeyboardController keyboardLogic = Get.put(NumericKeyboardController());
+  final NumericKeyboardController _keyboard = Get.put(NumericKeyboardController());
 
   bool _gameIsInitialized = false;
 
-  late final bool iAmPlayerOne;
+  late final bool iAmP1;
   late final DocumentReference<VersusGame> gameReference;
 
   final _playerOneData = Rxn<Player>();
@@ -62,17 +62,19 @@ class VersusGameLogic extends GetxController {
   set gameStatus(VersusGameStatus value) => _gameStatus.value = value;
 
   final IntercomBoxLogic intercom = Get.put(IntercomBoxLogic());
-  final ChronometerController playerOneTimer = Get.put(
+  final ChronometerController p1Timer = Get.put(
       ChronometerController(
           mode: ChronometerMode.countDown,
-          countDownPresetMillis: versusModeTimePresetMillis
+          countDownPresetMillis: versusModeTimePresetMillis,
+        versusPlayer: VersusPlayer.player1,
       ),
       tag: 'p1'
   );
-  final ChronometerController playerTwoTimer = Get.put(
+  final ChronometerController p2Timer = Get.put(
       ChronometerController(
-          mode: ChronometerMode.countDown,
-          countDownPresetMillis: versusModeTimePresetMillis
+        mode: ChronometerMode.countDown,
+        countDownPresetMillis: versusModeTimePresetMillis,
+        versusPlayer: VersusPlayer.player2,
       ),
       tag: 'p2'
   );
@@ -99,28 +101,49 @@ class VersusGameLogic extends GetxController {
   void onInit() async {
     super.onInit();
     gameStateStream = Get.arguments['gameStream'];
-    iAmPlayerOne = Get.arguments['isPlayerOne'];
+    iAmP1 = Get.arguments['isPlayerOne'];
     gameReference = Get.arguments['gameReference'];
     playerOneData = Get.arguments['playerOneObject'];
     playerTwoData = Get.arguments['playerTwoObject'];
     gameStateListener = gameStateStream.listen((event) { onGameStateReceived(event); });
-    ever(keyboardLogic.newGuess, (FourDigits guess) => onThisPlayerNewGuess(guess));
+    _keyboard.onNewInput((newInput) => onThisPlayerNewGuess(newInput));
     ever(_whoIsToMove, (VersusPlayer value) => onToggleMove(value));
+    if(iAmP1) {
+      ever(appController.p1TimeIsUp, (bool value) => onMyTimeIsUp(value));
+    } else {
+      ever(appController.p2TimeIsUp, (bool value) => onMyTimeIsUp(value));
+    }
   }
 
   Future<void> onGameStateReceived(DocumentSnapshot<VersusGame> gameSnapshot) async {
-    logger.i('iAmPlayerOne = $iAmPlayerOne   --  Current status is: $gameStatus');
+    logger.i('iAmPlayerOne = $iAmP1   --  Current status is: $gameStatus');
     logger.i('Received game update: ${gameSnapshot.data()!.toJson()},');
+    logger.i('Game initialized = : $_gameIsInitialized,');
     logger.i('winnerPlayer in snapshot is: ${gameSnapshot.data()!.winnerPlayer}');
 
-    if (_gameIsInitialized) game = gameSnapshot.data()!;
+    if (_gameIsInitialized) {
+      game = gameSnapshot.data()!;
+      if (game.state == VersusGameStatus.cancelled) {
+        gameStatus = VersusGameStatus.cancelled;
+      }
+      if (game.winByMode == WinByMode.opponentLeft || game.winByMode == WinByMode.opponentTimeUp) {
+        if(game.winnerId == appController.currentPlayer.id) {
+          logger.i('This player won because: ${game.winByMode.toString().split('.').last}!!');
+          onGameFinished();
+        } else {
+          if(game.winByMode == WinByMode.opponentTimeUp) onGameFinished();
+          logger.i('This player lost because: ${game.winByMode.toString().split('.').last}!!');
+        }
+      }
+
+    }
 
     switch (gameStatus) {
       case VersusGameStatus.unknown :
         _game = gameSnapshot.data()!.obs;
         _gameIsInitialized = true;
         gameStatus = VersusGameStatus.created;
-        iAmPlayerOne
+        iAmP1
             ? await firestoreService.addPlayerTwoSecretNumberToVersusGame(gameReference.id, generateSecretNum())
             : await firestoreService.addPlayerOneSecretNumberToVersusGame(gameReference.id, generateSecretNum());
         logger.i('added secret number to player in firestore');
@@ -151,8 +174,8 @@ class VersusGameLogic extends GetxController {
           p2TimeLeft = playerTwoGame!.moves.last.timeStampMillis;
           if (playerTwoGame!.moves.last.moveResult.bulls == 4) {
             logger.i('player 2 found the number first. Game needs to be finished...');
-            playerOneTimer.stopTimer();
-            playerTwoTimer.stopTimer();
+            p1Timer.stopTimer();
+            p2Timer.stopTimer();
             gameStatus = VersusGameStatus.finished;
             continue finished;
           }
@@ -167,7 +190,7 @@ class VersusGameLogic extends GetxController {
         playerTwoGame = game.playerTwoGame;
         p2TimeLeft = playerTwoGame!.moves.last.timeStampMillis;
         if (playerTwoGame!.moves.length == playerTwoGame!.moves.length) {
-          playerTwoTimer.stopTimer();
+          p2Timer.stopTimer();
           logger.i('player 2 completed last move, game is finished...');
           gameStatus = VersusGameStatus.finished;
           continue finished;
@@ -180,6 +203,11 @@ class VersusGameLogic extends GetxController {
       case VersusGameStatus.finished:
         onGameFinished();
         break;
+      case VersusGameStatus.cancelled:
+        logger.i('game was cancelled');
+        Get.snackbar('Game canceled', 'game was canceled', backgroundColor: Colors.green);
+        Future.delayed(const Duration(milliseconds: 1000), () => Get.back(closeOverlays: true));
+        break;
     }
     logger.i('After state is $gameStatus, player to move = $whoIsToMove, p1Time: $p1TimeLeft, p2Time: $p2TimeLeft');
   }
@@ -191,12 +219,9 @@ class VersusGameLogic extends GetxController {
         break;
       case VersusPlayer.player1:
         addDummyMoveToPlayer(VersusPlayer.player1);
-        // if(Get.isRegistered<StopWatchController>(tag: 'p1')) Get.delete<StopWatchController>(tag: 'p1');
-        // playerOneTimer = Get.put(StopWatchController(mode: StopWatchMode.countDown, countDownPresetMillis: p1TimeLeft));
-        playerOneTimer.timer.startFromNewPreset(p1TimeLeft);
-        // playerOneTimer.startTimer();
-        playerTwoTimer.stopTimer();
-        if (iAmPlayerOne) { // Is my move
+        p1Timer.timer.startFromNewPreset(p1TimeLeft);
+        p2Timer.stopTimer();
+        if (iAmP1) { // Is my move
           logger.i('Is this player move ');
           showKeyboard = true;
           switch (playerOneGame!.moves.length) {
@@ -225,9 +250,10 @@ class VersusGameLogic extends GetxController {
         break;
       case VersusPlayer.player2:
         addDummyMoveToPlayer(VersusPlayer.player2);
-        playerOneTimer.stopTimer();
-        playerTwoTimer.startTimer();
-        if (iAmPlayerOne) { // Player2 is moving
+        p1Timer.stopTimer();
+        p2Timer.restartFromNewPreset(p2TimeLeft);
+        // playerTwoTimer.startTimer();
+        if (iAmP1) { // Player2 is moving
           logger.i('Is opponent move ');
           showKeyboard = false;
           switch (playerTwoGame!.moves.length) {
@@ -255,8 +281,8 @@ class VersusGameLogic extends GetxController {
         }
         break;
       case VersusPlayer.none:
-        playerOneTimer.stopTimer();
-        playerTwoTimer.stopTimer();
+        p1Timer.stopTimer();
+        p2Timer.stopTimer();
         break;
     }
   }
@@ -279,7 +305,7 @@ class VersusGameLogic extends GetxController {
   }
 
   void onGameSemiFinished() {
-    if (iAmPlayerOne) {
+    if (iAmP1) {
       intercom.postMessage('Cross your fingers! opponent still have one shot...');
     } else { //I am player 2 and this is my last shot
       intercom.postMessage('You better find it now...');
@@ -303,12 +329,12 @@ class VersusGameLogic extends GetxController {
 
   Future<void> onThisPlayerNewGuess(FourDigits guess) async {
     logger.i('onNewGuess-> called with guess: ${guess.toJson()}');
-    if (iAmPlayerOne) {
+    if (iAmP1) {
       DigitMatchResult guessResult = getMatchResult(playerOneGame!.secretNum!, guess);
       GameMove newMove = GameMove(
         guess: guess,
         moveResult: guessResult,
-        timeStampMillis: playerOneTimer.timer.rawTime.value,
+        timeStampMillis: p1Timer.timer.rawTime.value,
       );
       needsScrollToLast = true;
       logger.i('Proceeding to add one move of player one...');
@@ -318,7 +344,7 @@ class VersusGameLogic extends GetxController {
       GameMove newMove = GameMove(
         guess: guess,
         moveResult: guessResult,
-        timeStampMillis: playerTwoTimer.timer.rawTime.value,
+        timeStampMillis: p2Timer.timer.rawTime.value,
       );
       logger.i('Proceeding to add one move of player two...');
       if (gameStatus == VersusGameStatus.semiFinished) {
@@ -329,14 +355,45 @@ class VersusGameLogic extends GetxController {
     }
   }
 
+  Future<void> onMyTimeIsUp(bool isMyTimeUp) async {
+    logger.i('Called with time up: $isMyTimeUp, iAmP1: $iAmP1');
+    if (!isMyTimeUp) return;
+    if (iAmP1) {
+      WinnerPlayer winnerPlayer = WinnerPlayer.player2;
+      WinByMode winByMode = WinByMode.opponentTimeUp;
+      String winnerId = playerTwoData!.id!;
+      firestoreService.addFinalResultToVersusGame(
+          gameReference: gameReference,
+          winnerPlayer: winnerPlayer,
+          winByMode: winByMode,
+          winnerId: winnerId
+      );
+      logger.i('Game updated with p2 as winner, now setting p1TimeUp again to false...');
+      appController.setP1TimeIsUp = false;
+    } else { //I am player two and my time is up
+      WinnerPlayer winnerPlayer = WinnerPlayer.player1;
+      WinByMode winByMode = WinByMode.opponentTimeUp;
+      String winnerId = playerOneData!.id!;
+      await firestoreService.addFinalResultToVersusGame(
+          gameReference: gameReference,
+          winnerPlayer: winnerPlayer,
+          winByMode: winByMode,
+          winnerId: winnerId
+      );
+      logger.i('Game updated with p1 as winner, now setting p2TimeUp again to false...');
+      appController.setP2TimeIsUp = false;
+    }
+  }
+
   void onGameFinished() {
     logger.i('called');
-    if (iAmPlayerOne) {
+    if (iAmP1) {
       if(game.winnerPlayer == null) {
         logger.i('Still not received final result...');
       } else {
         logger.i('As player1, received final result from firestore');
         showFinalResult = true;
+        appController.needUpdateVsStats.value = true;
       }
     } else { // I am player 2
       if (game.winnerPlayer == null) {
@@ -351,7 +408,7 @@ class VersusGameLogic extends GetxController {
             logger.i('Player one time left: $playerOneTimeLeft - Player two: $playerTwoTimeLeft');
             if (playerOneTimeLeft == playerTwoTimeLeft) { //Equal in moves and time => draw
               winnerPlayer = WinnerPlayer.draw;
-              winByMode = WinByMode.unknown;
+              winByMode = WinByMode.draw;
               winnerId = 'draw';
             } else if (playerOneTimeLeft > playerTwoTimeLeft) { //Player one won by time, i lost
               winnerPlayer = WinnerPlayer.player1;
@@ -381,14 +438,87 @@ class VersusGameLogic extends GetxController {
       } else {
         logger.i('As player2, received final result from firestore');
         showFinalResult = true;
+        appController.needUpdateVsStats.value = true;
       }
     }
   }
 
 
   Future<bool> onBackPressed() async {
+    logger.i('back button pressed');
+    if (showFinalResult) return true;
+    String middleText = '';
+    if (iAmP1) {
+      if (playerOneGame!.moves.isEmpty) {
+        middleText = 'Your opponent is still active...';
+      } else if(playerOneGame!.moves.length == 1 && playerOneGame!.moves.last.guess.isDummy()) {
+        middleText = 'Your opponent is still active...';
+      } else {
+        middleText = 'You will loose this game if quit now';
+      }
+    } else { // I am player 2
+      if (playerTwoGame!.moves.isEmpty) {
+        middleText = 'Your opponent is still active...';
+      } else {
+        middleText = 'You will loose this game if quit now';
+      }
+    }
+    Get.defaultDialog(
+      title: 'Press \'Quit\' to leave game.',
+      middleText: middleText,
+      textConfirm: 'Quit',
+      textCancel: 'Cancel',
+      backgroundColor: Colors.green.withOpacity(0.5),
+      buttonColor: originalColors.accentColor2,
+      cancelTextColor: originalColors.reverseTextColor,
+      confirmTextColor: originalColors.textColorLight,
+      onConfirm: onQuitGame,
+    );
+    return false;
+  }
+
+  void onCancelGame() async {
+    logger.i('called');
+    await firestoreService.updateVersusGameStatus(gameReference, VersusGameStatus.cancelled);
+  }
+
+  void onQuitGame() {
+    logger.i('Quitting with p1 moves = ${game.playerOneGame.moves.length} and p2 moves = ${game.playerTwoGame.moves.length}');
+    if (iAmP1) {
+      if(game.playerOneGame.moves.isEmpty) { //Game cancelled by me
+        logger.i('Cancelled by me before first move');
+        onCancelGame();
+      } else if (game.playerOneGame.moves.last.guess.isDummy()) {
+        logger.i('Cancelled by me before first move');
+        onCancelGame();
+      } else {
+        WinnerPlayer winnerPlayer = WinnerPlayer.player2;
+        WinByMode winByMode = WinByMode.opponentLeft;
+        String winnerId = playerTwoData!.id!;
+        firestoreService.addFinalResultToVersusGame(
+            gameReference: gameReference,
+            winnerPlayer: winnerPlayer,
+            winByMode: winByMode,
+            winnerId: winnerId
+        );
+      }
+    } else { //I am player 2
+      if (game.playerTwoGame.moves.isEmpty) {
+        onCancelGame();
+      } else {
+        WinnerPlayer winnerPlayer = WinnerPlayer.player1;
+        WinByMode winByMode = WinByMode.opponentLeft;
+        String winnerId = playerOneData!.id!;
+        firestoreService.addFinalResultToVersusGame(
+            gameReference: gameReference,
+            winnerPlayer: winnerPlayer,
+            winByMode: winByMode,
+            winnerId: winnerId
+        );
+      }
+    }
     appController.playEffect('audio/door-open.wav');
-    return true;
+    Get.back(closeOverlays: true);
   }
 
   @override

@@ -38,11 +38,13 @@ class BackPanelMenu extends StatelessWidget {
                     style: TextStyle(color: menuTextColor),),
                 ),
                 ListTile(
-                  enabled: enabled,
+                  enabled: enabled && appController.authState != AuthState.anonymous,
                   onTap: () => authController.signOut(),
-                  leading: Icon(Icons.logout, color: iconColor,),
-                  title: Text('Logout',
-                    style: TextStyle(color: menuTextColor),),
+                  leading: Icon(Icons.logout, color: appController.authState == AuthState.anonymous ? Colors.black45 : iconColor,),
+                  title: Text(
+                    'Logout',
+                    style: TextStyle(color: appController.authState == AuthState.anonymous ? Colors.black45 : menuTextColor,),
+                  ),
                 ),
               ],
             )

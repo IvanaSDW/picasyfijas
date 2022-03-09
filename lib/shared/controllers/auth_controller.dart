@@ -1,9 +1,11 @@
+import 'dart:ui';
+
 import 'package:bulls_n_cows_reloaded/domain/firebase_auth_use_cases.dart';
 import 'package:bulls_n_cows_reloaded/shared/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 
-class AuthController extends GetxController {
+class AuthController extends FullLifeCycleController with FullLifeCycleMixin{
   static AuthController instance = Get.find();
   final SignInAnonymouslyUC _signInAnonymously = SignInAnonymouslyUC();
   final SignInWithGoogleUC _signInWithGoogle = SignInWithGoogleUC();
@@ -20,43 +22,53 @@ class AuthController extends GetxController {
   }
 
   Future<void> signInAnonymously() async {
+    logger.i('Called');
     await _signInAnonymously().then(
-            (user) {
-          if(user != null ) firestoreService.checkInAnonymousPlayer(user);
+            (user) async {
+          if(user != null ) {
+            logger.i('User signed is anonymously as ${user.uid}, should have triggered updateAuthState() ...');
+            // logger.i('User signed is anonymously as ${user.uid}, proceeding to check it in in firestore');
+            // await firestoreService.checkInAnonymousPlayer(user);
+          }
         }
     );
   }
 
   Future<void> signInWithGoogle() async {
     await _signInWithGoogle().then(
-            (user) {
-          if (user != null) firestoreService.checkInGooglePlayer(user);
+            (user) async {
+          if (user != null) {
+            await firestoreService.checkInGooglePlayer(user);
+          }
         }
     );
   }
 
   Future<void> upgradeAnonymousToGoogle() async {
+    logger.i('called');
     appController.isBusy = true;
     String oldId = auth.currentUser!.uid;
     logger.i('Current anonymous id: $oldId');
     await _signInAnonymousToGoogle(auth.currentUser!)
-        .then((value) async {
+        .then((userOrCredential) async {
       appController.isUpgrade = true;
-      if (value is User) {
-        appController.updateAuthState(value);
-        await firestoreService.checkInGooglePlayer(value);
+      if (userOrCredential is User) {
+        await firestoreService.checkInGooglePlayer(userOrCredential);
+        appController.updateAuthState(userOrCredential);
         appController.isBusy = false;
-      } else if (value is String) {
+      } else if (userOrCredential is String) {
         appController.isBusy = false;
-      } else if (value is AuthCredential){
-        logger.e('error when linking account with credential: $value');
+      } else if (userOrCredential is AuthCredential){
+        logger.i('Will sign in with returned credential: $userOrCredential ...');
+        appController.canUpdateAuthState = false;
         _removeUserAccount(auth.currentUser!);
-        _signInWithCredential(value)
+        _signInWithCredential(userOrCredential)
             .then((value) async {
           if (value != null) {
             await firestoreService.checkInGooglePlayer(value);
             firestoreService.moveOldIdSoloGames(oldId, value.uid);
             appController.needUpdateSoloStats.value = true;
+            appController.needUpdateVsStats.value = true;
             firestoreService.deletePlayer(oldId);
             appController.isBusy = false;
           } else {
@@ -87,13 +99,53 @@ class AuthController extends GetxController {
     });
   }
 
-  void listenToAuthStateChanges() {
+  void listenToAuthStateChanges() { //App entry point
     auth.authStateChanges()
         .listen((User? user) {
-      logger.i('AuthStateChanges event occurred...');
+      logger.i('AuthStateChanges event occurred... canUpdate is ${appController.canUpdateAuthState}');
       appController.updateAuthState(user);
     });
   }
 
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.resumed:
+        logger.i('App lifecycle state changed to resumed');
+        break;
+      case AppLifecycleState.inactive:
+        logger.i('App lifecycle state changed to inactive');
+        break;
+      case AppLifecycleState.paused:
+        logger.i('App lifecycle state changed to paused');
+        break;
+      case AppLifecycleState.detached:
+        logger.i('App lifecycle state changed to detached');
+        break;
+    }
+    super.didChangeAppLifecycleState(state);
+  }
 
+  @override
+  void onDetached() async {
+    logger.i('App lifecycle state changed to detached');
+    // await firestoreService.reportOffline();
+  }
+
+  @override
+  void onInactive() {
+    logger.i('App lifecycle state changed to inactive');
+  }
+
+  @override
+  void onPaused() async {
+    logger.i('App lifecycle state changed to paused');
+    await firestoreService.reportOffline();
+  }
+
+  @override
+  void onResumed() {
+    logger.i('App lifecycle state changed to resumed');
+    firestoreService.reportOnline();
+  }
 }

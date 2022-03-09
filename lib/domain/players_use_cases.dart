@@ -12,14 +12,6 @@ class FetchPlayerByIdUC {
   }
 }
 
-class UpdatePlayerAveragesUC {
-  final PlayersRepository _playersRepository = Get.put(PlayersRepositoryImpl());
-
-  Future<void> call(String playerId, double timeAverage, double guessesAverage) async {
-    _playersRepository.updatePlayerAverages(playerId, timeAverage, guessesAverage);
-  }
-}
-
 class GetPlayerTimeRankUC {
   final PlayersRepository _playersRepository = Get.put(PlayersRepositoryImpl());
   Future<int> call(String playerId) async {

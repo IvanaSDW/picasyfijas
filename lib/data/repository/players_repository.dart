@@ -10,7 +10,6 @@ abstract class PlayersRepository {
 
   Future<void> deletePlayer(String playerId);
 
-  Future<void> updatePlayerAverages(String playerId, double timeAverage, double guessesAverage);
 
   Future<Player?> fetchPlayer(String playerId);
 

@@ -33,7 +33,7 @@ class FourDigits {
         'digit3': digit3
       };
 
-  bool isFake() {
+  bool isDummy() {
     return (
         digit0 == 0 &&
             digit1 == 0 &&

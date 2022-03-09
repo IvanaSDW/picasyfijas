@@ -145,25 +145,25 @@ class Chronometer {
     final msStr = getDisplayTimeMillisecond(value);
     var result = '';
     if (hours) {
-      result += '$hoursStr';
+      result += hoursStr;
     }
     if (minute) {
       if (hours) {
         result += hoursRightBreak;
       }
-      result += '$mStr';
+      result += mStr;
     }
     if (second) {
       if (minute) {
         result += minuteRightBreak;
       }
-      result += '$sStr';
+      result += sStr;
     }
     if (milliSecond) {
       if (second) {
         result += secondRightBreak;
       }
-      result += '$msStr';
+      result += msStr;
     }
     return result;
   }

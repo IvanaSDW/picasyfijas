@@ -1,8 +1,9 @@
 import 'dart:ui';
+
 import 'package:bulls_n_cows_reloaded/shared/constants.dart';
-import 'package:bulls_n_cows_reloaded/presentation/pages/landing_signed_out_view/booting_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import '../../../presentation/widgets/matrix_effect/matrix_effect.dart';
 
 
@@ -24,8 +25,8 @@ class SplashWidget extends StatelessWidget {
         child: Stack(
           children: [
             MatrixEffect(),
-            snapshot.connectionState == ConnectionState.waiting
-                ? TweenAnimationBuilder(
+            // snapshot.connectionState == ConnectionState.waiting
+                TweenAnimationBuilder(
                 tween: Tween<double>(begin: 0, end: 1),
                 duration: const Duration(seconds: 2),
                 curve: Curves.easeInCirc,
@@ -59,11 +60,11 @@ class SplashWidget extends StatelessWidget {
                   );
                 }
             )
-                : Obx(() => appController.authState == AuthState.booting ||
-                appController.authState == AuthState.signedOut
-                ? const BootingWidget()
-                : Container(color: Colors.transparent,),
-            ),
+            //     : Obx(() => appController.authState == AuthState.booting ||
+            //     appController.authState == AuthState.signedOut
+            //     ? const BootingWidget()
+            //     : Container(color: Colors.transparent,),
+            // ),
           ],
         )
     );

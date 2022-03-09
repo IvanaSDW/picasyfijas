@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'guess_bullet_widget.dart';
-import '../controllers/numeric_keyboard_controller.dart';
+import 'numeric_keyboard/numeric_keyboard_controller.dart';
 
 class NormalGuessDisplay extends StatelessWidget {
   const NormalGuessDisplay({

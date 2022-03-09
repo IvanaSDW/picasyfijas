@@ -41,11 +41,6 @@ class PlayersRepositoryImpl extends PlayersRepository {
   }
 
   @override
-  Future<void> updatePlayerAverages(String playerId, double timeAverage, double guessesAverage) async {
-    return firestoreService.updatePlayerAverages(playerId, timeAverage, guessesAverage);
-  }
-
-  @override
   Future<int> getPlayerGuessesRank(String playerId) async {
     return await firestoreService.getPlayerTimeRank(playerId);
   }

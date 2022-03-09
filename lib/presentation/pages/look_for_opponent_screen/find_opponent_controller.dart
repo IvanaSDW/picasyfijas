@@ -19,8 +19,6 @@ class FindOpponentController extends GetxController {
       Player? _playerOnePlayer;
       Player? _playerTwoPlayer;
       if (isPlayerOne) {
-        // await firestoreService.addPlayerTwoSecretNumberToVersusGame(gameReference.id, generateSecretNum());
-        // logger.i('added secret number to player two object');
         await gameReference.get().then((value) async {
           if( !value.exists) {
             logger.i('Game reference $gameReference does not exist!!');
@@ -33,8 +31,6 @@ class FindOpponentController extends GetxController {
           }
         });
       } else {
-        // await firestoreService.addPlayerOneSecretNumberToVersusGame(gameReference.id, generateSecretNum());
-        // logger.i('added secret number to player one object');
         await gameReference.get().then((value) async {
           if(!value.exists) {
             logger.i('Game reference $gameReference does not exist!!');

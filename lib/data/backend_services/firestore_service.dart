@@ -53,13 +53,19 @@ class FirestoreService {
           fromFirestore: (snapshot, _) => Player.fromJson(snapshot.data()!),
           toFirestore: (player, _) => player.toJson());
 
+  Query<Player> playersByVsWinRateRankQuery() =>
+      _firestore.collection(playersTableName)
+          .orderBy(playerVsModeWinRateFN,)
+          .withConverter<Player>(
+          fromFirestore: (snapshot, _) => Player.fromJson(snapshot.data()!),
+          toFirestore: (player, _) => player.toJson());
+
   Future<void> checkInGooglePlayer(User user) async {
     logger.i('called for user: ${user.uid}');
     DocumentReference playerRef = players.doc(user.uid);
     DocumentSnapshot firestoreUser = await playerRef.get();
     UserInfo userInfo = user.providerData[0];
     if (!firestoreUser.exists) {
-      //user not yet created in firestore
       logger.i('user not yet in firestore, lets create it...');
       await playerRef.set({
         playerIdFN: user.uid,
@@ -91,8 +97,7 @@ class FirestoreService {
     DocumentReference playerRef = players.doc(user.uid);
     DocumentSnapshot firestoreUser = await playerRef.get();
 
-    if (!firestoreUser.exists) {
-      //user not yet created in firestore
+    if (!firestoreUser.exists) { //user not yet created in firestore
       logger.i('user not yet in firestore, lets create it...');
       await playerRef.set({
         playerIdFN: user.uid,
@@ -129,13 +134,28 @@ class FirestoreService {
             (error) {logger.e('Error deleting player account: $error');});
   }
 
-  Future<void> updatePlayerAverages(String playerId, double timeAverage, double guessesAverage) async {
+  Future<void> updatePlayerSoloAverages(
+      String playerId,
+      double timeAverage,
+      double guessesAverage,
+      ) async {
     logger.i('called');
     await players.doc(playerId).update({
       playerTimeAverageFN: timeAverage,
-      playerGuessesAverageFN: guessesAverage
+      playerGuessesAverageFN: guessesAverage,
     });
   }
+
+  Future<void> updatePlayerVsRate(
+      String playerId,
+      double vsWinRate,
+      ) async {
+    logger.i('called');
+    await players.doc(playerId).update({
+      playerVsModeWinRateFN: vsWinRate,
+    });
+  }
+
 
   Future<Player?> fetchPlayer(String playerId) async {
     logger.i('called for user with id: $playerId');
@@ -173,6 +193,46 @@ class FirestoreService {
         .then((value) => value.docs.map((e) => e.data()).toList());
     logger.i('byGuesses: ${orderedByGuesses.length}');
     return orderedByGuesses.indexWhere((player) => player.id == playerId) + 1;
+  }
+
+  Future<Map<String, dynamic>> getSoloRankings(String playerId) async {
+    logger.i('called');
+    int timeRank = 0;
+    int guessRank = 0;
+    int worldRank = 0;
+    List<Map<String, dynamic>> wholeRank = <Map<String, dynamic>>[];
+    List<Player> orderedByTime = await playersByTimeRankQuery()
+        .get()
+        .then((value) => value.docs.map((e) => e.data()).toList());
+    List<Player> orderedByGuesses = await playersByGuessesRankQuery()
+        .get()
+        .then((value) => value.docs.map((e) => e.data()).toList());
+    for (Player player in orderedByTime) {
+      int timeRank = orderedByTime.indexWhere((element) => element.id == player.id);
+      int guessRank = orderedByGuesses.indexWhere((element) => element.id == player.id);
+      int sumOfRank = timeRank + guessRank;
+      wholeRank.add({'playerId' : player.id, 'timeRank' : timeRank, 'guessRank' : guessRank, 'sumOfRank' : sumOfRank});
+    }
+    wholeRank.sort((a, b) => a['sumOfRank'].compareTo(b['sumOfRank']));
+    logger.i('World rank: ${wholeRank.toString()}');
+    timeRank = orderedByTime.indexWhere((element) => element.id == playerId) + 1;
+    guessRank = orderedByGuesses.indexWhere((element) => element.id == playerId) + 1;
+    worldRank = wholeRank.indexWhere((element) => element['playerId'] == playerId) + 1;
+    Map<String, dynamic> soloRankings = {
+      'timeRank' : timeRank,
+      'guessRank' : guessRank,
+      'worldRank' : worldRank,
+    };
+    return soloRankings;
+  }
+
+  Future<int> getPlayerVsRank(String playerId) async {
+    logger.i('called');
+    List<Player> orderedByVsWinRate = await playersByVsWinRateRankQuery()
+        .get()
+        .then((value) => value.docs.map((e) => e.data()).toList());
+    logger.i('byVsWinRate: ${orderedByVsWinRate.length}');
+    return orderedByVsWinRate.indexWhere((player) => player.id == playerId) + 1;
   }
 
   //SoloGames database services
@@ -232,7 +292,10 @@ class FirestoreService {
 
   Future<DocumentReference<VersusGameChallenge>> postVersusChallenge(VersusGameChallenge challenge) async {
     return await versusChallenges.add(challenge)
-        .then((value) => value as DocumentReference<VersusGameChallenge>);
+        .then((value) {
+          addVsGameToCount();
+          return value as DocumentReference<VersusGameChallenge>;
+        });
   }
 
   Future<void> deleteVersusChallenge(String challengeId) async {
@@ -244,6 +307,38 @@ class FirestoreService {
   }
 
   //Versus Games Database services
+  Query<VersusGame> vsGamesQuery(String playerId) =>
+      _firestore.collection(versusGamesTableName)
+          .where(playerId, whereIn: [versusGamePlayerOneIdFN, versusGamePlayerTwoIdFN])
+          .orderBy(versusGameCreatedAtFN, descending: true)
+          .withConverter<VersusGame>(
+          fromFirestore: (snapshot, _) => VersusGame.fromJson(snapshot.data()!),
+          toFirestore: (vsGame, _) => vsGame.toJson());
+
+  Query<VersusGame> vsGamesByPlayerOneIdQuery(String playerId) =>
+      _firestore.collection(versusGamesTableName)
+          .where(versusGamePlayerOneIdFN, isEqualTo: playerId)
+          .withConverter<VersusGame>(
+          fromFirestore: (snapshot, _) => VersusGame.fromJson(snapshot.data()!),
+          toFirestore: (vsGame, _) => vsGame.toJson());
+
+  Query<VersusGame> vsGamesByPlayerTwoIdQuery(String playerId) =>
+      _firestore.collection(versusGamesTableName)
+          .where(versusGamePlayerTwoIdFN, isEqualTo: playerId)
+          .withConverter<VersusGame>(
+          fromFirestore: (snapshot, _) => VersusGame.fromJson(snapshot.data()!),
+          toFirestore: (vsGame, _) => vsGame.toJson());
+
+  Future<List<VersusGame>> getVsGamesWherePlayer1(String playerId) async {
+    return await vsGamesByPlayerOneIdQuery(playerId).get()
+        .then((value) => value.docs.map((e) => e.data()).toList());
+  }
+
+  Future<List<VersusGame>> getVsGamesWherePlayer2(String playerId) async {
+    return await vsGamesByPlayerTwoIdQuery(playerId).get()
+        .then((value) => value.docs.map((e) => e.data()).toList());
+  }
+
   Future<DocumentReference<VersusGame>> addVersusGame(VersusGame game) async {
     logger.i('called with game: ${game.toJson()}');
     return await versusGames.add(game)
@@ -335,7 +430,31 @@ class FirestoreService {
   }
 
   Future<void> updateVersusGameStatus(DocumentReference gameReference, VersusGameStatus status) async {
-    await gameReference.update({versusGameStatusFN: status});
+    logger.i('called with status: $status');
+    await gameReference.update({versusGameStatusFN: status.name});
   }
 
+//App globals Database services
+  Future<void> reportOnline() async {
+    _firestore.collection(appGlobalsTableName).doc(appGlobalsGeneralInfoDN)
+        .update({appGlobalsOnLineCountFN: FieldValue.increment(1)});
+  }
+
+  Future<void> reportOffline() async {
+    _firestore.collection(appGlobalsTableName).doc(appGlobalsGeneralInfoDN)
+        .update({appGlobalsOnLineCountFN: FieldValue.increment(-1)});
+  }
+
+  Future<void> addVsGameToCount() async {
+    _firestore.collection(appGlobalsTableName).doc(appGlobalsGeneralInfoDN)
+        .update({appGlobalsVersusGamesCountFN: FieldValue.increment(1)});
+  }
+
+  Future<void> removeVsGameFromCount() async {
+    _firestore.collection(appGlobalsTableName).doc(appGlobalsGeneralInfoDN)
+        .update({appGlobalsVersusGamesCountFN: FieldValue.increment(-1)});
+  }
+
+  Stream<DocumentSnapshot<Map<String, dynamic>>> appGeneralInfo() =>
+      _firestore.collection(appGlobalsTableName).doc(appGlobalsGeneralInfoDN).snapshots();
 }

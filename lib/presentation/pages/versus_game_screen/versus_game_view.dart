@@ -51,7 +51,7 @@ class VersusGamePage extends StatelessWidget {
                             // color: Colors.white.withOpacity(0.3),
                             // color: originalColors.playerOneBackground,
                             border: Border.all(
-                              color: logic.iAmPlayerOne ? Colors.white : originalColors.accentColor2!,
+                              color: logic.iAmP1 ? Colors.white : originalColors.accentColor2!,
                               width: 0.5,
                             ),
                           ),
@@ -68,7 +68,7 @@ class VersusGamePage extends StatelessWidget {
                               return MoveItemWidget(
                                 moveItem: logic.playerOneGame!.moves[index] ,
                                 textHeight: logic.textHeight,
-                                side: logic.iAmPlayerOne ? PlayerSide.self : PlayerSide.opponent,
+                                side: logic.iAmP1 ? PlayerSide.self : PlayerSide.opponent,
                                 playerShift: VersusPlayer.player1,
                               );
                             },
@@ -97,7 +97,7 @@ class VersusGamePage extends StatelessWidget {
                           decoration: BoxDecoration(
                             // color: Color(0xff4e804a),
                             border: Border.all(
-                              color: logic.iAmPlayerOne ? originalColors.accentColor2! : Colors.white,
+                              color: logic.iAmP1 ? originalColors.accentColor2! : Colors.white,
                               width: 0.5,
                             ),
                           ),
@@ -114,7 +114,7 @@ class VersusGamePage extends StatelessWidget {
                               return MoveItemWidget(
                                 moveItem: logic.playerTwoGame!.moves[index],
                                 textHeight: logic.textHeight,
-                                side: logic.iAmPlayerOne ? PlayerSide.opponent : PlayerSide.self,
+                                side: logic.iAmP1 ? PlayerSide.opponent : PlayerSide.self,
                                 playerShift: VersusPlayer.player2,
                               );
                             },
@@ -130,7 +130,7 @@ class VersusGamePage extends StatelessWidget {
                       children: [
                         const Spacer(flex: 1,),
                         Expanded(flex: 40, //Intercom box
-                          child: IntercomBoxPage(textHeight: logic.textHeight),
+                          child: IntercomBoxWidget(textHeight: logic.textHeight),
                         ),
                         const Spacer(flex: 1),
                         Expanded(flex: 59, //Keyboard area

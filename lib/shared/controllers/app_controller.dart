@@ -20,6 +20,9 @@ class AppController extends GetxController {
   set needLand(bool value) => _needLand.value = value;
 
   final RxBool needUpdateSoloStats = true.obs;
+  final RxBool needUpdateVsStats = true.obs;
+
+  bool canUpdateAuthState = true;
 
   final RxBool _isUpgrade = false.obs;
   set isUpgrade(value) => _isUpgrade.value = value;
@@ -70,6 +73,14 @@ class AppController extends GetxController {
   set volumeLevel(double value) => _volumeLevel.value = value;
   double get volumeLevel => _volumeLevel.value;
 
+  final RxBool p1TimeIsUp = false.obs;
+  set setP1TimeIsUp(bool value) => p1TimeIsUp.value = value;
+  bool get getP1TimeIsUp => p1TimeIsUp.value;
+
+  final RxBool p2TimeIsUp = false.obs;
+  set setP2TimeIsUp(bool value) => p2TimeIsUp.value = value;
+  bool get getP2TimeIsUp => p2TimeIsUp.value;
+
   Future<void> checkInternet() async {
     internetListener = InternetConnectionChecker().onStatusChange.listen((status) {
       switch (status) {
@@ -94,7 +105,7 @@ class AppController extends GetxController {
   Future<void> refreshPlayer() async {
     logger.i('called');
     currentPlayer = await _fetchPlayerById(auth.currentUser!.uid)
-    .then((player) {
+        .then((player) {
       if (player == null) {
         logger.wtf('Player may have been deleted from firestore. Exiting...');
         appController.authState = AuthState.signedOut;
@@ -111,6 +122,7 @@ class AppController extends GetxController {
   void onInit() {
     super.onInit();
     checkInternet();
+    firestoreService.reportOnline();
   }
 
   Future<AudioPlayer> playEffect(String fileName) async {
@@ -119,13 +131,22 @@ class AppController extends GetxController {
   }
 
   updateAuthState(User? currentUser) async {
-    logger.i('called');
-    if (currentUser == null) {
-      logger.i('authState is: $authState and current user is now null, needLand is: ${appController.needLand}');
+    if (!canUpdateAuthState) {
+      canUpdateAuthState = true;
+      return;
+    }
+    logger.i('called when current user is $currentUser');
+    if (currentUser == null) { //firs app run (or first run after last signed out)
+      logger.i('Current user is null, authState: $authState, first run: $isFirstRun, needLand: $needLand');
       if (authState != AuthState.signedOut) {
+        logger.i('just signed out');
         authState = AuthState.signedOut;
-        if(!appController.isUpgrade) isFirstRun = true;
-        if(!appController.isUpgrade) if (appController.needLand) Get.offAllNamed(Routes.landing);
+        if(!appController.isUpgrade) {
+          isFirstRun = true;
+          logger.i('isFirstRun is now = $isFirstRun');
+          if (appController.needLand) Get.offAllNamed(Routes.landing);
+        }
+        firstSignIn();
       } else {
         logger.i('called again for same auth event. ignoring...');
       }
@@ -133,25 +154,51 @@ class AppController extends GetxController {
       logger.i('authState is: ${authState.toString().split('.').last}');
       if (authState != AuthState.anonymous) {
         authState = AuthState.anonymous;
-        if(!isFirstRun) await refreshPlayer();
-        await Future.delayed(const Duration(seconds: 3));
-        if(!appController.isUpgrade) Get.offAllNamed(Routes.home);
+        logger.i('authState is now: $authState, isFirstRun: $isFirstRun');
+        if (isFirstRun) { //Just signed in anonymously
+          await firestoreService.checkInAnonymousPlayer(currentUser);
+          logger.i('Anonymous player should have been checked in in firestore. Taking user to homepage...');
+          Get.offAllNamed(Routes.home);
+          //Player object will be refreshed there;
+        } else { //App run from already signed anonymous user
+          logger.i('App run from already signed anonymous user: ${currentUser.uid}, .. refreshing player object');
+          await refreshPlayer();
+          await Future.delayed(const Duration(seconds: 3));
+          logger.i('Taking anonymous user to Home page..');
+          Get.offAllNamed(Routes.home);
+        }
       } else {
         logger.i('called again for same auth event. ignoring...');
       }
-    } else if (currentUser.providerData.first.providerId == 'google.com'){
+    } else //User is not anonymous
+    if (currentUser.providerData.first.providerId == 'google.com'){ //User is signed in with Google account
+      logger.i('User is signed in with Google');
       if (authState != AuthState.google) {
         authState = AuthState.google;
-        await refreshPlayer();
         await Future.delayed(const Duration(seconds: 3));
-        resetState();
-        if(!appController.isUpgrade) Get.offAllNamed(Routes.home);
+        if (isUpgrade) { //Just signed with Google from previous anonymous account
+          await refreshPlayer();
+          logger.i('Just upgraded to Google user... should change player avatar');
+        } else { //App run from already signed google user
+          logger.i('App run from already signed google user.. refreshing player object...');
+          await refreshPlayer();
+          await Future.delayed(const Duration(seconds: 3));
+          logger.i('Navigating to home page');
+          Get.offAllNamed(Routes.home);
+        }
       } else {
         logger.i('called again for same auth event. ignoring...');
       }
-    } else {
+    } else { //User is not anonymous nor google. Death end.
       logger.i('Could not check sign in method');
     }
+  }
+
+  void firstSignIn() async {
+    logger.i('called');
+    appController.isBusy = true;
+    await authController.signInAnonymously();
+    appController.isBusy = false;
   }
 
   @override

@@ -1,6 +1,7 @@
 import 'package:bulls_n_cows_reloaded/data/models/four_digits.dart';
 import 'package:bulls_n_cows_reloaded/shared/constants.dart';
 import 'package:characters/characters.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 class NumericKeyboardController extends GetxController {
@@ -11,13 +12,19 @@ class NumericKeyboardController extends GetxController {
     true, true, true,
     true,
   ];
-  final List<int> screenDigitNumbers = [0, 0, 0, 0].obs;
+  final List<int> screenDigitNumbers = [8, 8, 8, 8].obs;
   final List<bool> screenDigitEnabled = [false, false, false, false].obs;
   final List<bool> numberKeyEnabled =
       [true, true, true, true, true, true, true, true, true, true].obs;
   final RxBool bsKeyEnabled = false.obs;
   final RxBool enterKeyEnabled = false.obs;
-  Rx<FourDigits> newGuess = FourDigits(digit2: 0, digit1: 0, digit3: 0, digit0: 0).obs;
+
+  void Function(FourDigits newInput)? _onNewInput;
+
+  void onNewInput(Function(FourDigits newInput) callback) {
+    _onNewInput = callback;
+  }
+
 
   void numberKeyTapped(keyNumber) {
     numberTyped = numberTyped + keyNumber.toString();
@@ -25,13 +32,14 @@ class NumericKeyboardController extends GetxController {
   }
 
   void bsKeyTapped() {
+    HapticFeedback.lightImpact();
     numberTyped = numberTyped.substring(0, numberTyped.length - 1);
     parseEnabledKeys(numberTyped);
   }
 
   void resetKeyboard() {
     numberTyped = "";
-    screenDigitNumbers.assignAll([0, 0, 0, 0]);
+    screenDigitNumbers.assignAll([8, 8, 8, 8]);
     screenDigitEnabled.assignAll([false, false, false, false]);
     numberKeyEnabled.assignAll(
         [true, true, true, true, true, true, true, true, true, true]);
@@ -52,7 +60,7 @@ class NumericKeyboardController extends GetxController {
         bsKeyEnabled.value = true;
         enterKeyEnabled.value = false;
         var charCount = 0;
-        screenDigitNumbers.assignAll([0, 0, 0, 0]);
+        screenDigitNumbers.assignAll([8, 8, 8, 8]);
         screenDigitEnabled.assignAll([false, false, false, false]);
         numberKeyEnabled.assignAll(
             [true, true, true, true, true, true, true, true, true, true]);
@@ -68,7 +76,7 @@ class NumericKeyboardController extends GetxController {
           bsKeyEnabled.value = true;
           enterKeyEnabled.value = true;
           var charCount = 0;
-          screenDigitNumbers.assignAll([0, 0, 0, 0]);
+          screenDigitNumbers.assignAll([8, 8, 8, 8]);
           numberKeyEnabled.assignAll([
             false, false, false,
             false, false, false,
@@ -86,22 +94,19 @@ class NumericKeyboardController extends GetxController {
     }
   }
 
-  void enterKeyTapped() {
-    newGuess.value = FourDigits(
-      digit0: stringToDigits(numberTyped)[0],
-      digit1: stringToDigits(numberTyped)[1],
-      digit2: stringToDigits(numberTyped)[2],
-      digit3: stringToDigits(numberTyped)[3],
-    );
+  void onEnterTapped() {
+    appController.playEffect('audio/beep-21.wav');
+    logger.i('Current numTyped is: $numberTyped');
+    if (_onNewInput != null) _onNewInput!(stringToFourDigits(numberTyped));
     resetKeyboard();
   }
 
-  List<int> stringToDigits(String numberTyped) {
-    logger.i('number typed received: $numberTyped');
-    var digits = <int>[];
-    for (var element in numberTyped.characters) {
-      digits.add(int.parse(element));
-    }
-    return digits;
+  FourDigits stringToFourDigits(String numberTyped) {
+    int digit0, digit1, digit2, digit3;
+    digit0 = int.parse(numberTyped.substring(0, 1));
+    digit1 = int.parse(numberTyped.substring(1, 2));
+    digit2 = int.parse(numberTyped.substring(2, 3));
+    digit3 = int.parse(numberTyped.substring(3, 4));
+    return FourDigits(digit0: digit0, digit1: digit1, digit2: digit2, digit3: digit3);
   }
 }

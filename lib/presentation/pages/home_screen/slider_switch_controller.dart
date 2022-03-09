@@ -79,26 +79,6 @@ class SliderSwitchController extends GetxController {
       logger.i('Thumb width: $sliderThumbWidth, Track width: $sliderTrackWidth');
     }
 
-    // Offset getPosition(GlobalKey key) {
-    //   final box = key.currentContext!.findRenderObject() as RenderBox;
-    //   Offset position = box.localToGlobal(Offset.zero);
-    //   return position;
-    // }
-
-    // void updateSliderFrontPosition() {
-    //   Offset position = getPosition(sliderThumbKey);
-    //   logger.i('before position is: X= ${position.dx}, Y= ${position.dy}');
-    //   sliderThumbX.value = position.dx;
-    //   logger.i('after position is: X= ${sliderThumbX.value}');
-    // }
-    //
-    // void updateSliderFrontRect() {
-    //   Rect rect = getRect(sliderThumbKey);
-    //   logger.i('before rect position is: Left = ${rect.left}, Top= ${rect.top}');
-    //   sliderThumbX.value = rect.left;
-    //   logger.i('after position is: Left = ${sliderThumbX.value}');
-    // }
-
   void toggleDrawer() {
     if (appController.drawerSlideValue == 0.0) {
       openDrawer();
@@ -109,7 +89,8 @@ class SliderSwitchController extends GetxController {
 
   void openDrawer() {
     if (appController.drawerSlideValue < 1.0) {
-      appController.playEffect('audio/monitor_turn_on.mp3');
+      // appController.playEffect('audio/monitor_turn_on.mp3');
+      appController.playEffect('audio/door-open.wav');
       appController.drawerSlideValue = 1.0;
       sliderDuration = 1500;
       sliderThumbX.value = sliderMaxThumbX;
@@ -119,7 +100,8 @@ class SliderSwitchController extends GetxController {
   void closeDrawer() {
     logger.i('Called when drawerSlider value is: ${appController.drawerSlideValue}');
     if (appController.drawerSlideValue > 0.0) {
-      appController.playEffect('audio/monitor_turn_off.mp3');
+      appController.playEffect('audio/door-close.wav');
+      // appController.playEffect('audio/monitor_turn_off.mp3');
       appController.drawerSlideValue = 0.0;
       sliderDuration = 1000;
       sliderThumbX.value = 0;

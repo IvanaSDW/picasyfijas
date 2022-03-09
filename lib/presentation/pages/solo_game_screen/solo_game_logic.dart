@@ -1,5 +1,5 @@
 import 'package:bulls_n_cows_reloaded/domain/solo_games_use_cases.dart';
-import 'package:bulls_n_cows_reloaded/presentation/widgets/stop_watch_widget/chronometer_controller.dart';
+import 'package:bulls_n_cows_reloaded/presentation/widgets/chronometer_widget/chronometer_controller.dart';
 import 'package:bulls_n_cows_reloaded/shared/chronometer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -12,11 +12,11 @@ import '../../../data/models/solo_game.dart';
 import '../../../presentation/widgets/intercom_box/intercom_box_logic.dart';
 import '../../../shared/constants.dart';
 import '../../../shared/game_logic.dart';
-import '../../controllers/numeric_keyboard_controller.dart';
+import '../../widgets/numeric_keyboard/numeric_keyboard_controller.dart';
 
 
 class SoloGameLogic extends GetxController {
-  final NumericKeyboardController _keyboardLogic = Get.find();
+  final NumericKeyboardController _keyboard = Get.find();
   final SaveSoloGameToFirestoreUC _saveSoloMatchToFS = SaveSoloGameToFirestoreUC();
 
   late Rx<SoloGame> _match;
@@ -33,7 +33,10 @@ class SoloGameLogic extends GetxController {
 
   final IntercomBoxLogic intercom = Get.put(IntercomBoxLogic());
   final ChronometerController timer = Get.put(ChronometerController(
-      mode: ChronometerMode.countUp, countDownPresetMillis: versusModeTimePresetMillis));
+      mode: ChronometerMode.countUp,
+      countDownPresetMillis: versusModeTimePresetMillis,
+    versusPlayer: VersusPlayer.none,
+  ));
 
   double textHeight = 24;
 
@@ -43,6 +46,7 @@ class SoloGameLogic extends GetxController {
   @override
   void onInit() async {
     super.onInit();
+    if(appController.currentPlayer.id == null) await appController.refreshPlayer();
     _match = SoloGame(
       playerId: appController.currentPlayer.id!,
       secretNum: generateSecretNum(),
@@ -50,7 +54,7 @@ class SoloGameLogic extends GetxController {
       createdAt: Timestamp.now(),
     ).obs;
     logger.i('Secret number: ${match.secretNum!.toJson()}');
-    ever(_keyboardLogic.newGuess, (FourDigits value) => onNewGuess(value));
+    _keyboard.onNewInput((newInput) => onNewGuess(newInput));
   }
 
   void startSinglePlayerMatch() {
@@ -65,6 +69,7 @@ class SoloGameLogic extends GetxController {
     authService.signOut();
     firestoreService
         .deletePlayer(appController.currentPlayer.id!);
+
   }
 
   onInstructionsContinueTapped() {
@@ -84,16 +89,17 @@ class SoloGameLogic extends GetxController {
   }
 
   void onNewGuess(FourDigits guess) {
-    logger.i('onNewGuess-> called with guess: $guess');
+    logger.i('onNewGuess-> called with guess: ${guess.toJson()}');
     DigitMatchResult guessResult = getMatchResult(match.secretNum!, guess);
+    logger.i('Match result: ${guessResult.toJson()}');
     GameMove newMove = GameMove(
         guess: guess,
         moveResult: guessResult,
         timeStampMillis:
         Get.find<ChronometerController>().timer.rawTime.value
     );
-    _match.update((_) {
-      match.moves[match.moves.length - 1] = newMove;
+    _match.update((value) {
+      value!.moves.last = newMove;
     });
     if (match.moves.length == 1) {
       intercom.postMessage('Good, continue until you find it!');
@@ -109,10 +115,11 @@ class SoloGameLogic extends GetxController {
   }
 
   void onNumberFound() async {
+    logger.i('called');
     numberFound = true;
     matchState = SoloGameStatus.finished;
     timer.stopTimer();
-    _saveSoloMatchToFS(match)
+    await _saveSoloMatchToFS(match)
         .then((value) => appController.needUpdateSoloStats.value = true);
     intercom.postMessage('Mission successfully completed!');
   }

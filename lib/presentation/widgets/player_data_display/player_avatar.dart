@@ -22,13 +22,15 @@ class PlayerAvatar extends StatelessWidget {
             Column(
               children: [
                 Expanded(flex: 80,
-                  child: player.photoUrl != null
-                      ? FadeInImage.assetNetwork(
-                    placeholder: 'assets/images/user_photo_bg.png',
-                    image: player.photoUrl!,
-                  )
-                      : const Image(
-                      image: AssetImage('assets/images/user_photo_bg.png')
+                  child: ClipOval(
+                    child: player.photoUrl != null
+                        ? FadeInImage.assetNetwork(
+                      placeholder: 'assets/images/user_photo_bg.png',
+                      image: player.photoUrl!,
+                    )
+                        : const Image(
+                        image: AssetImage('assets/images/user_photo_bg.png')
+                    ),
                   ),
                 ),
                 Expanded(flex: 16,

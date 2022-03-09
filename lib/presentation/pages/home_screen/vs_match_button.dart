@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../navigation/routes.dart';
+import '../../../shared/theme.dart';
 
 class VersusMatchButton extends StatelessWidget {
   final VersusMatchButtonController controller = Get.put(
@@ -46,13 +47,25 @@ class VersusMatchButtonController extends GetxController {
 
   void onPressed() {
     logger.i('called, authState is: ${appController.authState}');
-    appController.authState == AuthState.google
-    ? Get.toNamed(Routes.findOpponent)
-    : authController.upgradeAnonymousToGoogle()
-    .then((value) => {
-      Get.toNamed(Routes.findOpponent)
-    });
     isDown = false;
+    if (appController.authState == AuthState.google) {
+      Get.toNamed(Routes.findOpponent);
+    } else {
+      Get.defaultDialog(
+        title: 'Requires Google sign in',
+        middleText: 'Sign in with your google account to enable multiplayer mode.',
+        textConfirm: 'Sign in',
+        // textCancel: 'Back',
+        backgroundColor: Colors.green.withOpacity(0.5),
+        buttonColor: originalColors.accentColor2,
+        cancelTextColor: originalColors.reverseTextColor,
+        confirmTextColor: originalColors.textColorLight,
+        onConfirm: () {
+          Get.back();
+          authController.upgradeAnonymousToGoogle();
+        },
+      );
+    }
   }
 
 }

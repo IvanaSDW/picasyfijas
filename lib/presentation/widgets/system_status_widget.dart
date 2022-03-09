@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:bulls_n_cows_reloaded/shared/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 
 import '../../shared/theme.dart';
@@ -127,13 +128,20 @@ class SystemStatusView extends StatelessWidget {
                             ),
                           ),
                           Expanded(flex: 68,
-                            child: AutoSizeText(
-                              '1500',
-                              style: TextStyle(
-                                color: originalColors.textColor3,
-                                fontSize: 18,
-                                fontFamily: 'Digital',
-                              ),
+                            child: StreamBuilder(
+                              stream: firestoreService.appGeneralInfo(),
+                              builder: (context, AsyncSnapshot snapshot) {
+                                return snapshot.connectionState == ConnectionState.waiting
+                                ? SpinKitThreeBounce(color: originalColors.textColorLight,)
+                                : AutoSizeText(
+                                  snapshot.data![appGlobalsOnLineCountFN].toString(),
+                                  style: TextStyle(
+                                    color: originalColors.textColor3,
+                                    fontSize: 18,
+                                    fontFamily: 'Digital',
+                                  ),
+                                );
+                              }
                             ),
                           ),
                         ],

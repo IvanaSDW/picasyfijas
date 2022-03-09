@@ -12,8 +12,8 @@ enum SoloGameStatus { created, started, finished }
 enum PlayerSide { self, opponent }
 enum VersusPlayer { unknown, player1, player2, none }
 enum WinnerPlayer { unknown, player1, player2, draw }
-enum WinByMode { unknown, moves, time}
-enum VersusGameStatus { unknown, created, started, semiFinished, finished}
+enum WinByMode { unknown, draw, moves, time, opponentLeft, opponentTimeUp }
+enum VersusGameStatus { unknown, created, started, semiFinished, finished, cancelled }
 
 final AuthController authController = AuthController.instance;
 final AppController appController = AppController.instance;
@@ -23,9 +23,6 @@ final FirebaseAuthService authService = FirebaseAuthService.instance;
 final Logger logger = Logger();
 FirebaseAuth auth = FirebaseAuth.instance;
 FirebaseFirestore firestore = FirebaseFirestore.instance;
-// FirebaseStorage storage = FirebaseStorage.instance;
-// FirestoreRepo firestoreRepo = FirestoreRepo();
-// StorageRepo storageRepo = StorageRepo();
 
 const String playersTableName = 'players';
 const String playerIdFN = 'id';
@@ -37,6 +34,7 @@ const String playerIsNewPlayerFN = 'is_new_user';
 const String playerCreatedAtFN = 'created_at';
 const String playerTimeAverageFN = 'time_average';
 const String playerGuessesAverageFN = 'guesses_average';
+const String playerVsModeWinRateFN = 'vs_mode_win_rate';
 
 const String soloGamesTableName = 'solo_matches';
 const String soloGamePlayerIdFN = 'player_id';
@@ -70,6 +68,11 @@ const String versusChallengeChallengerIdFN = 'player_one_id';
 const String versusChallengeOpponentIdFN = 'player_two_id';
 const String versusChallengeAssignedGameIdFN = 'assigned_match_id';
 const String versusChallengeCreatedAtFN = 'created_at';
+
+const String appGlobalsTableName = 'app_globals';
+const String appGlobalsGeneralInfoDN = 'general_info';
+const String appGlobalsOnLineCountFN = 'online_count';
+const String appGlobalsVersusGamesCountFN = 'vs_games_count';
 
 const int versusModeTimePresetMillis = 300000;
 

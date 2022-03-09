@@ -8,8 +8,9 @@ class ChronometerController extends GetxController {
   final int? countDownPresetMillis;
   late final Chronometer _timer;
   Chronometer get timer => _timer;
+  VersusPlayer versusPlayer;
 
-  ChronometerController({required this.mode, this.countDownPresetMillis})
+  ChronometerController({required this.mode, this.countDownPresetMillis, required this.versusPlayer})
       : assert ((mode == ChronometerMode.countDown && countDownPresetMillis != null)
       || (mode == ChronometerMode.countUp || countDownPresetMillis == null));
 
@@ -25,6 +26,8 @@ class ChronometerController extends GetxController {
     timer.startFromNewPreset(newPresetMillis);
   }
 
+
+
   String getDisplayTime(int elapsedTime) {
     return elapsedTime < 3600000 ?
     Chronometer.getDisplayTime(elapsedTime, hours: false, milliSecond: false) :
@@ -38,12 +41,22 @@ class ChronometerController extends GetxController {
   @override
   void onInit() {
     logger.i('called');
+
     _timer = Chronometer(isLapHours: false,
         mode: mode,
         presetMillisecond: mode == ChronometerMode.countUp
             ? 0
-            : countDownPresetMillis ?? Chronometer.getMilliSecFromMinute(5)
+            : countDownPresetMillis ?? Chronometer.getMilliSecFromMinute(5),
+      onEnded: onTimeIsUp,
     );
     super.onInit();
   }
+
+  void onTimeIsUp() {
+    logger.i('Time is up, this player es $versusPlayer');
+    if (versusPlayer == VersusPlayer.player1) appController.setP1TimeIsUp = true;
+    if (versusPlayer == VersusPlayer.player2) appController.setP2TimeIsUp = true;
+    logger.i('time flags status is: p1: ${appController.getP1TimeIsUp}, p2: ${appController.getP2TimeIsUp}');
+  }
+
 }

@@ -1,9 +1,12 @@
 import 'dart:ui';
 import 'package:bulls_n_cows_reloaded/presentation/pages/look_for_opponent_screen/find_opponent_controller.dart';
+import 'package:bulls_n_cows_reloaded/shared/constants.dart';
 import 'package:bulls_n_cows_reloaded/shared/text_styles.dart';
 import 'package:bulls_n_cows_reloaded/presentation/widgets/matrix_effect/matrix_effect.dart';
 import 'package:bulls_n_cows_reloaded/presentation/pages/look_for_opponent_screen/radar_widget.dart';
+import 'package:bulls_n_cows_reloaded/shared/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 
 class FindOpponentView extends StatelessWidget {
@@ -64,21 +67,32 @@ class FindOpponentView extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 20,),
-          Text(
-            '1250 players',
-            style: defaultTextStyle,
-          ),
-          const SizedBox(height: 6,),
-          Text(
-            '335 games',
-            style: defaultTextStyle,
+          StreamBuilder(
+            stream: firestoreService.appGeneralInfo(),
+            builder: (context, AsyncSnapshot snapshot) {
+              return snapshot.connectionState == ConnectionState.waiting
+              ? SpinKitThreeBounce(color: originalColors.accentColor2,)
+              : Column(
+                children: [
+                  Text(
+                    snapshot.data![appGlobalsOnLineCountFN].toString() + ' players',
+                    style: defaultTextStyle,
+                  ),
+                  const SizedBox(height: 6,),
+                  Text(
+                    snapshot.data![appGlobalsVersusGamesCountFN].toString() + ' games',
+                    style: defaultTextStyle,
+                  ),
+                ],
+              );
+            }
           ),
           const SizedBox(height: 40,),
           InkWell(
             onTap: () => controller.onChallengeCanceled(),
             child: Text(
-              'X Cancel',
-              style: textButtonStyle,
+              'x '+'cancel'.tr,
+              style: const TextStyle(color: Colors.amber, fontSize: 16),
             ),
           ),
         ],

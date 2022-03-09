@@ -142,7 +142,7 @@ class InstructionsWidget extends StatelessWidget {
                                 'assets/images/brackets_red_grid.png'),
                                 fit: BoxFit.fill)
                         )
-                        : null ,
+                            : null ,
                         child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -357,11 +357,16 @@ class InstructionsWidget extends StatelessWidget {
                   ),
                   Expanded(flex: 20,
                     child: Center(
-                      child: Visibility(
-                          visible: controller.continueButtonVisible,
-                          child: ContinueButton(
-                            onTapAction: onContinueTappedAction,
-                          )
+                      child: controller.continueButtonVisible ?
+                      ContinueButton(
+                        onTapAction: onContinueTappedAction,
+                      )
+                          : InkWell(
+                        onTap: onContinueTappedAction,
+                        child: Text(
+                          ' -Skip-',
+                          style: textButtonStyle,
+                        ),
                       ),
                     ),
                   )
