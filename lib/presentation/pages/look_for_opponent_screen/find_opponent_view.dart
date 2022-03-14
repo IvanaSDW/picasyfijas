@@ -9,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 
+import '../../widgets/matrix_effect/matrix_effect_controller.dart';
+
 class FindOpponentView extends StatelessWidget {
   FindOpponentView({Key? key}) : super(key: key);
   final FindOpponentController controller = Get.find();
@@ -42,7 +44,7 @@ class FindOpponentView extends StatelessWidget {
                   // height: Get.height*0.5,
                     child: ClipRRect(
                       borderRadius: const BorderRadius.all(Radius.circular(45.0)),
-                        child: MatrixEffect()
+                        child: MatrixEffect(controller: Get.put(MatrixEffectController(), tag: 'find_opponent'))
                     )
                 ),
               ),

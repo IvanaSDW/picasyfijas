@@ -10,16 +10,6 @@ class FirebaseAuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
-  // Future<void> signInAnonymously() async {
-  //   try {
-  //     final User user = (await auth.signInAnonymously()).user!;
-  //     logger.i('Signed in as ${user.uid}');
-  //     await firestoreService.checkInAnonymousUser(user);
-  //   } catch (e) {
-  //     logger.i('Error signing in anonymously: $e');
-  //   }
-  // }
-
   Future<User?> signInAnonymously() async {
     return await _auth.signInAnonymously()
         .then((credential) => credential.user)
@@ -57,56 +47,6 @@ class FirebaseAuthService {
     }
     return googleUser;
   }
-
-  // Future<User?> upgradeAnonymousToGoogle() async {
-  //   logger.i('called');
-  //   if (auth.currentUser == null) {
-  //     logger.i('Currently not signed in');
-  //     return null;
-  //   } else {
-  //     String oldId = auth.currentUser!.uid;
-  //     logger.i('Currently signed in with id: $oldId');
-  //     appController.isBusy = true;
-  //     AuthCredential credential;
-  //     User? googleUser;
-  //     final GoogleSignInAccount? signInAccount = await _googleSignIn.signIn();
-  //     if (signInAccount != null) {
-  //       logger.i('Google account to link: ${signInAccount.email}');
-  //       final GoogleSignInAuthentication signInAuthentication =
-  //       await signInAccount.authentication;
-  //       credential = GoogleAuthProvider.credential(
-  //         accessToken: signInAuthentication.accessToken,
-  //         idToken: signInAuthentication.idToken,
-  //       );
-  //       logger.i('credential is $credential');
-  //       await auth.currentUser!.linkWithCredential(credential).then((value) async {
-  //         googleUser = value.user!;
-  //         appController.updateAuthState(googleUser);
-  //         await firestoreService.checkInGoogleUser(googleUser!);
-  //         appController.isBusy = false;
-  //         // firestoreService.deletePlayer(oldId);
-  //       }).catchError((error) async {
-  //         logger.e('error linking with credential: $error, hashcode: ${error.hashCode}');
-  //         removeUserAccount(auth.currentUser!);
-  //         // removeUserAccount();
-  //         await auth.signInWithCredential(credential).then((value) async {
-  //           googleUser = value.user!;
-  //           await firestoreService.checkInGoogleUser(googleUser!);
-  //           appController.isBusy = false;
-  //           firestoreService.moveOldIdSoloMatches(oldId, googleUser!.uid);
-  //           firestoreService.deletePlayer(oldId);
-  //         }).catchError((error) {
-  //           logger.i('Error signing in with google: $error');
-  //           appController.isBusy = false;
-  //         });
-  //       });
-  //     } else {
-  //       logger.i('signInAccount is null: $signInAccount');
-  //       appController.isBusy = false;
-  //     }
-  //     return googleUser;
-  //   }
-  // }
 
   Future<dynamic> signAnonymousToGoogle(User user) async {
     logger.i('Upgrading user ${user.uid} to Google account...');

@@ -1,73 +1,54 @@
-import 'dart:ui';
-
+import 'package:bulls_n_cows_reloaded/presentation/pages/splash_screen/logo_widget.dart';
+import 'package:bulls_n_cows_reloaded/presentation/pages/splash_screen/splash_controller.dart';
+import 'package:bulls_n_cows_reloaded/presentation/widgets/matrix_effect/matrix_effect_controller.dart';
 import 'package:bulls_n_cows_reloaded/shared/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 import '../../../presentation/widgets/matrix_effect/matrix_effect.dart';
 
 
 class SplashWidget extends StatelessWidget {
   final AsyncSnapshot snapshot;
+  final SplashController controller = Get.put(SplashController());
 
-  const SplashWidget({Key? key, required this.snapshot}) : super(key: key);
+  SplashWidget({Key? key, required this.snapshot}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     logger.i(
         'AsyncSnapshot state: ${snapshot.connectionState}, Current route: ${Get
             .currentRoute}');
-    return Get.currentRoute == '/HomeView' &&
-        snapshot.connectionState == ConnectionState.done
-        ? Container(color: Colors.transparent,)
-        : Material(
-        color: Colors.transparent,
-        child: Stack(
-          children: [
-            MatrixEffect(),
-            // snapshot.connectionState == ConnectionState.waiting
-                TweenAnimationBuilder(
-                tween: Tween<double>(begin: 0, end: 1),
-                duration: const Duration(seconds: 2),
-                curve: Curves.easeInCirc,
-                builder: (BuildContext context, double opacity,
-                    Widget? child) {
-                  return Opacity(opacity: opacity,
-                    child: Center(
-                      child: ClipRect(
-                        child: BackdropFilter(
-                          filter: ImageFilter.blur(
-                              sigmaY: 10, sigmaX: 10
-                          ),
-                          child: Hero(
-                            tag: 'logo',
-                            child: Container(
-                              width: Get.width,
-                              decoration: BoxDecoration(
-                                color: Colors.black.withOpacity(0.7),
-                              ),
-                              child: Get.locale.toString().substring(0, 2) ==
-                                  'es'
-                                  ? Image.asset(
-                                  'assets/images/logo_spanish_on.png')
-                                  : Image.asset(
-                                  'assets/images/logo_english_on.png'),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
-                }
-            )
-            //     : Obx(() => appController.authState == AuthState.booting ||
-            //     appController.authState == AuthState.signedOut
-            //     ? const BootingWidget()
-            //     : Container(color: Colors.transparent,),
-            // ),
-          ],
-        )
-    );
+    return snapshot.connectionState == ConnectionState.waiting
+      ? Container(color: Colors.transparent,)
+      : Material(
+          color: Colors.transparent,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Obx(() {
+                return AnimatedOpacity(
+                  opacity: controller.showLogo.value ? 1.0 : 0.0,
+                  duration: const Duration(milliseconds: 2500),
+                  child: SizedBox(
+                      width: Get.width * 0.7,
+                      child: const LogoWidget()
+                  ),
+                );
+              }),
+              Obx(() {
+                return AnimatedOpacity(
+                    opacity: controller.hideBackground.value ? 0.0 : 1.0,
+                    duration: const Duration(milliseconds: 4000),
+                    child: MatrixEffect(
+                      key: const ValueKey(2),
+                      controller: Get.put(
+                          MatrixEffectController(speedMillis: 100),
+                          tag: 'splash'),
+                    )
+                );
+              }),
+            ],
+          )
+      );
   }
 }
-

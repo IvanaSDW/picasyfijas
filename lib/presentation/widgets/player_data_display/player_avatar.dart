@@ -4,8 +4,6 @@ import 'package:bulls_n_cows_reloaded/shared/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
-import '../../../shared/constants.dart';
-
 class PlayerAvatar extends StatelessWidget {
   const PlayerAvatar({Key? key, required this.player,}) : super(key: key);
   final Player player;
@@ -56,7 +54,7 @@ class PlayerAvatar extends StatelessWidget {
               child: SizedBox(
                   width: 32,
                   child: Image.asset(
-                      'icons/flags/png/${appController.countryCode}.png',
+                      'icons/flags/png/${player.countryCode}.png',
                       package: 'country_icons')
               ),
             ),

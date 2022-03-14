@@ -130,7 +130,7 @@ class PlayerStatsWidget extends StatelessWidget {
                     child: AutoSizeText(
                       stats.vsWinRate == double.infinity
                           ? '---'
-                          : stats.vsWinRate.toStringAsFixed(2),
+                          : (stats.vsWinRate*100).toStringAsFixed(1),
                       style: statsText,
                       textAlign: TextAlign.start,
                     )

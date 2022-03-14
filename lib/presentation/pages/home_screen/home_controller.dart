@@ -3,6 +3,8 @@ import 'package:bulls_n_cows_reloaded/presentation/widgets/matrix_effect/matrix_
 import 'package:bulls_n_cows_reloaded/shared/constants.dart';
 import 'package:get/get.dart';
 
+import '../splash_screen/logo_widget.dart';
+
 class HomeController extends GetxController {
 
   @override
@@ -12,7 +14,8 @@ class HomeController extends GetxController {
   }
 
   void onAvatarTapped() {
-
+    // logger.i('Called');
+    // Get.to(() => const LogoWidget());
   }
 
   void googleSignIn() async {

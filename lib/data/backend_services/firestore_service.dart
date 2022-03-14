@@ -16,6 +16,11 @@ class FirestoreService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   //Collection references
+  CollectionReference<Player> get _playersConverted => _firestore.collection(playersTableName)
+      .withConverter<Player>(
+      fromFirestore: ((snapshot, _) => Player.fromJson(snapshot.data()!)),
+      toFirestore: (player, _) => player.toJson()
+  );
   CollectionReference get players => _firestore.collection(playersTableName);
   CollectionReference get soloMatches =>
       _firestore.collection(soloGamesTableName)
@@ -74,7 +79,9 @@ class FirestoreService {
         playerEmailFN: userInfo.email,
         playerPhoneFN: userInfo.phoneNumber,
         playerGoogleAvatarFN: userInfo.photoURL,
-        playerCreatedAtFN: Timestamp.now()
+        playerCreatedAtFN: Timestamp.now(),
+        playerCountryCodeFN: Get.locale.toString().split('_').last.toLowerCase(),
+        playerIsOnlineFN: true,
       }).catchError(
               (error) => logger.e("Failed to create user in firestore: $error"));
     } else {
@@ -86,6 +93,7 @@ class FirestoreService {
         playerEmailFN: userInfo.email,
         playerPhoneFN: userInfo.phoneNumber,
         playerGoogleAvatarFN: userInfo.photoURL,
+        playerIsOnlineFN: true,
       })
           .catchError((error) {
         logger.e("Failed to update user in firestore: $error");});
@@ -103,7 +111,9 @@ class FirestoreService {
         playerIdFN: user.uid,
         playerNameFN: 'Guest',
         playerIsNewPlayerFN: true,
-        playerCreatedAtFN: Timestamp.now()
+        playerCreatedAtFN: Timestamp.now(),
+        playerCountryCodeFN: Get.locale.toString().split('_').last.toLowerCase(),
+        playerIsOnlineFN: true,
       }).then(
               (_) => appController.refreshPlayer()
       )
@@ -293,9 +303,9 @@ class FirestoreService {
   Future<DocumentReference<VersusGameChallenge>> postVersusChallenge(VersusGameChallenge challenge) async {
     return await versusChallenges.add(challenge)
         .then((value) {
-          addVsGameToCount();
-          return value as DocumentReference<VersusGameChallenge>;
-        });
+      addVsGameToCount();
+      return value as DocumentReference<VersusGameChallenge>;
+    });
   }
 
   Future<void> deleteVersusChallenge(String challengeId) async {
@@ -436,13 +446,19 @@ class FirestoreService {
 
 //App globals Database services
   Future<void> reportOnline() async {
-    _firestore.collection(appGlobalsTableName).doc(appGlobalsGeneralInfoDN)
-        .update({appGlobalsOnLineCountFN: FieldValue.increment(1)});
+    _playersConverted.doc(auth.currentUser!.uid).get().then((value) => {
+      if (!value.data()!.isOnline!) _firestore.collection(appGlobalsTableName).doc(appGlobalsGeneralInfoDN)
+          .update({appGlobalsOnLineCountFN: FieldValue.increment(1)})
+          .then((value) => _playersConverted.doc(auth.currentUser!.uid).update({
+        playerIsOnlineFN: true}))
+    });
+
   }
 
   Future<void> reportOffline() async {
     _firestore.collection(appGlobalsTableName).doc(appGlobalsGeneralInfoDN)
         .update({appGlobalsOnLineCountFN: FieldValue.increment(-1)});
+    players.doc(auth.currentUser!.uid).update({playerIsOnlineFN: false});
   }
 
   Future<void> addVsGameToCount() async {

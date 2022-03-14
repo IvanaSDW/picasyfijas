@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:blinking_text/blinking_text.dart';
 import 'package:bulls_n_cows_reloaded/presentation/pages/versus_game_screen/guess_bullet_widget_versus.dart';
+import 'package:bulls_n_cows_reloaded/presentation/pages/versus_game_screen/input_secret_number_widget.dart';
 import 'package:bulls_n_cows_reloaded/presentation/pages/versus_game_screen/move_widget_versus.dart';
 import 'package:bulls_n_cows_reloaded/presentation/pages/versus_game_screen/versus_game_final_result_widget.dart';
 import 'package:bulls_n_cows_reloaded/presentation/pages/versus_game_screen/versus_game_header_widget.dart';
@@ -38,7 +39,9 @@ class VersusGamePage extends StatelessWidget {
                   ),
                   const Spacer(flex: 1),
                   Expanded(flex: 51, //Playing body
-                    child: (logic.gameStatus == VersusGameStatus.unknown) ||
+                    child: logic.showNumberInput
+                        ? const InputSecretNumberWidget()
+                        : (logic.gameStatus == VersusGameStatus.unknown) ||
                         (logic.gameStatus == VersusGameStatus.created)
                         ? const SpinKitDancingSquare(color: Colors.white,)
                         : Row(
@@ -48,8 +51,6 @@ class VersusGamePage extends StatelessWidget {
                           padding: const EdgeInsets.all(6),
                           width: Get.width*0.44,
                           decoration: BoxDecoration(
-                            // color: Colors.white.withOpacity(0.3),
-                            // color: originalColors.playerOneBackground,
                             border: Border.all(
                               color: logic.iAmP1 ? Colors.white : originalColors.accentColor2!,
                               width: 0.5,
@@ -141,7 +142,7 @@ class VersusGamePage extends StatelessWidget {
                                     logic.gameStatus == VersusGameStatus.created)
                                     ? Center(
                                     child: BlinkText(
-                                      'Waiting opponent to be ready...',
+                                      'waiting_opponent_to_be_ready'.tr,
                                       style: defaultTextStyle,
                                     )
                                 )
@@ -170,7 +171,7 @@ class VersusGamePage extends StatelessWidget {
                                     child: Padding(
                                       padding: const EdgeInsets.all(12.0),
                                       child: BlinkText(
-                                        'Waiting opponent to move...',
+                                        'waiting_opponent_to_move'.tr,
                                         style: defaultTextStyle,
                                         textAlign: TextAlign.center,
                                       ),

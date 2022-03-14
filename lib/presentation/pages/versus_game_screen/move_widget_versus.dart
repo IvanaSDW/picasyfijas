@@ -110,7 +110,7 @@ class NormalMoveWidgetVersus extends StatelessWidget {
             style: resultTextStyleVersus,
           ),
           Text(
-            'b',
+            'b'.tr,
             style: resultTextStyleVersus,
           ),
           Container(
@@ -121,7 +121,7 @@ class NormalMoveWidgetVersus extends StatelessWidget {
             style: resultTextStyleVersus,
           ),
           Text(
-            'c',
+            'c'.tr,
             style: resultTextStyleVersus,
           ),
         ],

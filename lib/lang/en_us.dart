@@ -38,5 +38,8 @@ const Map<String, String> enUS = {
   'you_can_do_it_try_your_guess' : 'You can do it! try your guess',
   'be_ready_for_your_second_guess' : 'Be ready for your second guess',
   'think_of_a_smart_guess_for_your next_move' : 'Think of a smart guess for your next move',
-
+  'b' : 'b',
+  'c' : 'c',
+  'tap_here_to_start': 'Tap here to start',
+  'waiting_opponent_to_be_ready' : 'Waiting opponent to be ready...',
 };

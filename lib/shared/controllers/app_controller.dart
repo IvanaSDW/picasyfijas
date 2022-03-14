@@ -108,8 +108,8 @@ class AppController extends GetxController {
         .then((player) {
       if (player == null) {
         logger.wtf('Player may have been deleted from firestore. Exiting...');
-        appController.authState = AuthState.signedOut;
-        appController.needLand = true;
+        // authState = AuthState.signedOut;
+        needLand = true;
         authService.signOut();
         return Player.empty();
       } else {
@@ -143,7 +143,7 @@ class AppController extends GetxController {
         authState = AuthState.signedOut;
         if(!appController.isUpgrade) {
           isFirstRun = true;
-          logger.i('isFirstRun is now = $isFirstRun');
+          logger.i('isFirstRun is now: $isFirstRun');
           if (appController.needLand) Get.offAllNamed(Routes.landing);
         }
         firstSignIn();
@@ -158,12 +158,13 @@ class AppController extends GetxController {
         if (isFirstRun) { //Just signed in anonymously
           await firestoreService.checkInAnonymousPlayer(currentUser);
           logger.i('Anonymous player should have been checked in in firestore. Taking user to homepage...');
+          await Future.delayed(const Duration(seconds: 10));
           Get.offAllNamed(Routes.home);
           //Player object will be refreshed there;
         } else { //App run from already signed anonymous user
           logger.i('App run from already signed anonymous user: ${currentUser.uid}, .. refreshing player object');
           await refreshPlayer();
-          await Future.delayed(const Duration(seconds: 3));
+          await Future.delayed(const Duration(seconds: 6));
           logger.i('Taking anonymous user to Home page..');
           Get.offAllNamed(Routes.home);
         }
@@ -182,7 +183,7 @@ class AppController extends GetxController {
         } else { //App run from already signed google user
           logger.i('App run from already signed google user.. refreshing player object...');
           await refreshPlayer();
-          await Future.delayed(const Duration(seconds: 3));
+          await Future.delayed(const Duration(seconds: 4));
           logger.i('Navigating to home page');
           Get.offAllNamed(Routes.home);
         }

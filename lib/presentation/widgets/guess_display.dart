@@ -83,7 +83,7 @@ class NormalGuessDisplay extends StatelessWidget {
             width: 4,
           ),
           Text(
-            'b',
+            'b'.tr,
             style: resultTextStyle,
           ),
           Container(
@@ -104,7 +104,7 @@ class NormalGuessDisplay extends StatelessWidget {
             width: 4,
           ),
           Text(
-            'c',
+            'c'.tr,
             style: resultTextStyle,
           ),
         ],

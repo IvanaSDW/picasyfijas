@@ -1,11 +1,9 @@
-import 'package:bulls_n_cows_reloaded/presentation/pages/landing_signed_out_view/landing_controller.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:get/get.dart';
+
 import '../splash_screen/splash_widget.dart';
 
 class LandingUnsignedScreen extends StatelessWidget {
-  LandingUnsignedScreen({Key? key}) : super(key: key);
-  final LandingController controller = Get.put(LandingController());
+  const LandingUnsignedScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

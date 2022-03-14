@@ -4,6 +4,7 @@ import 'package:bulls_n_cows_reloaded/shared/chronometer.dart';
 import 'package:bulls_n_cows_reloaded/shared/theme.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import '../../../data/models/digit_match_result.dart';
 import '../../../data/models/four_digits.dart';
@@ -22,6 +23,10 @@ class VersusGameLogic extends GetxController {
 
   bool _gameIsInitialized = false;
 
+  final Rx<VersusGameStatus> _gameStatus = VersusGameStatus.unknown.obs;
+  VersusGameStatus get gameStatus => _gameStatus.value;
+  set gameStatus(VersusGameStatus value) => _gameStatus.value = value;
+
   late final bool iAmP1;
   late final DocumentReference<VersusGame> gameReference;
 
@@ -32,6 +37,10 @@ class VersusGameLogic extends GetxController {
   final _playerTwoData = Rxn<Player>();
   Player? get playerTwoData => _playerTwoData.value;
   set playerTwoData(Player? value) => _playerTwoData.value = value;
+
+  final RxBool _showNumberInput = false.obs;
+  bool get showNumberInput => _showNumberInput.value;
+  set showNumberInput(bool value) => _showNumberInput.value = value;
 
   final RxBool _showKeyboard = false.obs;
   bool get showKeyboard => _showKeyboard.value;
@@ -57,15 +66,11 @@ class VersusGameLogic extends GetxController {
   SoloGame? get playerTwoGame => _playerTwoGame.value;
   set playerTwoGame(SoloGame? game) => _playerTwoGame.value = game;
 
-  final Rx<VersusGameStatus> _gameStatus = VersusGameStatus.unknown.obs;
-  VersusGameStatus get gameStatus => _gameStatus.value;
-  set gameStatus(VersusGameStatus value) => _gameStatus.value = value;
-
   final IntercomBoxLogic intercom = Get.put(IntercomBoxLogic());
   final ChronometerController p1Timer = Get.put(
       ChronometerController(
-          mode: ChronometerMode.countDown,
-          countDownPresetMillis: versusModeTimePresetMillis,
+        mode: ChronometerMode.countDown,
+        countDownPresetMillis: versusModeTimePresetMillis,
         versusPlayer: VersusPlayer.player1,
       ),
       tag: 'p1'
@@ -106,13 +111,54 @@ class VersusGameLogic extends GetxController {
     playerOneData = Get.arguments['playerOneObject'];
     playerTwoData = Get.arguments['playerTwoObject'];
     gameStateListener = gameStateStream.listen((event) { onGameStateReceived(event); });
-    _keyboard.onNewInput((newInput) => onThisPlayerNewGuess(newInput));
+    _keyboard.onNewInput((newInput) {
+      if (showNumberInput) {
+        onSecretNumberInput(newInput);
+      } else {
+        onThisPlayerNewGuess(newInput);
+      }
+    });
     ever(_whoIsToMove, (VersusPlayer value) => onToggleMove(value));
     if(iAmP1) {
       ever(appController.p1TimeIsUp, (bool value) => onMyTimeIsUp(value));
     } else {
       ever(appController.p2TimeIsUp, (bool value) => onMyTimeIsUp(value));
     }
+  }
+
+  final RxDouble progressValue = 0.0.obs;
+  late final Timer inputSecretNumberTimer;
+
+  void startInputSecretNumberProgress() {
+    inputSecretNumberTimer = Timer.periodic(
+        const Duration(milliseconds: 100),
+            (timer) async {
+          progressValue.value += 100;
+          if (progressValue.value == 10000) {
+            timer.cancel();
+            logger.i('time is up');
+            onAutoGenerateSecretNumber();
+          }
+        });
+  }
+
+  Future<void> onAutoGenerateSecretNumber() async {
+    inputSecretNumberTimer.cancel();
+    var secretNumber = generateSecretNum();
+    iAmP1
+        ? await firestoreService.addPlayerTwoSecretNumberToVersusGame(gameReference.id, secretNumber)
+        : await firestoreService.addPlayerOneSecretNumberToVersusGame(gameReference.id, secretNumber);
+    logger.i('Automatically added secret number to player in firestore: ${secretNumber.toJson()}');
+    showNumberInput = false;
+  }
+
+  Future<void> onSecretNumberInput(FourDigits number) async {
+    inputSecretNumberTimer.cancel();
+    showNumberInput = false;
+    iAmP1
+        ? await firestoreService.addPlayerTwoSecretNumberToVersusGame(gameReference.id, number)
+        : await firestoreService.addPlayerOneSecretNumberToVersusGame(gameReference.id, number);
+    logger.i('Added your secret number to game in firestore: $number');
   }
 
   Future<void> onGameStateReceived(DocumentSnapshot<VersusGame> gameSnapshot) async {
@@ -135,7 +181,6 @@ class VersusGameLogic extends GetxController {
           logger.i('This player lost because: ${game.winByMode.toString().split('.').last}!!');
         }
       }
-
     }
 
     switch (gameStatus) {
@@ -143,12 +188,9 @@ class VersusGameLogic extends GetxController {
         _game = gameSnapshot.data()!.obs;
         _gameIsInitialized = true;
         gameStatus = VersusGameStatus.created;
-        iAmP1
-            ? await firestoreService.addPlayerTwoSecretNumberToVersusGame(gameReference.id, generateSecretNum())
-            : await firestoreService.addPlayerOneSecretNumberToVersusGame(gameReference.id, generateSecretNum());
-        logger.i('added secret number to player in firestore');
+        showNumberInput = true;
+        startInputSecretNumberProgress();
         break;
-
       case VersusGameStatus.created :
         if (game.playerOneGame.secretNum != null && game.playerTwoGame.secretNum != null) {
           logger.i('Both players ready...');
@@ -223,6 +265,7 @@ class VersusGameLogic extends GetxController {
         p2Timer.stopTimer();
         if (iAmP1) { // Is my move
           logger.i('Is this player move ');
+          HapticFeedback.mediumImpact();
           showKeyboard = true;
           switch (playerOneGame!.moves.length) {
             case 1:
@@ -268,6 +311,7 @@ class VersusGameLogic extends GetxController {
           }
         } else { // I am player 2 and is my move
           showKeyboard = true;
+          HapticFeedback.mediumImpact();
           switch (playerTwoGame!.moves.length) {
             case 1:
               intercom.postMessage('Time is running!!, input your guess...');

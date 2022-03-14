@@ -7,13 +7,39 @@ import 'package:get/get.dart';
 class MatrixEffectController extends GetxController {
   late Timer timer;
   final RxList<Widget> verticalLines = <Widget>[].obs;
+  final List<Color>? colors;
+  final int? speedMillis;
+  double greenStart = 0.3;
+  final List<String> _characters = [];
+  double fontSize = Random().nextInt(12)+8.toDouble();
+  List<double> stops = [];
+
+  MatrixEffectController({this.speedMillis, this.colors});
+
 
   void startTimer() {
-    timer = Timer.periodic(const Duration(milliseconds: 300), (timer) {
-      if (verticalLines.length <= 60) {
-        verticalLines.add(_getVerticalTextLine());
-      }
-    });
+    timer = Timer.periodic(
+        Duration(milliseconds: speedMillis ?? 200), //Speed
+            (timer) {
+          if (verticalLines.length <= 200) { //Density
+            verticalLines.add(_getVerticalTextLine());
+          }
+        });
+
+  }
+
+  List<Widget> getCharacters(double fontSize) {
+    List<Widget> textWidgets = [];
+    for (var character in _characters) {
+      textWidgets.add(
+          Text(character,
+              style: TextStyle(
+                // fontFamily: "Monospace",
+                  fontSize: fontSize))
+      );
+    }
+
+    return textWidgets;
   }
 
   Widget _getVerticalTextLine() {
@@ -22,6 +48,7 @@ class MatrixEffectController extends GetxController {
       key: key,
       left: Random().nextDouble() * Get.size.width,
       child: VerticalTextLine(
+          colors: colors,
           onFinished: () {
             verticalLines.removeWhere((element) {
               return element.key == key;
@@ -31,6 +58,8 @@ class MatrixEffectController extends GetxController {
           maxLength: Random().nextInt(10) + 5),
     );
   }
+
+
 
   @override
   void dispose() {

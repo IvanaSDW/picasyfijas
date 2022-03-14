@@ -34,11 +34,10 @@ class MyApp extends StatelessWidget {
         builder: (context, AsyncSnapshot snapshot) {
           return GetMaterialApp(
             defaultTransition: Transition.native,
-            transitionDuration: const Duration(seconds: 2),
+            transitionDuration: const Duration(milliseconds: 500),
             debugShowCheckedModeBanner: false,
             locale: Get.deviceLocale,
             translations: Translator(),
-            // initialRoute: '/',
             home: SplashWidget(snapshot: snapshot,),
             getPages: appPages,
           );
@@ -59,7 +58,14 @@ class Init {
     Get.lazyPut(() => FirebaseAuthService(),);
     Get.put(AuthController(), permanent: true);
     Get.put(AppController(), permanent: true);
-    await Future.delayed(const Duration(seconds: 3));
+    do {
+      logger.i('waiting controllers to be put...');
+    } while (
+    !Get.isRegistered<FirestoreService>() ||
+        !Get.isRegistered<FirebaseAuthService>() ||
+        !Get.isRegistered<AuthController>() ||
+        !Get.isRegistered<AppController>()
+    );
     FlutterNativeSplash.remove();
   }
 }

@@ -21,7 +21,9 @@ abstract class Routes {
 }
 
 final appPages = [
-  GetPage(name: Routes.landing, page: () => LandingUnsignedScreen()),
+  GetPage(name: Routes.landing,
+      page: () => LandingUnsignedScreen()
+  ),
   GetPage(
     name: Routes.home,
     page: () => HomeView(),

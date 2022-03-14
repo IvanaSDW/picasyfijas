@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class MatrixEffect extends StatelessWidget {
-  MatrixEffect({Key? key}) : super(key: key);
-  final MatrixEffectController controller = Get.put(MatrixEffectController());
+  const MatrixEffect({Key? key, required this.controller}) : super(key: key);
+  final MatrixEffectController controller;
 
   @override
   Widget build(BuildContext context) {

@@ -1,9 +1,13 @@
+import 'dart:ui';
+
 import 'package:bulls_n_cows_reloaded/shared/constants.dart';
 import 'package:bulls_n_cows_reloaded/presentation/widgets/player_data_display/player_data_display.dart';
 import 'package:bulls_n_cows_reloaded/presentation/widgets/system_status_widget.dart';
 import 'package:bulls_n_cows_reloaded/presentation/widgets/matrix_effect/matrix_effect.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../widgets/matrix_effect/matrix_effect_controller.dart';
+import 'front_panel_clipper.dart';
 import 'front_panel_painter.dart';
 import 'quit_button.dart';
 import 'home_controller.dart';
@@ -41,7 +45,7 @@ class FrontPanelWidget extends StatelessWidget {
                         ? Column(
                       children: [
                         Expanded(flex: 18,
-                          child: PlayerDataDisplay(onAvatarTapped: () => {},),
+                          child: PlayerDataDisplay(onAvatarTapped: () => controller.onAvatarTapped(),),
                         ),
                         Expanded(
                             flex: 60,
@@ -84,7 +88,7 @@ class QuitWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        MatrixEffect(),
+        MatrixEffect(controller: Get.put(MatrixEffectController(), tag: 'front_panel')),
         Center(
             child: QuitButton(
                 onTapAction: () => appController.quitApp()

@@ -35,6 +35,8 @@ const String playerCreatedAtFN = 'created_at';
 const String playerTimeAverageFN = 'time_average';
 const String playerGuessesAverageFN = 'guesses_average';
 const String playerVsModeWinRateFN = 'vs_mode_win_rate';
+const String playerCountryCodeFN = 'country_code';
+const String playerIsOnlineFN = 'is_online';
 
 const String soloGamesTableName = 'solo_matches';
 const String soloGamePlayerIdFN = 'player_id';

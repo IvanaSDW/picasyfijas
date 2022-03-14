@@ -113,7 +113,7 @@ class SoloGamePage extends StatelessWidget {
                           onTap: () => logic.startSinglePlayerMatch(),
                           child: Center(
                               child: BlinkText(
-                                'Tap here to start...',
+                                'tap_here_to_start'.tr,
                                 style: defaultTextStyle,
                               )),
                         )

@@ -1,29 +1,9 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 
-class FrontPanelPainter extends CustomPainter {
-  final double width;
-
-  FrontPanelPainter({required this.width});
-
+class FrontPanelClipper extends CustomClipper<Path> {
   @override
-  void paint(Canvas canvas, Size size) {
-    var rect = Rect.fromPoints(Offset.zero, Offset(size.width, size.height));
-    var paint = Paint();
-    paint.isAntiAlias = true;
-    paint.shader = const RadialGradient(
-      radius: 1.5,
-        colors: [
-          Color(0xFFFFFFFF),
-          Color(0xFF424242),
-          Color(0xFF1F1F1F),
-          Color(0xFF494949),
-          Color(0xFF101010),
-          Color(0xFF000000),
-        ]
-    ).createShader(rect);
-    paint.style = PaintingStyle.stroke;
-    paint.strokeWidth = width;
-    var path = Path();
+  getClip(Size size) {
+    final path = Path();
     path.moveTo(size.height*0.03, 0);
     path.arcToPoint(
         Offset(0, size.height*0.03),
@@ -57,14 +37,12 @@ class FrontPanelPainter extends CustomPainter {
     path.lineTo(size.width, 0);
     path.lineTo(0, 0);
     path.close();
-    canvas.drawPath(path, paint);
-
+    return path;
   }
 
-
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return true;
+  bool shouldReclip(covariant CustomClipper<dynamic> oldClipper) {
+    return false;
   }
 
 }
