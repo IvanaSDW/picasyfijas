@@ -226,7 +226,6 @@ class VersusGameLogic extends GetxController {
         break;
 
       case VersusGameStatus.semiFinished:
-      // game = gameSnapshot.data()!;
         playerOneGame = game.playerOneGame;
         p1TimeLeft = playerOneGame!.moves.last.timeStampMillis;
         playerTwoGame = game.playerTwoGame;
@@ -247,7 +246,7 @@ class VersusGameLogic extends GetxController {
         break;
       case VersusGameStatus.cancelled:
         logger.i('game was cancelled');
-        Get.snackbar('Game canceled', 'game was canceled', backgroundColor: Colors.green);
+        Get.snackbar('game_canceled'.tr, 'game_was_canceled'.tr, backgroundColor: Colors.green);
         Future.delayed(const Duration(milliseconds: 1000), () => Get.back(closeOverlays: true));
         break;
     }
@@ -269,10 +268,10 @@ class VersusGameLogic extends GetxController {
           showKeyboard = true;
           switch (playerOneGame!.moves.length) {
             case 1:
-              intercom.postMessage('Time is running!!, input your guess...');
+              intercom.postMessage('time_is_running_input_your_guess'.tr);
               break;
             case 2:
-              intercom.postMessage('You can do it, try your guess...');
+              intercom.postMessage('you_can_do_it_try_your_guess'.tr);
               break;
             default:
               break;
@@ -281,10 +280,10 @@ class VersusGameLogic extends GetxController {
           showKeyboard = false;
           switch (playerTwoGame!.moves.length) {
             case 0:
-              intercom.postMessage('Be ready for you first guess...');
+              intercom.postMessage('be_ready_for_your_second_guess'.tr);
               break;
             case 1:
-              intercom.postMessage('Think your next guess..');
+              intercom.postMessage('think_your_next_guess'.tr);
               break;
             default:
               break;
@@ -301,10 +300,10 @@ class VersusGameLogic extends GetxController {
           showKeyboard = false;
           switch (playerTwoGame!.moves.length) {
             case 1:
-              intercom.postMessage('Be ready for you second guess...');
+              intercom.postMessage('be_ready_for_your_second_guess'.tr);
               break;
             case 2:
-              intercom.postMessage('Think of a smart guess for your next one..');
+              intercom.postMessage('think_of_a_smart_guess_for_your next_move'.tr);
               break;
             default:
               break;
@@ -314,10 +313,10 @@ class VersusGameLogic extends GetxController {
           HapticFeedback.mediumImpact();
           switch (playerTwoGame!.moves.length) {
             case 1:
-              intercom.postMessage('Time is running!!, input your guess...');
+              intercom.postMessage('time_is_running_input_your_guess'.tr);
               break;
             case 2:
-              intercom.postMessage('You can do it, try your guess...');
+              intercom.postMessage('you_can_do_it_try_your_guess'.tr);
               break;
             default:
               break;
@@ -350,9 +349,9 @@ class VersusGameLogic extends GetxController {
 
   void onGameSemiFinished() {
     if (iAmP1) {
-      intercom.postMessage('Cross your fingers! opponent still have one shot...');
+      intercom.postMessage('cross_your_fingers'.tr);
     } else { //I am player 2 and this is my last shot
-      intercom.postMessage('You better find it now...');
+      intercom.postMessage('you_better_find_it_now'.tr);
     }
   }
 
@@ -494,24 +493,25 @@ class VersusGameLogic extends GetxController {
     String middleText = '';
     if (iAmP1) {
       if (playerOneGame!.moves.isEmpty) {
-        middleText = 'Your opponent is still active...';
+        middleText = 'your_opponent_is_still_active'.tr;
       } else if(playerOneGame!.moves.length == 1 && playerOneGame!.moves.last.guess.isDummy()) {
-        middleText = 'Your opponent is still active...';
+        middleText = 'your_opponent_is_still_active'.tr;
       } else {
-        middleText = 'You will loose this game if quit now';
+        middleText = 'You_will_loose_this_game_if_quit_now'.tr;
       }
     } else { // I am player 2
       if (playerTwoGame!.moves.isEmpty) {
-        middleText = 'Your opponent is still active...';
+        middleText = 'your_opponent_is_still_active'.tr;
       } else {
-        middleText = 'You will loose this game if quit now';
+        middleText = 'You_will_loose_this_game_if_quit_now'.tr
+        ;
       }
     }
     Get.defaultDialog(
-      title: 'Press \'Quit\' to leave game.',
+      title: 'press_quit_to_leave_game'.tr,
       middleText: middleText,
-      textConfirm: 'Quit',
-      textCancel: 'Cancel',
+      textConfirm: 'quit'.tr,
+      textCancel: 'cancel'.tr,
       backgroundColor: Colors.green.withOpacity(0.5),
       buttonColor: originalColors.accentColor2,
       cancelTextColor: originalColors.reverseTextColor,

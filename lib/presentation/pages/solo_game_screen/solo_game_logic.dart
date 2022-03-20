@@ -61,7 +61,7 @@ class SoloGameLogic extends GetxController {
     matchState = SoloGameStatus.started;
     match.moves.add(GameMove.dummy());
     timer.startTimer();
-    intercom.postMessage('Time is running!!, input your guess...');
+    intercom.postMessage('time_is_running_input_your_guess'.tr);
   }
 
   void onSignOutTapped() async {
@@ -102,7 +102,7 @@ class SoloGameLogic extends GetxController {
       value!.moves.last = newMove;
     });
     if (match.moves.length == 1) {
-      intercom.postMessage('Good, continue until you find it!');
+      intercom.postMessage('good_continue_until_you_find_it'.tr);
     }
     if (guessResult.bulls == 4) {
       onNumberFound();
@@ -121,7 +121,7 @@ class SoloGameLogic extends GetxController {
     timer.stopTimer();
     await _saveSoloMatchToFS(match)
         .then((value) => appController.needUpdateSoloStats.value = true);
-    intercom.postMessage('Mission successfully completed!');
+    intercom.postMessage('mission_successfully_completed'.tr);
   }
 
   Future<bool> onBackPressed() async {

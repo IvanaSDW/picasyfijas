@@ -23,7 +23,9 @@ class FindChallengeUC {
 class AcceptVersusChallengeUC {
   final VersusChallengesRepository _repository = VersusChallengeRepositoryImpl();
   Future<void> call(DocumentReference challengeReference, String acceptedById) async {
-    await _repository.updateVersusChallenge(challengeReference, {versusChallengeOpponentIdFN: acceptedById});
+    await _repository.updateVersusChallenge(challengeReference,
+        {versusChallengeOpponentIdFN: acceptedById, vsChallengeP2RatingFN: appController.currentPlayer.rating}
+    );
   }
 }
 

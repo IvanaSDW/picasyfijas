@@ -36,7 +36,7 @@ class SoloMatchButtonController extends GetxController {
   get isDown => _isDown.value;
 
   void onTapDown() {
-    appController.playEffect('audio/button-16.wav');
+    appController.playEffect('audio/beep-21.wav');
     isDown = true;
   }
 

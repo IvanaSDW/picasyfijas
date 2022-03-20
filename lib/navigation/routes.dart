@@ -2,6 +2,7 @@ import 'package:bulls_n_cows_reloaded/di/find_opponent_binding.dart';
 import 'package:bulls_n_cows_reloaded/di/solo_game_binding.dart';
 import 'package:bulls_n_cows_reloaded/di/versus_game_binding.dart';
 import 'package:bulls_n_cows_reloaded/presentation/pages/landing_signed_out_view/landing_screen.dart';
+import 'package:bulls_n_cows_reloaded/presentation/pages/player_profile_screen/player_profile_view.dart';
 import 'package:bulls_n_cows_reloaded/presentation/pages/versus_game_screen/versus_game_view.dart';
 import 'package:flutter/animation.dart';
 import 'package:get/get.dart';
@@ -10,6 +11,7 @@ import '../di/home_binding.dart';
 import '../presentation/pages/home_screen/home_view.dart';
 import '../presentation/pages/look_for_opponent_screen/find_opponent_view.dart';
 import '../presentation/pages/solo_game_screen/solo_game_view.dart';
+import '../presentation/pages/splash_screen/splash_widget.dart';
 
 abstract class Routes {
   static const splash = '/';
@@ -18,11 +20,16 @@ abstract class Routes {
   static const findOpponent = '/FindOpponent';
   static const soloGame = '/SoloGame';
   static const versusGame = '/VersusGame';
+  static const profile = '/Profile';
 }
 
 final appPages = [
+  GetPage(
+      name: Routes.splash,
+      page: () => SplashWidget(),
+  ),
   GetPage(name: Routes.landing,
-      page: () => LandingUnsignedScreen()
+      page: () => const LandingUnsignedScreen()
   ),
   GetPage(
     name: Routes.home,
@@ -50,5 +57,13 @@ final appPages = [
       transition: Transition.fade,
       curve: Curves.easeInOut,
       transitionDuration: const Duration(milliseconds: 1000),
+  ),
+  GetPage(
+    name: Routes.profile,
+    page: () => PlayerProfileView(),
+    // binding: FindOpponentBindings(),
+    transition: Transition.fade,
+    curve: Curves.easeInOut,
+    transitionDuration: const Duration(milliseconds: 1000),
   ),
 ];

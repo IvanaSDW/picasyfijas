@@ -47,6 +47,7 @@ class VersusMatchMaker {
         _postChallenge(
             challenge: VersusGameChallenge(
               playerOneId: playerId,
+              p1Rating: appController.currentPlayer.rating!,
               createdAt: Timestamp.now(),
             )
         );
@@ -106,6 +107,8 @@ class VersusMatchMaker {
           moves: <GameMove>[],
           createdAt: Timestamp.now(),
         ),
+        p1Rating: challenge.p1Rating,
+        p2Rating: challenge.p2Rating!,
         whoIsToMove: VersusPlayer.player1,
         createdAt: Timestamp.now(),
         state: VersusGameStatus.created

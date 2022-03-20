@@ -58,9 +58,9 @@ class FirestoreService {
           fromFirestore: (snapshot, _) => Player.fromJson(snapshot.data()!),
           toFirestore: (player, _) => player.toJson());
 
-  Query<Player> playersByVsWinRateRankQuery() =>
+  Query<Player> playersByRatingQuery() =>
       _firestore.collection(playersTableName)
-          .orderBy(playerVsModeWinRateFN,)
+          .orderBy(playerRatingFN, descending: true)
           .withConverter<Player>(
           fromFirestore: (snapshot, _) => Player.fromJson(snapshot.data()!),
           toFirestore: (player, _) => player.toJson());
@@ -112,8 +112,11 @@ class FirestoreService {
         playerNameFN: 'Guest',
         playerIsNewPlayerFN: true,
         playerCreatedAtFN: Timestamp.now(),
+        playerGuessesAverageFN: double.infinity,
+        playerTimeAverageFN: double.infinity,
         playerCountryCodeFN: Get.locale.toString().split('_').last.toLowerCase(),
         playerIsOnlineFN: true,
+        playerRatingFN: playerPresetRating,
       }).then(
               (_) => appController.refreshPlayer()
       )
@@ -153,16 +156,30 @@ class FirestoreService {
     await players.doc(playerId).update({
       playerTimeAverageFN: timeAverage,
       playerGuessesAverageFN: guessesAverage,
+      playerCountryCodeFN: Get.locale.toString().split('_').last.toLowerCase(), //Use this chance to update locale
     });
   }
 
-  Future<void> updatePlayerVsRate(
-      String playerId,
-      double vsWinRate,
-      ) async {
+  Future<void> updatePlayerVsStats({
+    required String playerId,
+    required double winRate,
+    required int rating,
+  }) async {
     logger.i('called');
     await players.doc(playerId).update({
-      playerVsModeWinRateFN: vsWinRate,
+      playerVsModeWinRateFN: winRate,
+      playerRatingFN: rating,
+    });
+  }
+
+  Future<void> updatePlayerToken({
+    required String playerId,
+    required String newToken,
+  }) async {
+    logger.i('called');
+    await players.doc(playerId).update({
+      playerPushTokenFN: newToken,
+      'tokenTimeStamp': DateTime.now(),
     });
   }
 
@@ -236,13 +253,15 @@ class FirestoreService {
     return soloRankings;
   }
 
-  Future<int> getPlayerVsRank(String playerId) async {
+  Future<Map<String, dynamic>> getPlayerRatingRank(String playerId) async {
     logger.i('called');
-    List<Player> orderedByVsWinRate = await playersByVsWinRateRankQuery()
+    List<Player> orderedByRating = await playersByRatingQuery()
         .get()
         .then((value) => value.docs.map((e) => e.data()).toList());
-    logger.i('byVsWinRate: ${orderedByVsWinRate.length}');
-    return orderedByVsWinRate.indexWhere((player) => player.id == playerId) + 1;
+    logger.i('byRating: ${orderedByRating.length}');
+    int rankIndex = orderedByRating.indexWhere((player) => player.id == playerId) + 1;
+    double percentile = (orderedByRating.length- rankIndex) / orderedByRating.length;
+    return {'rank' : rankIndex, 'percentile' : percentile};
   }
 
   //SoloGames database services

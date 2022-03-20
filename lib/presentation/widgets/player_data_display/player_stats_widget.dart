@@ -10,8 +10,7 @@ import '../../../shared/text_styles.dart';
 class PlayerStatsWidget extends StatelessWidget {
   PlayerStatsWidget({Key? key,}) : super(key: key);
 
-  final PlayerStatsController controller = Get.put(
-      PlayerStatsController());
+  final PlayerStatsController controller = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -143,15 +142,22 @@ class PlayerStatsWidget extends StatelessWidget {
               children: [
                 Expanded(flex: 50,
                     child: AutoSizeText(
-                      'world_ranking'.tr,
+                      '  ' + 'rating'.tr,
                       style: statsSubTitle,
                       textAlign: TextAlign.start,
                     )
                 ),
-                Expanded(flex: 50,
+                Expanded(flex: 25,
                     child: AutoSizeText(
-                      stats.vsGamesCount == 0 ? "--" : stats.vsWorldRank.toString(),
+                      stats.rating.toString(),
                       style: statsText,
+                      textAlign: TextAlign.start,
+                    )
+                ),
+                Expanded(flex: 25,
+                    child: AutoSizeText(
+                      stats.vsGamesCount == 0 ? "--" : 'Rank: ' + stats.vsWorldRank.toString(),
+                      style: statsSubTitle,
                       textAlign: TextAlign.start,
                     )
                 ),

@@ -6,12 +6,18 @@ class PlayerStats {
   int guessesRank = 0;
   int soloWorldRank = 0;
   int vsGamesCount = 0;
+  int vsGamesWon = 0;
+  int vsGamesDraw = 0;
+  int vsGamesLost = 0;
   double vsWinRate = 0;
   int vsWorldRank = 0;
+  double vsPercentile = 0;
+  int rating = 0;
 
   PlayerStats(this.soloGamesCount, this.timeAverage, this.guessesAverage,
       this.timeRank, this.guessesRank, this.soloWorldRank, this.vsGamesCount,
-      this.vsWinRate, this.vsWorldRank
+      this.vsWinRate, this.vsWorldRank, this.vsGamesWon, this.vsGamesDraw,
+      this.vsGamesLost, this.vsPercentile, this.rating,
       );
 
   PlayerStats.blank();

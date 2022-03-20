@@ -1,9 +1,9 @@
-import 'dart:ui';
-
 import 'package:bulls_n_cows_reloaded/domain/firebase_auth_use_cases.dart';
 import 'package:bulls_n_cows_reloaded/shared/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../theme.dart';
 
 class AuthController extends FullLifeCycleController with FullLifeCycleMixin{
   static AuthController instance = Get.find();
@@ -35,11 +35,13 @@ class AuthController extends FullLifeCycleController with FullLifeCycleMixin{
   }
 
   Future<void> signInWithGoogle() async {
+    appController.isBusy = true;
     await _signInWithGoogle().then(
             (user) async {
           if (user != null) {
             await firestoreService.checkInGooglePlayer(user);
           }
+          appController.isBusy = false;
         }
     );
   }
@@ -88,7 +90,18 @@ class AuthController extends FullLifeCycleController with FullLifeCycleMixin{
   }
 
   Future<void> signOut() async {
-    await _signOut();
+    Get.defaultDialog(
+        title: 'press_confirm_to_logout'.tr,
+        middleText: '',
+        textConfirm: 'confirm'.tr,
+        textCancel: 'cancel'.tr,
+        backgroundColor: Colors.green.withOpacity(0.5),
+        buttonColor: originalColors.accentColor2,
+        cancelTextColor: originalColors.reverseTextColor,
+        confirmTextColor: originalColors.textColorLight,
+        onConfirm: () => _signOut(),
+    );
+
   }
 
   void listenToUserChanges() {

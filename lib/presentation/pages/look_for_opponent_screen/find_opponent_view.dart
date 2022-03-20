@@ -23,7 +23,7 @@ class FindOpponentView extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-              'Looking for opponent',
+            'looking_for_opponent'.tr,
             style: defaultTextStyle,
           ),
           const SizedBox(height: 20,),
@@ -32,20 +32,26 @@ class FindOpponentView extends StatelessWidget {
             children: [
               Hero(tag: 'home_pad',
                 child: Container(
-                  height: Get.height*0.45,
-                  width: Get.height*0.35,
-                  decoration: const BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(40.0)),
-                    image: DecorationImage(
-                      image: AssetImage('assets/images/key_pad_home.png'),
-                      fit: BoxFit.fill
-                    )
-                  ),
-                  // height: Get.height*0.5,
-                    child: ClipRRect(
-                      borderRadius: const BorderRadius.all(Radius.circular(45.0)),
-                        child: MatrixEffect(controller: Get.put(MatrixEffectController(), tag: 'find_opponent'))
-                    )
+                    height: Get.height*0.45,
+                    width: Get.height*0.35,
+                    decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(40.0)),
+                        image: DecorationImage(
+                            image: AssetImage('assets/images/key_pad_home.png'),
+                            fit: BoxFit.fill
+                        )
+                    ),
+                    child: Obx(() {
+                      return AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 700),
+                        child: controller.matrixVisible
+                            ? ClipRRect(
+                            borderRadius: const BorderRadius.all(Radius.circular(45.0)),
+                            child: MatrixEffect(controller: Get.put(MatrixEffectController(speedMillis: 500), tag: 'find_opponent',))
+                        )
+                        : const SizedBox.shrink(),
+                      );
+                    })
                 ),
               ),
               SizedBox(
@@ -55,7 +61,7 @@ class FindOpponentView extends StatelessWidget {
                   borderRadius: const BorderRadius.all(Radius.circular(50.0)),
                   child: BackdropFilter(
                       filter: ImageFilter.blur(
-                        sigmaX: 10.0, sigmaY: 10.0
+                          sigmaX: 10.0, sigmaY: 10.0
                       ),
                       child: Image.asset('assets/images/world_map.png',
                         fit: BoxFit.contain,)
@@ -63,31 +69,31 @@ class FindOpponentView extends StatelessWidget {
                 ),
               ),
               SizedBox(
-                height: Get.height*0.33,
+                  height: Get.height*0.33,
                   width: Get.height*0.33,
                   child: RadarWidget()),
             ],
           ),
           const SizedBox(height: 20,),
           StreamBuilder(
-            stream: firestoreService.appGeneralInfo(),
-            builder: (context, AsyncSnapshot snapshot) {
-              return snapshot.connectionState == ConnectionState.waiting
-              ? SpinKitThreeBounce(color: originalColors.accentColor2,)
-              : Column(
-                children: [
-                  Text(
-                    snapshot.data![appGlobalsOnLineCountFN].toString() + ' players',
-                    style: defaultTextStyle,
-                  ),
-                  const SizedBox(height: 6,),
-                  Text(
-                    snapshot.data![appGlobalsVersusGamesCountFN].toString() + ' games',
-                    style: defaultTextStyle,
-                  ),
-                ],
-              );
-            }
+              stream: firestoreService.appGeneralInfo(),
+              builder: (context, AsyncSnapshot snapshot) {
+                return snapshot.connectionState == ConnectionState.waiting
+                    ? SpinKitThreeBounce(color: originalColors.accentColor2,)
+                    : Column(
+                  children: [
+                    Text(
+                      snapshot.data![appGlobalsOnLineCountFN].toString() + '_players'.tr,
+                      style: defaultTextStyle,
+                    ),
+                    const SizedBox(height: 6,),
+                    Text(
+                      snapshot.data![appGlobalsVersusGamesCountFN].toString() + '_games'.tr,
+                      style: defaultTextStyle,
+                    ),
+                  ],
+                );
+              }
           ),
           const SizedBox(height: 40,),
           InkWell(

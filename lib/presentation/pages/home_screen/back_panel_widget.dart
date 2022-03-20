@@ -69,21 +69,7 @@ class BackPanelWidget extends StatelessWidget {
                   ),
                 ),
                 Expanded(flex: 8,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      InkWell(
-                        child: appController.backPanelOn
-                            ? Image.asset(
-                          'assets/images/power_button_on.png',)
-                            : Image.asset(
-                          'assets/images/power_button_off.png',),
-                        onTap: () => controller.togglePanelOnOff(),
-                      ),
-                      controller.sliderSwitch,
-                    ],
-                  ),
+                  child: Center(child: controller.sliderSwitch),
                 ),
                 Expanded(flex: 14,
                   child: Container(

@@ -1,12 +1,15 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:bulls_n_cows_reloaded/data/models/player.dart';
 import 'package:bulls_n_cows_reloaded/shared/text_styles.dart';
+import 'package:bulls_n_cows_reloaded/shared/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class PlayerAvatar extends StatelessWidget {
-  const PlayerAvatar({Key? key, required this.player,}) : super(key: key);
+  const PlayerAvatar({Key? key, required this.player, required this.isP1})
+      : super(key: key);
   final Player player;
+  final bool isP1;
 
   @override
   Widget build(BuildContext context) {
@@ -14,9 +17,15 @@ class PlayerAvatar extends StatelessWidget {
         color: Colors.transparent,
         child: Stack(
           children: [
-            Center(
-              child: Image.asset('assets/images/user_image_frame.png'),
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(30.0),
+                border: Border.all(color: isP1 ? Colors.white : originalColors.accentColor2!, width: 0.5,)
+              ),
             ),
+            // Center(
+            //   child: Image.asset('assets/images/user_image_frame.png'),
+            // ),
             Column(
               children: [
                 Expanded(flex: 80,

@@ -1,5 +1,6 @@
 import 'package:bulls_n_cows_reloaded/data/models/player.dart';
 import 'package:bulls_n_cows_reloaded/navigation/routes.dart';
+import 'package:bulls_n_cows_reloaded/presentation/widgets/matrix_effect/matrix_effect_controller.dart';
 import 'package:get/get.dart';
 
 import '../../../shared/constants.dart';
@@ -7,13 +8,16 @@ import '../../../shared/managers/versus_match_maker.dart';
 
 class FindOpponentController extends GetxController {
 
-  VersusMatchMaker handler = VersusMatchMaker();
+  VersusMatchMaker matchMaker = VersusMatchMaker();
+
+  final RxBool _matrixVisible = true.obs;
+  get matrixVisible => _matrixVisible.value;
 
   @override
   void onInit() {
     super.onInit();
     logger.i('called');
-    handler.onGameCreated((stream, gameReference, isPlayerOne) async {
+    matchMaker.onGameCreated((stream, gameReference, isPlayerOne) async {
       logger.i('Participating in game: $stream');
       Player? _opponentPlayer;
       Player? _playerOnePlayer;
@@ -53,10 +57,14 @@ class FindOpponentController extends GetxController {
             'playerTwoObject' : _playerTwoPlayer,
           });
     });
-    handler.makeMatch(playerId: appController.currentPlayer.id!);
+    matchMaker.makeMatch(playerId: appController.currentPlayer.id!);
+    Future.delayed(const Duration(seconds: 5), () {
+      _matrixVisible.value = false;
+      Get.delete<MatrixEffectController>(tag: 'find_opponent');
+    });
   }
 
   void onChallengeCanceled() {
-    handler.cancelChallenge();
+    matchMaker.cancelChallenge();
   }
 }

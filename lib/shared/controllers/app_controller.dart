@@ -1,16 +1,22 @@
 import 'dart:async';
-import 'dart:ui';
+
 import 'package:audioplayers/audioplayers.dart';
 import 'package:bulls_n_cows_reloaded/data/models/player.dart';
 import 'package:bulls_n_cows_reloaded/domain/players_use_cases.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
+
 import '../../navigation/routes.dart';
 import '../constants.dart';
+import '../theme.dart';
 
 class AppController extends GetxController {
+
+
   static AppController instance = Get.find();
 
   final FetchPlayerByIdUC _fetchPlayerById = FetchPlayerByIdUC();
@@ -113,6 +119,7 @@ class AppController extends GetxController {
         authService.signOut();
         return Player.empty();
       } else {
+        logger.i('Fetched player is: ${player.toJson()}');
         return player;
       }
     });
@@ -121,6 +128,14 @@ class AppController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    // final firebaseMessaging = FCM();
+    // firebaseMessaging.setNotifications();
+    if(currentPlayer.pushToken == null) {
+      FirebaseMessaging.instance.getToken().then((value) => {
+        firestoreService.updatePlayerToken(playerId: auth.currentUser!.uid, newToken: value!)
+      }
+      );
+    }
     checkInternet();
     firestoreService.reportOnline();
   }
@@ -137,16 +152,21 @@ class AppController extends GetxController {
     }
     logger.i('called when current user is $currentUser');
     if (currentUser == null) { //firs app run (or first run after last signed out)
-      logger.i('Current user is null, authState: $authState, first run: $isFirstRun, needLand: $needLand');
+      logger.i('Current: null, authState: $authState, first run: $isFirstRun, needLand: $needLand');
       if (authState != AuthState.signedOut) {
-        logger.i('just signed out');
+        logger.i('just signed out, isUpgrade: $isUpgrade');
         authState = AuthState.signedOut;
-        if(!appController.isUpgrade) {
+        if(!isUpgrade) {
           isFirstRun = true;
           logger.i('isFirstRun is now: $isFirstRun');
-          if (appController.needLand) Get.offAllNamed(Routes.landing);
+          if (needLand) {
+            logger.i('Moving to landing screen..');
+            Get.offAllNamed(Routes.landing);
+            isBusy = false;
+          } else {
+            firstSignIn();
+          }
         }
-        firstSignIn();
       } else {
         logger.i('called again for same auth event. ignoring...');
       }
@@ -160,6 +180,7 @@ class AppController extends GetxController {
           logger.i('Anonymous player should have been checked in in firestore. Taking user to homepage...');
           await Future.delayed(const Duration(seconds: 10));
           Get.offAllNamed(Routes.home);
+          appController.isBusy = false;
           //Player object will be refreshed there;
         } else { //App run from already signed anonymous user
           logger.i('App run from already signed anonymous user: ${currentUser.uid}, .. refreshing player object');
@@ -167,6 +188,7 @@ class AppController extends GetxController {
           await Future.delayed(const Duration(seconds: 6));
           logger.i('Taking anonymous user to Home page..');
           Get.offAllNamed(Routes.home);
+          appController.isBusy = false;
         }
       } else {
         logger.i('called again for same auth event. ignoring...');
@@ -186,6 +208,7 @@ class AppController extends GetxController {
           await Future.delayed(const Duration(seconds: 4));
           logger.i('Navigating to home page');
           Get.offAllNamed(Routes.home);
+          appController.isBusy = false;
         }
       } else {
         logger.i('called again for same auth event. ignoring...');
@@ -199,7 +222,6 @@ class AppController extends GetxController {
     logger.i('called');
     appController.isBusy = true;
     await authController.signInAnonymously();
-    appController.isBusy = false;
   }
 
   @override
@@ -209,7 +231,18 @@ class AppController extends GetxController {
   }
 
   quitApp() {
-    SystemNavigator.pop(animated: true);
+    Get.defaultDialog(
+        title: 'press_exit_to_leave_app'.tr,
+        middleText: '',
+        // middleText: 'press_exit_to_leave_app'.tr,
+        textConfirm: 'exit'.tr,
+        textCancel: 'cancel'.tr,
+        backgroundColor: Colors.green.withOpacity(0.5),
+        buttonColor: originalColors.accentColor2,
+        cancelTextColor: originalColors.reverseTextColor,
+        confirmTextColor: originalColors.textColorLight,
+        onConfirm: () => SystemNavigator.pop(animated: true)
+    );
   }
 
 }

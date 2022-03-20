@@ -9,25 +9,26 @@ import 'package:get/get.dart';
 class PlayerStatsController extends GetxController {
 
   late List<SoloGame>? myMatches;
+
+  final RxBool _isSyncing = false.obs;
+  set isSyncing(bool value) => _isSyncing.value = value;
+  bool get isSyncing => _isSyncing.value;
+
   final Rx<PlayerStats> _playerStats = PlayerStats.blank().obs;
   set playerStats(PlayerStats stats) => _playerStats.value = stats;
   PlayerStats get playerStats => _playerStats.value;
 
   final GetSoloGamesByIdUC _getSoloMatchesById = GetSoloGamesByIdUC();
-  // final GetPlayerTimeRankUC _getPlayerTimeRank = GetPlayerTimeRankUC();
-  // final GetPlayerGuessesRankUC _getPlayerGuessesRank = GetPlayerGuessesRankUC();
 
 
-  refreshStats(String playerId) async {
+  Future<void> refreshStats(String playerId) async {
     logger.i(
         'called with needUpdateSolo = ${appController.needUpdateSoloStats.value}, and needUpdateVs = ${appController.needUpdateVsStats.value}');
     int soloGamesCount = 0;
     double timeAverage = double.infinity;
     double guessesAverage = double.infinity;
-    int vsGamesCount = 0;
-    double vsWinRate = double.infinity;
-    int vsRank = 0;
     if (appController.needUpdateSoloStats.value) {
+      isSyncing = true;
       double sumOfTime = 0;
       int sumOfGuesses = 0;
       var soloGames = await _getSoloMatchesById(playerId);
@@ -44,9 +45,6 @@ class PlayerStatsController extends GetxController {
 
       await firestoreService.updatePlayerSoloAverages(playerId, timeAverage, guessesAverage);
 
-      // int timeRank = await _getPlayerTimeRank(playerId);
-      // int guessesRank = await _getPlayerGuessesRank(playerId);
-      // // int soloWorldRank = await firestoreService.getSoloWorldRank(playerId);
       Map<String, dynamic> soloRankings = await firestoreService.getSoloRankings(playerId);
 
       playerStats.soloGamesCount = soloGamesCount;
@@ -57,55 +55,88 @@ class PlayerStatsController extends GetxController {
       playerStats.soloWorldRank = soloRankings['worldRank'];
 
       _playerStats.update((val) { });
+      isSyncing = false;
     }
 
 
     if (appController.needUpdateVsStats.value) {
+      isSyncing = true;
       await getVsStats(playerId)
           .then((value) {
-        vsGamesCount = value['vsGamesCount'];
-        vsWinRate = value['vsWinRate'];
+        playerStats.vsGamesCount = value['vsGamesCount'];
+        playerStats.vsGamesWon = value['vsGamesWon'];
+        playerStats.vsGamesDraw = value['vsGamesDraw'];
+        playerStats.vsGamesLost = value['vsGamesLost'];
+        playerStats.vsWinRate = value['vsWinRate'];
+        playerStats.rating = value['rating'];
       });
+      await firestoreService.updatePlayerVsStats(
+          playerId: playerId,
+          winRate: playerStats.vsWinRate,
+          rating: playerStats.rating
+      );
 
-      await firestoreService.updatePlayerVsRate(playerId, vsWinRate);
-      vsRank = await firestoreService.getPlayerVsRank(playerId);
-      playerStats.vsGamesCount = vsGamesCount;
-      playerStats.vsWinRate = vsWinRate;
-      playerStats.vsWorldRank = vsRank;
+      await firestoreService.getPlayerRatingRank(playerId).then((value) {
+        playerStats.vsWorldRank = value['rank'];
+        playerStats.vsPercentile = value['percentile'];
+      });
       _playerStats.update((val) { });
+      isSyncing = false;
     }
-
     appController.needUpdateSoloStats.value = false;
     appController.needUpdateVsStats.value = false;
   }
 
   Future<Map<String, dynamic>> getVsStats(String playerId) async {
+    int sumOfOpsElo = 0;
     logger.i(
         'called with needUpdate = ${appController.needUpdateVsStats.value}');
     List<VersusGame> wherePlayer1 = await firestoreService.getVsGamesWherePlayer1(playerId);
+    for (var game in wherePlayer1) {
+      sumOfOpsElo += game.p2Rating;
+    }
     List<VersusGame> wherePlayer2 = await firestoreService.getVsGamesWherePlayer2(playerId);
+    for (var game in wherePlayer2) {
+      sumOfOpsElo += game.p1Rating;
+    }
     List<VersusGame> vsGames = <VersusGame>[];
     vsGames.addAll(wherePlayer1);
     vsGames.addAll(wherePlayer2);
     logger.i('VS Games found : ${vsGames.length}');
     int vsGamesCount = vsGames.length;
     int vsGamesWon = 0;
+    int vsGamesDraw = 0;
+    int vsGamesLost = 0;
+    int rating = 1500;
     double vsWinRate = double.infinity;
     if (vsGamesCount > 0) {
       for (var game in vsGames) {
-        if (game.winnerId == playerId) vsGamesWon ++;
+        if (game.winnerId == playerId) {
+          vsGamesWon ++;
+        } else if (game.winnerPlayer == WinnerPlayer.draw) {
+          vsGamesDraw ++;
+        } else {
+          vsGamesLost ++;
+        }
       }
       vsWinRate = vsGamesWon / vsGamesCount;
+      rating = (vsGamesWon*400 - vsGamesLost*400 + sumOfOpsElo) ~/ vsGamesCount;
+
     }
-    return {'vsGamesCount' : vsGamesCount, 'vsWinRate' : vsWinRate};
+    return {
+      'vsGamesCount' : vsGamesCount, 'vsGamesWon' : vsGamesWon,
+      'vsGamesDraw' : vsGamesDraw, 'vsGamesLost' : vsGamesLost,
+      'vsWinRate' : vsWinRate, 'rating': rating,
+    };
   }
 
   @override
   void onInit() async {
     super.onInit();
-    if (appController.needUpdateSoloStats.value || appController.needUpdateVsStats.value) await refreshStats(auth.currentUser!.uid);
-    ever(appController.needUpdateSoloStats, (value) async => await refreshStats(auth.currentUser!.uid));
-    ever(appController.needUpdateVsStats, (value) async => await refreshStats(auth.currentUser!.uid));
+    if (appController.needUpdateSoloStats.value ||
+        appController.needUpdateVsStats.value) {
+      await refreshStats(auth.currentUser!.uid);
+    }
   }
 
 }

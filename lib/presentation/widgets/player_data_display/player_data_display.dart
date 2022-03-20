@@ -7,10 +7,11 @@ import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 
 class PlayerDataDisplay extends StatelessWidget {
 
-  const PlayerDataDisplay({Key? key, required this.onAvatarTapped})
+  const PlayerDataDisplay({Key? key, required this.onAvatarTapped, required this.isP1})
       : super(key: key);
 
   final Function onAvatarTapped;
+  final bool isP1;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +28,7 @@ class PlayerDataDisplay extends StatelessWidget {
                       child: Hero(
                         tag: 'avatar',
                         child: appController.authState == AuthState.google
-                            ? PlayerAvatar(player: appController.currentPlayer)
+                            ? PlayerAvatar(player: appController.currentPlayer, isP1: isP1,)
                             : const GuestAvatar(),
                       )
                   );

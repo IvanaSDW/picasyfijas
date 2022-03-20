@@ -17,17 +17,20 @@ class HomeKeysWidget extends StatelessWidget {
       alignment: Alignment.center,
       children: [
         Hero(tag: 'home_pad',
-            child: Image.asset('assets/images/key_pad_home.png')
+            child: Image.asset('assets/images/key_pad_home.png', fit: BoxFit.fill,)
         ),
-        Container(
-            alignment: Alignment.center,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                SoloMatchButton(),
-                VersusMatchButton(),
-              ],
-            )
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+              alignment: Alignment.center,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  SoloMatchButton(),
+                  VersusMatchButton(),
+                ],
+              )
+          ),
         ),
       ],
     );

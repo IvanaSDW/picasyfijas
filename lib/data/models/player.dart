@@ -1,6 +1,4 @@
 
-import 'dart:ui';
-
 import 'package:bulls_n_cows_reloaded/shared/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -16,6 +14,8 @@ class Player {
   double? soloGuessesAverage;
   String? countryCode;
   bool? isOnline;
+  String? pushToken;
+  int? rating;
 
 
   Player({
@@ -29,6 +29,8 @@ class Player {
     required this.soloGuessesAverage,
     required this.countryCode,
     required this.isOnline,
+    required this.pushToken,
+    required this.rating,
   });
 
   Player.empty();
@@ -41,8 +43,12 @@ class Player {
     playerGoogleAvatarFN: photoUrl,
     playerIsNewPlayerFN: isNewPlayer,
     playerCreatedAtFN: createdAt,
+    playerGuessesAverageFN: soloGuessesAverage,
+    playerTimeAverageFN: soloTimeAverage,
     playerCountryCodeFN: countryCode,
     playerIsOnlineFN: isOnline,
+    playerPushTokenFN: pushToken,
+    playerRatingFN: rating,
   };
 
   factory Player.fromJson(Map<String, dynamic> json) => Player(
@@ -52,10 +58,12 @@ class Player {
     photoUrl: json[playerGoogleAvatarFN],
     isNewPlayer: json[playerIsNewPlayerFN],
     createdAt: (json[playerCreatedAtFN] as Timestamp).toDate(),
-    soloGuessesAverage: json[playerGuessesAverageFN],
-    soloTimeAverage: json[playerTimeAverageFN],
+    soloGuessesAverage: double.parse(json[playerGuessesAverageFN].toString()),
+    soloTimeAverage: double.parse(json[playerTimeAverageFN].toString()),
     countryCode: json[playerCountryCodeFN],
     isOnline: json[playerIsOnlineFN],
+    pushToken: json[playerPushTokenFN],
+    rating: json[playerRatingFN],
   );
 
 }

@@ -11,7 +11,7 @@ class AnonymousSignInButton extends StatelessWidget {
   void onTapAction() async {
     appController.isBusy = true;
     await authController.signInAnonymously();
-    appController.isBusy = false;
+    // appController.isBusy = false;
   }
 
   @override

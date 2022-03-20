@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'back_panel_widget.dart';
-import 'front_panel.dart';
+import 'front_panel_widget.dart';
 import 'home_controller.dart';
 
 class HomeView extends StatelessWidget {

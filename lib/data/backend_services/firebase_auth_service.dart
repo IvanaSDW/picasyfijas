@@ -101,6 +101,8 @@ class FirebaseAuthService {
     logger.i('called');
     appController.isBusy = true;
     appController.needLand = true;
+    appController.isUpgrade = false;
+    appController.resetState();
     if (auth.currentUser!.isAnonymous) {
       firestoreService.deletePlayer(auth.currentUser!.uid);
       await removeUserAccount(auth.currentUser!);
@@ -111,7 +113,6 @@ class FirebaseAuthService {
     } on PlatformException catch (e) {
       logger.e('Error signing out: ${e.toString()}');
     }
-
     appController.isBusy = false;
   }
 }

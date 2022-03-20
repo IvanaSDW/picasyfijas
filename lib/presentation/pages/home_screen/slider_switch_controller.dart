@@ -89,7 +89,6 @@ class SliderSwitchController extends GetxController {
 
   void openDrawer() {
     if (appController.drawerSlideValue < 1.0) {
-      // appController.playEffect('audio/monitor_turn_on.mp3');
       appController.playEffect('audio/door-open.wav');
       appController.drawerSlideValue = 1.0;
       sliderDuration = 1500;
@@ -101,7 +100,6 @@ class SliderSwitchController extends GetxController {
     logger.i('Called when drawerSlider value is: ${appController.drawerSlideValue}');
     if (appController.drawerSlideValue > 0.0) {
       appController.playEffect('audio/door-close.wav');
-      // appController.playEffect('audio/monitor_turn_off.mp3');
       appController.drawerSlideValue = 0.0;
       sliderDuration = 1000;
       sliderThumbX.value = 0;

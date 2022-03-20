@@ -78,12 +78,13 @@ class VersusGameResultWidget extends StatelessWidget {
                 ),
               ),
               Container(height: 16,),
-              Text(gameLogic.game.winByMode == WinByMode.opponentTimeUp ? '' : 'Time left: ${StopWatchTimer.getDisplayTime(
-                  gameLogic.iAmP1
-                      ? gameLogic.game.playerOneGame.moves.last.timeStampMillis
-                      : gameLogic.game.playerTwoGame.moves.last.timeStampMillis,
-                  hours: false, milliSecond: false,
-              )}',
+              Text(gameLogic.game.winByMode == WinByMode.opponentLeft || gameLogic.game.winByMode == WinByMode.opponentTimeUp? ''
+                   : 'time_left'.tr +  StopWatchTimer.getDisplayTime(
+                gameLogic.iAmP1
+                    ? gameLogic.game.playerOneGame.moves.last.timeStampMillis
+                    : gameLogic.game.playerTwoGame.moves.last.timeStampMillis,
+                hours: false, milliSecond: false,
+              ),
                 style: GoogleFonts.robotoMono(
                     textStyle: const TextStyle(
                         color: Colors.green,
@@ -91,7 +92,8 @@ class VersusGameResultWidget extends StatelessWidget {
                     )
                 ),
               ),
-              Text('Guesses: ${gameLogic.game.playerOneGame.moves.length}',
+              Text(gameLogic.game.winByMode == WinByMode.opponentLeft || gameLogic.game.winByMode == WinByMode.opponentTimeUp? ''
+                  : 'guesses'.tr + '${gameLogic.game.playerOneGame.moves.length}',
                 style: GoogleFonts.robotoMono(
                     textStyle: const TextStyle(
                         color: Colors.green,

@@ -7,6 +7,8 @@ class VersusGame {
   String playerTwoId;
   SoloGame playerOneGame;
   SoloGame playerTwoGame;
+  int p1Rating;
+  int p2Rating;
   VersusPlayer whoIsToMove;
   Timestamp createdAt;
   VersusGameStatus state;
@@ -21,6 +23,8 @@ class VersusGame {
     required this.playerTwoId,
     required this.playerOneGame,
     required this.playerTwoGame,
+    required this.p1Rating,
+    required this.p2Rating,
     required this.whoIsToMove,
     required this.createdAt,
     required this.state,
@@ -37,6 +41,8 @@ class VersusGame {
         playerTwoId: json[versusGamePlayerTwoIdFN],
         playerOneGame: SoloGame.fromData(json[versusGamePlayerOneMatchFN]),
         playerTwoGame: SoloGame.fromData(json[versusGamePlayerTwoMatchFN]),
+        p1Rating: json[vsGameP1RatingFN],
+        p2Rating: json[vsGameP1RatingFN],
         whoIsToMove: (json[versusGameWhoIsToMoveFN] as String).toPlayerToMove(),
         createdAt: json[versusGameCreatedAtFN],
         state: (json[versusGameStatusFN] as String).toMatchState(),
@@ -54,6 +60,8 @@ class VersusGame {
     versusGamePlayerTwoIdFN: playerTwoId,
     versusGamePlayerOneMatchFN: playerOneGame.toJson(),
     versusGamePlayerTwoMatchFN: playerTwoGame.toJson(),
+    vsGameP1RatingFN: p1Rating,
+    vsGameP2RatingFN: p2Rating,
     versusGameWhoIsToMoveFN: whoIsToMove.name,
     versusGameCreatedAtFN: createdAt,
     versusGameStatusFN: state.name,

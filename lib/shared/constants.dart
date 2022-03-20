@@ -37,6 +37,8 @@ const String playerGuessesAverageFN = 'guesses_average';
 const String playerVsModeWinRateFN = 'vs_mode_win_rate';
 const String playerCountryCodeFN = 'country_code';
 const String playerIsOnlineFN = 'is_online';
+const String playerPushTokenFN = 'push_token';
+const String playerRatingFN = 'rating';
 
 const String soloGamesTableName = 'solo_matches';
 const String soloGamePlayerIdFN = 'player_id';
@@ -57,6 +59,8 @@ const String versusGamePlayerOneIdFN = 'player_one_id';
 const String versusGamePlayerTwoIdFN = 'player_two_id';
 const String versusGamePlayerOneMatchFN = 'player_one_match';
 const String versusGamePlayerTwoMatchFN = 'player_two_match';
+const String vsGameP1RatingFN = 'p1_rating';
+const String vsGameP2RatingFN = 'p2_rating';
 const String versusGameWinnerIdFN = 'winner_id';
 const String versusGameWhoIsToMoveFN = 'player_to_move';
 const String versusGameCreatedAtFN = 'created_at';
@@ -65,8 +69,11 @@ const String versusGameWinnerPlayerFN = 'winner_player';
 const String versusGameWinByModeFN = 'winner_by_mode';
 const String versusGamePlayerOneFoundFN = 'player_one_found';
 const String versusGamePlayerTwoFoundFN = 'player_two_found';
+
 const String versusChallengesTableName = 'versus_challenges_queue';
 const String versusChallengeChallengerIdFN = 'player_one_id';
+const String vsChallengeP1RatingFN = 'p1_rating';
+const String vsChallengeP2RatingFN = 'p2_rating';
 const String versusChallengeOpponentIdFN = 'player_two_id';
 const String versusChallengeAssignedGameIdFN = 'assigned_match_id';
 const String versusChallengeCreatedAtFN = 'created_at';
@@ -77,4 +84,8 @@ const String appGlobalsOnLineCountFN = 'online_count';
 const String appGlobalsVersusGamesCountFN = 'vs_games_count';
 
 const int versusModeTimePresetMillis = 300000;
+const int playerPresetRating = 1500;
+
+const monthsEng = <String>[ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', ];
+const monthsSpa = <String>[ 'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic', ];
 

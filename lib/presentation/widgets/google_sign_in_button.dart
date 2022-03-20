@@ -6,6 +6,15 @@ class GoogleSignInButtonSquared extends StatelessWidget {
   const GoogleSignInButtonSquared({Key? key}) : super(key: key);
 
 
+  void onTapAction() async {
+    appController.isBusy = true;
+    appController.isUpgrade = false;
+    appController.needUpdateSoloStats.value = true;
+    appController.needUpdateVsStats.value = true;
+    appController.authState == AuthState.signedOut
+        ? await authController.signInWithGoogle()
+        : await authController.upgradeAnonymousToGoogle();
+  }
 
   @override
   Widget build(BuildContext context) {

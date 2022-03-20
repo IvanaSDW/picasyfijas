@@ -24,13 +24,13 @@ class SystemStatusView extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, left: 16.0, right: 16.0),
+              padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, left: 8.0, right: 8.0),
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Expanded(flex: 24, child: Container(height: 1,)),
+                    const Expanded(flex: 10, child: SizedBox.shrink(),),
                     Expanded(flex: 19,
                       child: Row(
                         children: [
@@ -45,9 +45,9 @@ class SystemStatusView extends StatelessWidget {
                               ),
                             ),
                           ),
-                          Expanded(flex: 60,
+                          Expanded(flex: 28,
                             child: AutoSizeText(
-                              appController.authState.toString(),
+                              appController.authState.toString().split('.').last,
                               textAlign: TextAlign.left,
                               style: TextStyle(
                                 color: originalColors.textColor3,
@@ -56,18 +56,9 @@ class SystemStatusView extends StatelessWidget {
                               ),
                             ),
                           ),
-                          const Expanded(flex: 8,
-                              child: Icon(Icons.settings)
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(flex: 19,
-                      child: Row(
-                        children: [
-                          Expanded(flex: 32,
+                          Expanded(flex: 24,
                             child: AutoSizeText(
-                              "Locale:",
+                              'locale'.tr,
                               style: TextStyle(
                                 color: originalColors.textColor2,
                                 fontSize: 18,
@@ -75,7 +66,7 @@ class SystemStatusView extends StatelessWidget {
                               ),
                             ),
                           ),
-                          Expanded(flex: 68,
+                          Expanded(flex: 16,
                             child: AutoSizeText(
                               "${Get.locale}",
                               style: TextStyle(
@@ -101,7 +92,7 @@ class SystemStatusView extends StatelessWidget {
                               ),
                             ),
                           ),
-                          Expanded(flex: 68,
+                          Expanded(flex: 28,
                             child: AutoSizeText(
                               "${appController.internetStatus}",
                               style: TextStyle(
@@ -111,13 +102,7 @@ class SystemStatusView extends StatelessWidget {
                               ),
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                    Expanded(flex: 19,
-                      child: Row(
-                        children: [
-                          Expanded(flex: 32,
+                          Expanded(flex: 24,
                             child: AutoSizeText(
                               'players_online'.tr,
                               style: TextStyle(
@@ -127,21 +112,21 @@ class SystemStatusView extends StatelessWidget {
                               ),
                             ),
                           ),
-                          Expanded(flex: 68,
+                          Expanded(flex: 16,
                             child: StreamBuilder(
-                              stream: firestoreService.appGeneralInfo(),
-                              builder: (context, AsyncSnapshot snapshot) {
-                                return snapshot.connectionState == ConnectionState.waiting
-                                ? SpinKitThreeBounce(color: originalColors.textColorLight,)
-                                : AutoSizeText(
-                                  snapshot.data![appGlobalsOnLineCountFN].toString(),
-                                  style: TextStyle(
-                                    color: originalColors.textColor3,
-                                    fontSize: 18,
-                                    fontFamily: 'Digital',
-                                  ),
-                                );
-                              }
+                                stream: firestoreService.appGeneralInfo(),
+                                builder: (context, AsyncSnapshot snapshot) {
+                                  return snapshot.connectionState == ConnectionState.waiting || !snapshot.hasData
+                                      ? SpinKitThreeBounce(color: originalColors.textColorLight, size: 20,)
+                                      : AutoSizeText(
+                                    snapshot.data![appGlobalsOnLineCountFN].toString(),
+                                    style: TextStyle(
+                                      color: originalColors.textColor3,
+                                      fontSize: 18,
+                                      fontFamily: 'Digital',
+                                    ),
+                                  );
+                                }
                             ),
                           ),
                         ],

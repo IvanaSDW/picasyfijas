@@ -1,5 +1,4 @@
 import 'package:bulls_n_cows_reloaded/shared/theme.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -57,17 +56,16 @@ final TextStyle screenDigitOffStyle = TextStyle(
     color: originalColors.screenTextOffColor,
     fontFamily: 'Digital',
     fontSize: 42);
-final TextStyle profilePlayerDataKeyStyle = GoogleFonts.abel(
-    textStyle: TextStyle(
-      fontFamily: 'Mainframe',
-      color: originalColors.textColor2,
-      fontSize: 18,
-    ));
-final TextStyle profilePlayerDataValueStyle = GoogleFonts.abel(
-    textStyle: TextStyle(
-      color: originalColors.textColor3,
-      fontSize: 18,
-    ));
+final TextStyle profilePlayerDataKeyStyle = TextStyle(
+  fontFamily: 'Digital',
+  color: originalColors.textColor2,
+  fontSize: 18,
+);
+final TextStyle profilePlayerDataValueStyle = TextStyle(
+  fontFamily: 'Digital',
+  color: originalColors.textColor3,
+  fontSize: 18,
+);
 final TextStyle profilePlayerStatsTitleKeyStyle = TextStyle(
   fontFamily: 'Digital',
   color: originalColors.accentColor2,
@@ -134,3 +132,12 @@ final TextStyle statsSubTitle = TextStyle(
 
 final TextStyle statsText =
 TextStyle(color: originalColors.textColor3, fontFamily: 'Mainframe');
+
+final TextStyle playerProfileAccentTitle =
+TextStyle(color: originalColors.accentColor2, fontFamily: 'Digital', fontSize: 18);
+
+const TextStyle profilePlayerWhiteTextStyle = TextStyle(
+  fontFamily: 'Digital',
+  color: Colors.white,
+  fontSize: 18,
+);

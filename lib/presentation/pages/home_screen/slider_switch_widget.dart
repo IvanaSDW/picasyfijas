@@ -1,7 +1,6 @@
 import 'package:bulls_n_cows_reloaded/presentation/pages/home_screen/slider_switch_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import '../../../shared/constants.dart';
 
 class SliderSwitch extends StatelessWidget {
   SliderSwitch({Key? key,}) : super(key: key);
@@ -15,9 +14,9 @@ class SliderSwitch extends StatelessWidget {
         children: [
           Container(
             key: controller.sliderTrackKey,
-            child: appController.backPanelOn
-                ? Image.asset('assets/images/slider_back.png')
-                : Image.asset('assets/images/slider_back.png'),
+            child: SizedBox(width: Get.width*0.36,
+                child: Image.asset('assets/images/slider_back.png', fit: BoxFit.fitHeight,)
+            ),
           ),
           Obx(() {
             return AnimatedPositioned(
@@ -35,11 +34,10 @@ class SliderSwitch extends StatelessWidget {
                     controller.onSliderDragStart(details),
                 child: Container(
                   key: controller.sliderThumbKey,
-                  child: appController.backPanelOn
-                      ? Image.asset(
-                      'assets/images/slider_thumb_on.png')
-                      : Image.asset(
-                      'assets/images/slider_thumb_off.png'),
+                  child: SizedBox(width: Get.width*0.18,
+                    child: Image.asset(
+                        'assets/images/slider_thumb_on.png', fit: BoxFit.fitHeight,),
+                  )
                 ),
               ),
             );
