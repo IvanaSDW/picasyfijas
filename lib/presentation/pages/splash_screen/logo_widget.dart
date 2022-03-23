@@ -20,7 +20,7 @@ class LogoWidget extends StatelessWidget {
           child: MatrixEffect(
               key: const ValueKey(1),
               controller: Get.put(MatrixEffectController(
-                  speedMillis: 100,
+                  speedMillis: 50,
                   colors: [
                     // Colors.transparent,
                     const Color(0x2022FF00),

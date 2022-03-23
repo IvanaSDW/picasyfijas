@@ -3,7 +3,7 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
    <application
-        android:label="Bulls n' Cows Reloaded"
+       android:label="@string/app_name"
         android:name="${applicationName}"
        android:usesCleartextTraffic="true"
         android:icon="@mipmap/ic_launcher">
@@ -41,6 +41,6 @@
             android:value="2" />
        <meta-data
            android:name="com.google.android.gms.ads.APPLICATION_ID"
-           android:value="ca-app-pub-3940256099942544~3347511713"/>
+           android:value="ca-app-pub-9780033679028237~3820673391"/>
     </application>
 </manifest>

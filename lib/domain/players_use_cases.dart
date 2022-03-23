@@ -11,17 +11,3 @@ class FetchPlayerByIdUC {
     return await _playersRepository.fetchPlayer(playerId);
   }
 }
-
-class GetPlayerTimeRankUC {
-  final PlayersRepository _playersRepository = Get.put(PlayersRepositoryImpl());
-  Future<int> call(String playerId) async {
-    return await _playersRepository.getPlayerTimeRank(playerId);
-  }
-}
-
-class GetPlayerGuessesRankUC {
-  final PlayersRepository _playersRepository = Get.put(PlayersRepositoryImpl());
-  Future<int> call(String playerId) async {
-    return await _playersRepository.getPlayerGuessesRank(playerId);
-  }
-}

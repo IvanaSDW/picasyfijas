@@ -108,11 +108,14 @@ class FirebaseAuthService {
       await removeUserAccount(auth.currentUser!);
     }
     try {
+      if(!auth.currentUser!.isAnonymous) await _googleSignIn.signOut();
       await auth.signOut();
       logger.i('Successfully signed out');
     } on PlatformException catch (e) {
       logger.e('Error signing out: ${e.toString()}');
+      appController.isBusy = false;
     }
     appController.isBusy = false;
   }
+
 }

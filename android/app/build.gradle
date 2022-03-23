@@ -26,15 +26,14 @@ apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 apply plugin: 'com.google.gms.google-services'
 
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('key.properties')
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
 android {
-    signingConfigs {
-        release {
-            storeFile file('E:\\SoftDevWorks\\keystores\\upload_key.jks')
-            storePassword 'ssapUpload'
-            keyAlias 'upload'
-            keyPassword 'ssapUpload'
-        }
-    }
+
     compileSdkVersion flutter.compileSdkVersion
 
     compileOptions {
@@ -52,18 +51,26 @@ android {
 
     defaultConfig {
         applicationId "com.ivana.sdw.bulls_n_cows_reloaded"
-        minSdkVersion flutter.minSdkVersion
-        targetSdkVersion flutter.targetSdkVersion
+        minSdkVersion 23
+        targetSdkVersion 32
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }
 
+    signingConfigs {
+        release {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
+            storePassword keystoreProperties['storePassword']
+        }
+    }
+
     buildTypes {
         release {
-            // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig signingConfigs.release
-//            shrinkResources false
-//            minifyEnabled false
+            minifyEnabled = true
+            shrinkResources = true
         }
         debug {
             signingConfig signingConfigs.debug

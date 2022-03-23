@@ -22,8 +22,6 @@ class PlayerStatsController extends GetxController {
 
 
   Future<void> refreshStats(String playerId) async {
-    logger.i(
-        'called with needUpdateSolo = ${appController.needUpdateSoloStats.value}, and needUpdateVs = ${appController.needUpdateVsStats.value}');
     int soloGamesCount = 0;
     double timeAverage = double.infinity;
     double guessesAverage = double.infinity;
@@ -32,7 +30,6 @@ class PlayerStatsController extends GetxController {
       double sumOfTime = 0;
       int sumOfGuesses = 0;
       var soloGames = await _getSoloMatchesById(playerId);
-      logger.i('Games count found : ${soloGames.length}');
       soloGamesCount = soloGames.length;
       if (soloGamesCount > 0) {
         for (var game in soloGames) {
@@ -89,8 +86,6 @@ class PlayerStatsController extends GetxController {
 
   Future<Map<String, dynamic>> getVsStats(String playerId) async {
     int sumOfOpsElo = 0;
-    logger.i(
-        'called with needUpdate = ${appController.needUpdateVsStats.value}');
     List<VersusGame> wherePlayer1 = await firestoreService.getVsGamesWherePlayer1(playerId);
     for (var game in wherePlayer1) {
       sumOfOpsElo += game.p2Rating;
@@ -102,7 +97,6 @@ class PlayerStatsController extends GetxController {
     List<VersusGame> vsGames = <VersusGame>[];
     vsGames.addAll(wherePlayer1);
     vsGames.addAll(wherePlayer2);
-    logger.i('VS Games found : ${vsGames.length}');
     int vsGamesCount = vsGames.length;
     int vsGamesWon = 0;
     int vsGamesDraw = 0;

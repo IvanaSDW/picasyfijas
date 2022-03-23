@@ -19,6 +19,9 @@ class AppController extends GetxController {
 
   static AppController instance = Get.find();
 
+  AudioPlayer? splashPlayer;
+  AudioCache? splashCache;
+
   final FetchPlayerByIdUC _fetchPlayerById = FetchPlayerByIdUC();
 
   final RxBool _needLand = false.obs;
@@ -92,11 +95,9 @@ class AppController extends GetxController {
       switch (status) {
         case InternetConnectionStatus.connected:
           internetStatus.value = 'connected'.tr;
-          logger.i('Internet status is: ${internetStatus.value}');
           break;
         case InternetConnectionStatus.disconnected:
           internetStatus.value = 'not_connected'.tr;
-          logger.i('Internet status is: ${internetStatus.value}');
           break;
       }
     });
@@ -109,17 +110,13 @@ class AppController extends GetxController {
   }
 
   Future<void> refreshPlayer() async {
-    logger.i('called');
     currentPlayer = await _fetchPlayerById(auth.currentUser!.uid)
         .then((player) {
       if (player == null) {
-        logger.wtf('Player may have been deleted from firestore. Exiting...');
-        // authState = AuthState.signedOut;
         needLand = true;
         authService.signOut();
         return Player.empty();
       } else {
-        logger.i('Fetched player is: ${player.toJson()}');
         return player;
       }
     });
@@ -128,8 +125,7 @@ class AppController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // final firebaseMessaging = FCM();
-    // firebaseMessaging.setNotifications();
+
     if(currentPlayer.pushToken == null) {
       FirebaseMessaging.instance.getToken().then((value) => {
         firestoreService.updatePlayerToken(playerId: auth.currentUser!.uid, newToken: value!)
@@ -137,12 +133,23 @@ class AppController extends GetxController {
       );
     }
     checkInternet();
-    firestoreService.reportOnline();
+    // firestoreService.reportOnline();
   }
 
   Future<AudioPlayer> playEffect(String fileName) async {
     AudioCache cache = AudioCache();
-    return await cache.play(fileName, volume: isMuted ? 0.0: volumeLevel);
+    return await cache.play(fileName, volume: isMuted ? 0.0: volumeLevel,);
+  }
+
+  void playSplashEffect(String fileName) async {
+    splashCache = AudioCache(fixedPlayer: splashPlayer);
+    splashPlayer = await splashCache?.play(fileName, volume: isMuted ? 0.0: volumeLevel,);
+  }
+
+  void stopSplashEffect() {
+    logger.i('called');
+    splashPlayer?.stop();
+    splashCache?.clearAll();
   }
 
   updateAuthState(User? currentUser) async {
@@ -150,17 +157,12 @@ class AppController extends GetxController {
       canUpdateAuthState = true;
       return;
     }
-    logger.i('called when current user is $currentUser');
     if (currentUser == null) { //firs app run (or first run after last signed out)
-      logger.i('Current: null, authState: $authState, first run: $isFirstRun, needLand: $needLand');
       if (authState != AuthState.signedOut) {
-        logger.i('just signed out, isUpgrade: $isUpgrade');
         authState = AuthState.signedOut;
         if(!isUpgrade) {
           isFirstRun = true;
-          logger.i('isFirstRun is now: $isFirstRun');
           if (needLand) {
-            logger.i('Moving to landing screen..');
             Get.offAllNamed(Routes.landing);
             isBusy = false;
           } else {
@@ -168,10 +170,8 @@ class AppController extends GetxController {
           }
         }
       } else {
-        logger.i('called again for same auth event. ignoring...');
       }
     } else if (currentUser.isAnonymous) {
-      logger.i('authState is: ${authState.toString().split('.').last}');
       if (authState != AuthState.anonymous) {
         authState = AuthState.anonymous;
         logger.i('authState is now: $authState, isFirstRun: $isFirstRun');
@@ -195,31 +195,24 @@ class AppController extends GetxController {
       }
     } else //User is not anonymous
     if (currentUser.providerData.first.providerId == 'google.com'){ //User is signed in with Google account
-      logger.i('User is signed in with Google');
       if (authState != AuthState.google) {
         authState = AuthState.google;
         await Future.delayed(const Duration(seconds: 3));
         if (isUpgrade) { //Just signed with Google from previous anonymous account
           await refreshPlayer();
-          logger.i('Just upgraded to Google user... should change player avatar');
         } else { //App run from already signed google user
-          logger.i('App run from already signed google user.. refreshing player object...');
           await refreshPlayer();
           await Future.delayed(const Duration(seconds: 4));
-          logger.i('Navigating to home page');
           Get.offAllNamed(Routes.home);
           appController.isBusy = false;
         }
       } else {
-        logger.i('called again for same auth event. ignoring...');
       }
     } else { //User is not anonymous nor google. Death end.
-      logger.i('Could not check sign in method');
     }
   }
 
   void firstSignIn() async {
-    logger.i('called');
     appController.isBusy = true;
     await authController.signInAnonymously();
   }

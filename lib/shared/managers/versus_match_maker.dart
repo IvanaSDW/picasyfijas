@@ -71,9 +71,7 @@ class VersusMatchMaker {
       postedChallengeReference = event.reference;
       VersusGameChallenge? challenge = event.data();
       if( challenge != null) {
-        logger.i('received challenge update: ${challenge.toJson()}');
         if(challenge.playerTwoId != null) {
-          logger.i('Challenge accepted, we are player 1, creating game...');
           _postedChallengeStream.cancel();
           await _createGame(challenge: challenge)
               .then((value) async {
@@ -83,17 +81,14 @@ class VersusMatchMaker {
           });
         }
       } else {
-        logger.i('Received a null snapshot from challenge subscription');
         Get.snackbar('Game canceled', 'game was canceled', backgroundColor: Colors.green);
         Future.delayed(const Duration(milliseconds: 1000), () => Get.back(closeOverlays: true));
       }
     });
-    logger.i('Listening to posted challenge : ${reference.id}');
   }
 
 
   Future<DocumentReference<VersusGame>> _createGame({required VersusGameChallenge challenge}) async {
-    logger.i('called');
     VersusGame newGame = VersusGame(
         playerOneId: challenge.playerOneId,
         playerTwoId: challenge.playerTwoId!,
@@ -164,19 +159,16 @@ class VersusMatchMaker {
       acceptedChallengeReference.delete();
     } catch (e) {
       error = e;
-      logger.e('error deleting accepted challenge from queue: $e');
     }
     try {
       postedChallengeReference.delete();
       error = null;
     } catch (e) {
       error = e;
-      logger.e('error deleting posted challenge from queue: $e');
     }
     if (error != null) {
       Get.back();
     } else {
-      logger.i('Removing game from gameCount in firestore...');
       firestoreService.removeVsGameFromCount();
     }
   }

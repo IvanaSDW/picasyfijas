@@ -10,8 +10,7 @@ final TextStyle reverseTitleTextStyle = TextStyle(
     fontFamily: 'Mainframe');
 final TextStyle defaultTextStyle = TextStyle(
     color: originalColors.textColor3, fontSize: 16, fontFamily: 'Mainframe');
-final TextStyle alternateTextStyle = TextStyle(
-    color: originalColors.textColor3, fontSize: 16, fontFamily: 'Digital');
+
 final TextStyle textButtonStyle = TextStyle(
   color: originalColors.mainTitleColor,
   fontSize: 16,
@@ -32,30 +31,26 @@ final TextStyle exampleNumberStyleSmallLight = TextStyle(
   fontSize: 24,
   fontFamily: 'Digital',
 );
-final TextStyle exampleNumberStyleSmallAccent = TextStyle(
-  color: originalColors.accentColor1,
-  fontSize: 24,
-  fontFamily: 'Digital',
-);
-final TextStyle robotoMono20 =
-GoogleFonts.robotoMono(fontSize: 20, color: originalColors.textColor2);
-final TextStyle userNameStyle =
-TextStyle(color: originalColors.textColorLight, fontFamily: 'Mainframe');
+
 final TextStyle numberKeyOnStyle = TextStyle(
     color: originalColors.keyOnColor,
     fontFamily: 'Digital', fontSize: 42
 );
+
 final TextStyle numberKeyOffStyle = TextStyle(
     color: originalColors.keyOffColor, fontFamily: 'Digital', fontSize: 42);
+
 final TextStyle screenDigitOnStyle = TextStyle(
     color: originalColors.screenTextOnColor,
     fontFamily: 'Digital',
     fontSize: 42);
+
 final TextStyle screenDigitOffStyle = TextStyle(
   // color: const Color(0xFF6E7261),
     color: originalColors.screenTextOffColor,
     fontFamily: 'Digital',
     fontSize: 42);
+
 final TextStyle profilePlayerDataKeyStyle = TextStyle(
   fontFamily: 'Digital',
   color: originalColors.textColor2,
@@ -66,37 +61,25 @@ final TextStyle profilePlayerDataValueStyle = TextStyle(
   color: originalColors.textColor3,
   fontSize: 18,
 );
-final TextStyle profilePlayerStatsTitleKeyStyle = TextStyle(
-  fontFamily: 'Digital',
-  color: originalColors.accentColor2,
-  fontSize: 19,
-);
+
 final TextStyle profilePlayerStatsSubTitleKeyStyle = TextStyle(
   fontFamily: 'Digital',
   color: originalColors.textColorLight,
   fontSize: 19,
 );
-final TextStyle profilePlayerStatsValueStyle = TextStyle(
-  fontFamily: 'Mainframe',
-  color: originalColors.textColorLight,
-  fontSize: 17,
-);
-
-final TextStyle playerNameProfileStyle = TextStyle(
-    color: originalColors.textColorLight,
-    fontFamily: 'Mainframe',
-    fontSize: 19);
 
 final resultTextStyle = GoogleFonts.robotoMono(
     textStyle: TextStyle(
       color: originalColors.textColor3,
       fontSize: 24,
     ));
+
 final guessTextStyle = GoogleFonts.robotoMono(
     textStyle: TextStyle(
       color: originalColors.textColor1,
       fontSize: 24,
     ));
+
 final correctGuessStyle = GoogleFonts.robotoMono(
     textStyle: TextStyle(
         color: originalColors.correctGuessColor,
@@ -108,16 +91,19 @@ final resultTextStyleVersus = GoogleFonts.robotoMono(
       color: originalColors.textColor3,
       fontSize: 21,
     ));
+
 final guessTextStyleVersusPlayer1 = GoogleFonts.robotoMono(
     textStyle: TextStyle(
       color: originalColors.textColor1,
       fontSize: 21,
     ));
+
 final guessTextStyleVersusPlayer2 = GoogleFonts.robotoMono(
     textStyle: TextStyle(
       color: originalColors.textColor1,
       fontSize: 21,
     ));
+
 final correctGuessStyleVersus = GoogleFonts.robotoMono(
     textStyle: TextStyle(
         color: originalColors.correctGuessColor,

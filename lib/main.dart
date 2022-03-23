@@ -36,6 +36,7 @@ Future<void> main() async {
   }
   MobileAds.instance.initialize();
   await CountryCodes.init();
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   runApp(const MyApp());
 }
 
@@ -80,17 +81,14 @@ class Init {
     Get.put(AuthController(), permanent: true);
     Get.put(AppController(), permanent: true);
     do {
-      logger.i('waiting controllers to be put...');
-      logger.i('FirestoreService: ${Get.isRegistered<FirestoreService>()} - '
-          'FirebaseAuthService: ${Get.isRegistered<FirebaseAuthService>()} - '
-          'AuthController: ${Get.isRegistered<AuthController>()} - '
-          'AppController: ${Get.isRegistered<AppController>()}');
+
     } while (
     !Get.isRegistered<FirestoreService>() ||
         !Get.isRegistered<FirebaseAuthService>() ||
         !Get.isRegistered<AuthController>() ||
         !Get.isRegistered<AppController>()
     );
+    appController.playSplashEffect('audio/matrix_sound.mp3');
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
     await flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
@@ -161,7 +159,6 @@ class Init {
   }
 
   void checkForInitialMessage() async {
-    logger.i('called');
     RemoteMessage? message =
     await FirebaseMessaging.instance.getInitialMessage();
     if (message != null) {

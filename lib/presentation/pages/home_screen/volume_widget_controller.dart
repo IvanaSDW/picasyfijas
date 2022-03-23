@@ -37,16 +37,13 @@ class VolumeWidgetController extends GetxController {
   }
 
   void onVolumeDragging(DragUpdateDetails details) {
-    logger.i('called');
     double newDx = thumbX.value! + details.primaryDelta!;
     if (minThumbX <= newDx && newDx <= maxThumbX && appController.backPanelOn) {
       thumbX.value = newDx;
       appController.volumeLevel = (thumbX.value! - minThumbX) / volInterval;
-      logger.i('thumb position: ${thumbX.value}, Volume: ${appController.volumeLevel}');
     }
   }
   void onVolumeDragEnd(DragEndDetails details) {
-    logger.i('called');
     // HapticFeedback.lightImpact();
   }
 
@@ -56,7 +53,6 @@ class VolumeWidgetController extends GetxController {
     maxThumbX = 0;
     minThumbX = -thumbWidth*0.72;
     volInterval = maxThumbX - minThumbX;
-    logger.i('Thumb width: $thumbWidth, Track width: $trackWidth');
   }
 
 }

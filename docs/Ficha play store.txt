@@ -1,0 +1,10 @@
+Descripción breve:
+Descifra el número secreto de tu oponente antes que descifren el tuyo.
+
+Descripción completa:
+Presentamos el juego clásico y amado por muchos: "Picas y Fijas", tambien conocido en al gunos lugares como Picas y Palas, Picas y Famas, o en inglés como Bulls and Cows. Es un juego realmente recomendado para desarrollar en los jóvenes la habilidades de análisis y deducción lógica, así como para el ejercicio del cerebro en todas las edades, ayudando a mantenerlo activo y saludable.
+La esencia del juego es descifrar un número de 4 cifras, para lo cual el jugador realiza intentos y por cada uno de ellos recibe pistas en forma de  picas (digitos que estan en el numero secreto pero no en la posición correcta) y fijas (digitos que estan en el número secreto pero además en la posición correcta).
+Puedes jugar en modo "Solo", es decir adivinando un número generado por el sistema, o mejor aun jugar contra un oponente, ya sea de tus amigos o de cualquier lugar del mundo.
+El juego te ofrece además detallado de tu desempeño como jugador, mostrándote estadísticas minuciosas y un ranking mundial de jugadores.
+Encontrarás una agradable interfáz gráfica inspirada en la saga Matrix.
+Es la primera versión de nuestra serie "Resurrecciones", en la que te seguiremos trayendo los juegos clásicos de los años 80 y 90.

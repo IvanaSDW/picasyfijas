@@ -16,9 +16,7 @@ class FindOpponentController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    logger.i('called');
     matchMaker.onGameCreated((stream, gameReference, isPlayerOne) async {
-      logger.i('Participating in game: $stream');
       Player? _opponentPlayer;
       Player? _playerOnePlayer;
       Player? _playerTwoPlayer;

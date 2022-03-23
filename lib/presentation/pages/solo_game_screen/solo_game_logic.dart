@@ -53,7 +53,6 @@ class SoloGameLogic extends GetxController {
       moves: <GameMove>[],
       createdAt: Timestamp.now(),
     ).obs;
-    logger.i('Secret number: ${match.secretNum!.toJson()}');
     _keyboard.onNewInput((newInput) => onNewGuess(newInput));
   }
 
@@ -78,7 +77,6 @@ class SoloGameLogic extends GetxController {
   }
 
   void scrollToLastItem() {
-    logger.i('Scrolling to last item...');
     scrollController.animateTo(scrollController.position.maxScrollExtent,
         duration: const Duration(milliseconds: 400), curve: Curves.easeInOut);
     needsScrollToLast = false;
@@ -89,9 +87,7 @@ class SoloGameLogic extends GetxController {
   }
 
   void onNewGuess(FourDigits guess) {
-    logger.i('onNewGuess-> called with guess: ${guess.toJson()}');
     DigitMatchResult guessResult = getMatchResult(match.secretNum!, guess);
-    logger.i('Match result: ${guessResult.toJson()}');
     GameMove newMove = GameMove(
         guess: guess,
         moveResult: guessResult,

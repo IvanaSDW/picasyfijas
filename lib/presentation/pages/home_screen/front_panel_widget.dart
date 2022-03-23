@@ -1,19 +1,16 @@
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:bulls_n_cows_reloaded/presentation/pages/home_screen/ad_area_painter.dart';
-import 'package:bulls_n_cows_reloaded/shared/constants.dart';
 import 'package:bulls_n_cows_reloaded/presentation/widgets/player_data_display/player_data_display.dart';
 import 'package:bulls_n_cows_reloaded/presentation/widgets/system_status_widget.dart';
-import 'package:bulls_n_cows_reloaded/presentation/widgets/matrix_effect/matrix_effect.dart';
+import 'package:bulls_n_cows_reloaded/shared/constants.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import '../../widgets/matrix_effect/matrix_effect_controller.dart';
 import 'front_panel_clipper.dart';
 import 'front_panel_painter.dart';
-import 'quit_button.dart';
 import 'home_controller.dart';
 import 'home_keys_widget.dart';
 
@@ -51,7 +48,7 @@ class FrontPanelWidget extends StatelessWidget {
                       Expanded(
                           flex: 51,
                           child: Padding(
-                            padding: const EdgeInsets.all(70.0),
+                            padding: EdgeInsets.symmetric(vertical: 70.0, horizontal: Get.width*0.2),
                             child: AbsorbPointer(
                               absorbing: appController.isBusy,
                               child: HomeKeysWidget(controller: controller),
@@ -134,24 +131,6 @@ class FrontPanelWidget extends StatelessWidget {
               ),
             ),
           ),
-        ),
-      ],
-    );
-  }
-}
-
-class QuitWidget extends StatelessWidget {
-  const QuitWidget({Key? key,}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        MatrixEffect(controller: Get.put(MatrixEffectController(), tag: 'front_panel')),
-        Center(
-            child: QuitButton(
-                onTapAction: () => appController.quitApp()
-            )
         ),
       ],
     );

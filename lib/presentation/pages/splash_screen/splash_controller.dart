@@ -1,5 +1,6 @@
 
 import 'package:bulls_n_cows_reloaded/presentation/widgets/matrix_effect/matrix_effect_controller.dart';
+import 'package:bulls_n_cows_reloaded/shared/constants.dart';
 import 'package:get/get.dart';
 
 class SplashController extends GetxController {
@@ -14,7 +15,7 @@ class SplashController extends GetxController {
       hideBackground.value = true;
       Get.delete<MatrixEffectController>(tag: 'splash');
     });
-    Future.delayed(const Duration(milliseconds: 4000), () => showLogo.value = true);
+    Future.delayed(const Duration(milliseconds: 2000), () => showLogo.value = true);
   }
 
 }

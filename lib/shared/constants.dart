@@ -1,6 +1,5 @@
 import 'package:bulls_n_cows_reloaded/data/backend_services/firebase_auth_service.dart';
 import 'package:bulls_n_cows_reloaded/data/backend_services/firestore_service.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:logger/logger.dart';
 
@@ -22,7 +21,6 @@ final FirebaseAuthService authService = FirebaseAuthService.instance;
 
 final Logger logger = Logger();
 FirebaseAuth auth = FirebaseAuth.instance;
-FirebaseFirestore firestore = FirebaseFirestore.instance;
 
 const String playersTableName = 'players';
 const String playerIdFN = 'id';
@@ -50,7 +48,6 @@ const String moveGuessFN = 'guess';
 const String moveResultFN = 'move_result';
 const String moveTimeStamp = 'timestamp';
 
-const String moveDigitsFN = 'digits';
 const String resultBullsFN = 'bulls';
 const String resultCowsFN = 'cows';
 

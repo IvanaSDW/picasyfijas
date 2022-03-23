@@ -96,7 +96,6 @@ class NumericKeyboardController extends GetxController {
 
   void onEnterTapped() {
     appController.playEffect('audio/beep-21.wav');
-    logger.i('Current numTyped is: $numberTyped');
     if (_onNewInput != null) _onNewInput!(stringToFourDigits(numberTyped));
     resetKeyboard();
   }

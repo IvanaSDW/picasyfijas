@@ -115,7 +115,6 @@ class AuthController extends FullLifeCycleController with FullLifeCycleMixin{
   void listenToAuthStateChanges() { //App entry point
     auth.authStateChanges()
         .listen((User? user) {
-      logger.i('AuthStateChanges event occurred... canUpdate is ${appController.canUpdateAuthState}');
       appController.updateAuthState(user);
     });
   }
@@ -153,12 +152,12 @@ class AuthController extends FullLifeCycleController with FullLifeCycleMixin{
   @override
   void onPaused() async {
     logger.i('App lifecycle state changed to paused');
-    await firestoreService.reportOffline();
+    // await firestoreService.reportOffline();
   }
 
   @override
   void onResumed() {
     logger.i('App lifecycle state changed to resumed');
-    firestoreService.reportOnline();
+    // firestoreService.reportOnline();
   }
 }

@@ -1,11 +1,15 @@
 import 'dart:async';
 import 'dart:convert';
+
 import 'package:bulls_n_cows_reloaded/shared/chronometer.dart';
 import 'package:bulls_n_cows_reloaded/shared/theme.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+
+import '../../../data/ad_helper.dart';
 import '../../../data/models/digit_match_result.dart';
 import '../../../data/models/four_digits.dart';
 import '../../../data/models/game_move.dart';
@@ -20,6 +24,11 @@ import '../../widgets/numeric_keyboard/numeric_keyboard_controller.dart';
 
 class VersusGameLogic extends GetxController {
   final NumericKeyboardController _keyboard = Get.put(NumericKeyboardController());
+
+  //Ads logic
+  InterstitialAd? _interstitialAd;
+  static const int maxFailedLoadAttempts = 3;
+  int _interstitialLoadAttempts = 0;
 
   bool _gameIsInitialized = false;
 
@@ -124,6 +133,7 @@ class VersusGameLogic extends GetxController {
     } else {
       ever(appController.p2TimeIsUp, (bool value) => onMyTimeIsUp(value));
     }
+    _createInterstitialAd();
   }
 
   final RxDouble progressValue = 0.0.obs;
@@ -367,6 +377,7 @@ class VersusGameLogic extends GetxController {
   }
 
   void onContinuePressed() {
+    _showInterstitialAd();
     Get.back();
   }
 
@@ -565,10 +576,47 @@ class VersusGameLogic extends GetxController {
     Get.back(closeOverlays: true);
   }
 
+  void _createInterstitialAd() {
+    InterstitialAd.load(
+      adUnitId: AdHelper.afterVersusGameInterstitialAdUnitId,
+      request: const AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (InterstitialAd ad) {
+          _interstitialLoadAttempts = 0;
+          _interstitialAd = ad;
+        },
+        onAdFailedToLoad: (LoadAdError error) {
+          _interstitialLoadAttempts += 1;
+          _interstitialAd = null;
+          if (_interstitialLoadAttempts <= maxFailedLoadAttempts) {
+            _createInterstitialAd();
+          }
+        },
+      ),
+    );
+  }
+
+  void _showInterstitialAd() {
+    if (_interstitialAd != null) {
+      _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
+        onAdDismissedFullScreenContent: (InterstitialAd ad) {
+          ad.dispose();
+          _createInterstitialAd();
+        },
+        onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
+          ad.dispose();
+          _createInterstitialAd();
+        },
+      );
+      _interstitialAd!.show();
+    }
+  }
+
   @override
   void dispose() {
     super.dispose();
     gameStateListener.cancel();
+    _interstitialAd?.dispose();
   }
 
   @override

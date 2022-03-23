@@ -4,7 +4,6 @@ import 'package:bulls_n_cows_reloaded/shared/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
-
 import '../../../shared/theme.dart';
 
 class BackPanelMenu extends StatelessWidget {
@@ -32,7 +31,7 @@ class BackPanelMenu extends StatelessWidget {
                   onTap: () => Get.find<BackPanelController>().onProfileMenuPressed(),
                   leading: Icon(Icons.person, color: iconColor,),
                   title: Text('profile'.tr,
-                    style: TextStyle(color: menuTextColor, fontFamily: 'Mainframe'),
+                    style: TextStyle(color: menuTextColor, fontFamily: 'Mainframe', fontSize: 13),
                   ),
                 ),
                 ListTile(
@@ -45,7 +44,7 @@ class BackPanelMenu extends StatelessWidget {
                       : Icon(Icons.sync_outlined, color: appController.needUpdateVsStats.value || appController.needUpdateSoloStats.value
                       ? iconColor : originalColors.reverseTextColor,),
                   title: Text('refresh_stats'.tr,
-                    style: TextStyle(fontFamily: 'Mainframe',
+                    style: TextStyle(fontFamily: 'Mainframe', fontSize: 13,
                         color: appController.needUpdateVsStats.value || appController.needUpdateSoloStats.value
                         ? menuTextColor : originalColors.reverseTextColor),),
                 ),
@@ -57,7 +56,7 @@ class BackPanelMenu extends StatelessWidget {
                   leading: Icon(Icons.logout, color: appController.authState == AuthState.anonymous ? Colors.black45 : iconColor,),
                   title: Text(
                     'logout'.tr,
-                    style: TextStyle(fontFamily: 'Mainframe',
+                    style: TextStyle(fontFamily: 'Mainframe', fontSize: 13,
                       color: appController.authState == AuthState.anonymous ? Colors.black45 : menuTextColor,
                     ),
                   ),

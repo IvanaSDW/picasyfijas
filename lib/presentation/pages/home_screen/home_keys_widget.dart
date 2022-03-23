@@ -13,26 +13,21 @@ class HomeKeysWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        Hero(tag: 'home_pad',
-            child: Image.asset('assets/images/key_pad_home.png', fit: BoxFit.fill,)
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 32.0),
+        alignment: Alignment.center,
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/key_pad_home.png',)
+          )
         ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Container(
-              alignment: Alignment.center,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  SoloMatchButton(),
-                  VersusMatchButton(),
-                ],
-              )
-          ),
-        ),
-      ],
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            SoloMatchButton(),
+            VersusMatchButton(),
+          ],
+        )
     );
   }
 }

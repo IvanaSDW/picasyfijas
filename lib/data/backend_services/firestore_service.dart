@@ -152,7 +152,6 @@ class FirestoreService {
       double timeAverage,
       double guessesAverage,
       ) async {
-    logger.i('called');
     await players.doc(playerId).update({
       playerTimeAverageFN: timeAverage,
       playerGuessesAverageFN: guessesAverage,
@@ -165,7 +164,6 @@ class FirestoreService {
     required double winRate,
     required int rating,
   }) async {
-    logger.i('called');
     await players.doc(playerId).update({
       playerVsModeWinRateFN: winRate,
       playerRatingFN: rating,
@@ -176,7 +174,6 @@ class FirestoreService {
     required String playerId,
     required String newToken,
   }) async {
-    logger.i('called');
     await players.doc(playerId).update({
       playerPushTokenFN: newToken,
       'tokenTimeStamp': DateTime.now(),
@@ -185,7 +182,6 @@ class FirestoreService {
 
 
   Future<Player?> fetchPlayer(String playerId) async {
-    logger.i('called for user with id: $playerId');
     final fetchedPlayer = players
         .doc(playerId)
         .withConverter<Player>(
@@ -223,7 +219,6 @@ class FirestoreService {
   }
 
   Future<Map<String, dynamic>> getSoloRankings(String playerId) async {
-    logger.i('called');
     int timeRank = 0;
     int guessRank = 0;
     int worldRank = 0;
@@ -241,7 +236,6 @@ class FirestoreService {
       wholeRank.add({'playerId' : player.id, 'timeRank' : timeRank, 'guessRank' : guessRank, 'sumOfRank' : sumOfRank});
     }
     wholeRank.sort((a, b) => a['sumOfRank'].compareTo(b['sumOfRank']));
-    logger.i('World rank: ${wholeRank.toString()}');
     timeRank = orderedByTime.indexWhere((element) => element.id == playerId) + 1;
     guessRank = orderedByGuesses.indexWhere((element) => element.id == playerId) + 1;
     worldRank = wholeRank.indexWhere((element) => element['playerId'] == playerId) + 1;
@@ -254,11 +248,9 @@ class FirestoreService {
   }
 
   Future<Map<String, dynamic>> getPlayerRatingRank(String playerId) async {
-    logger.i('called');
     List<Player> orderedByRating = await playersByRatingQuery()
         .get()
         .then((value) => value.docs.map((e) => e.data()).toList());
-    logger.i('byRating: ${orderedByRating.length}');
     int rankIndex = orderedByRating.indexWhere((player) => player.id == playerId) + 1;
     double percentile = (orderedByRating.length- rankIndex) / orderedByRating.length;
     return {'rank' : rankIndex, 'percentile' : percentile};
@@ -274,7 +266,6 @@ class FirestoreService {
           toFirestore: (soloMatch, _) => soloMatch.toJson());
 
   Future<void> moveOldIdSoloGames(String oldId, String newId) async {
-    logger.i('called to move matches from $oldId to $newId');
     _firestore.collection(soloGamesTableName)
         .where(soloGamePlayerIdFN, isEqualTo: oldId)
         .get()
@@ -286,10 +277,10 @@ class FirestoreService {
   }
 
   Future<DocumentReference<SoloGame>> addSoloGame(SoloGame match) async {
-    logger.i('called with object: ${match.toJson()}');
     return await soloMatches.add(match)
         .then((value) => value as DocumentReference<SoloGame>)
-        .catchError((error) {logger.e('Error saving match to firestore: $error');});
+        .catchError((error) {
+        });
   }
 
   Future<List<SoloGame>> getSoloGamesByPlayerId(String playerId) async {
@@ -369,7 +360,6 @@ class FirestoreService {
   }
 
   Future<DocumentReference<VersusGame>> addVersusGame(VersusGame game) async {
-    logger.i('called with game: ${game.toJson()}');
     return await versusGames.add(game)
         .then((value) => value as DocumentReference<VersusGame>);
   }
@@ -384,15 +374,12 @@ class FirestoreService {
 
   Future<void> removePlayerOneMoveInVersusGame(DocumentReference gameReference, int index) async  {
     String playerOneMovesFieldName = '$versusGamePlayerOneMatchFN.$soloGameMovesFN';
-    logger.i('Called to delete index: $index of $playerOneMovesFieldName');
     await gameReference.update({playerOneMovesFieldName : FieldValue.arrayRemove([index.toString()])})
         .catchError((error) {
-      logger.e('Error deleting move: $error');
     });
   }
 
   Future<void> addMoveToPlayerOneInVersusGame(DocumentReference gameReference, GameMove move) async {
-    logger.i('called to add move: ${move.toJson()}');
     gameReference.update({
       '$versusGamePlayerOneMatchFN.$soloGameMovesFN' : FieldValue.arrayUnion([move.toJson()]),
       versusGameWhoIsToMoveFN: VersusPlayer.player2.name
@@ -459,7 +446,6 @@ class FirestoreService {
   }
 
   Future<void> updateVersusGameStatus(DocumentReference gameReference, VersusGameStatus status) async {
-    logger.i('called with status: $status');
     await gameReference.update({versusGameStatusFN: status.name});
   }
 
@@ -471,7 +457,6 @@ class FirestoreService {
           .then((value) => _playersConverted.doc(auth.currentUser!.uid).update({
         playerIsOnlineFN: true}))
     });
-
   }
 
   Future<void> reportOffline() async {
@@ -492,4 +477,5 @@ class FirestoreService {
 
   Stream<DocumentSnapshot<Map<String, dynamic>>> appGeneralInfo() =>
       _firestore.collection(appGlobalsTableName).doc(appGlobalsGeneralInfoDN).snapshots();
+
 }

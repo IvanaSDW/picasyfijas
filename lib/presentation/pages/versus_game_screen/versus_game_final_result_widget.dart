@@ -17,40 +17,40 @@ class VersusGameResultWidget extends StatelessWidget {
     String subTitleText ='';
     switch (gameLogic.game.winByMode) {
       case WinByMode.draw:
-        titleText = 'Amazing!!';
-        subTitleText = 'it\'s a DRAW';
+        titleText = 'amazing'.tr;
+        subTitleText = 'its_a_draw'.tr;
         break;
       case WinByMode.moves:
         titleText = (gameLogic.iAmP1 && gameLogic.game.winnerPlayer == WinnerPlayer.player1) ||
             (!gameLogic.iAmP1 && gameLogic.game.winnerPlayer == WinnerPlayer.player2)
-            ? 'YOU WON!!' : '-YOU LOST-';
+            ? 'you_won'.tr : '-you_lost-'.tr;
         subTitleText = (gameLogic.iAmP1 && gameLogic.game.winnerPlayer == WinnerPlayer.player1) ||
             (!gameLogic.iAmP1 && gameLogic.game.winnerPlayer == WinnerPlayer.player2)
-            ? 'Congratulations!' : 'Maybe next time!';
+            ? 'congratulations'.tr : 'maybe_next_time'.tr;
         break;
       case WinByMode.time:
         titleText = (gameLogic.iAmP1 && gameLogic.game.winnerPlayer == WinnerPlayer.player1) ||
             (!gameLogic.iAmP1 && gameLogic.game.winnerPlayer == WinnerPlayer.player2)
-            ? 'YOU WON BY TIME!!' : 'YOU LOST BY TIME!!';
+            ? 'you_won_by_time'.tr : 'you_lost_by_time'.tr;
         subTitleText = (gameLogic.iAmP1 && gameLogic.game.winnerPlayer == WinnerPlayer.player1) ||
             (!gameLogic.iAmP1 && gameLogic.game.winnerPlayer == WinnerPlayer.player2)
-            ? 'Wow, that was close!' : 'But well played!';
+            ? 'that_was_close'.tr : 'but_well_played'.tr;
         break;
       case WinByMode.opponentLeft:
         titleText = (gameLogic.iAmP1 && gameLogic.game.winnerPlayer == WinnerPlayer.player1) ||
             (!gameLogic.iAmP1 && gameLogic.game.winnerPlayer == WinnerPlayer.player2)
-            ? 'YOUR OPPONENT LEFT!!' : 'YOU LEFT!!';
+            ? 'your_opponent_left'.tr : 'you_left'.tr;
         subTitleText = (gameLogic.iAmP1 && gameLogic.game.winnerPlayer == WinnerPlayer.player1) ||
             (!gameLogic.iAmP1 && gameLogic.game.winnerPlayer == WinnerPlayer.player2)
-            ? 'You win!' : 'You lost!';
+            ? 'you_won_lower'.tr : 'you_lost_lower'.tr;
         break;
       case WinByMode.opponentTimeUp:
         titleText = (gameLogic.iAmP1 && gameLogic.game.winnerPlayer == WinnerPlayer.player1) ||
             (!gameLogic.iAmP1 && gameLogic.game.winnerPlayer == WinnerPlayer.player2)
-            ? 'YOU WIN!!' : 'YOUR TIME IS UP!!';
+            ? 'you_won'.tr : 'your_time_is_up'.tr;
         subTitleText = (gameLogic.iAmP1 && gameLogic.game.winnerPlayer == WinnerPlayer.player1) ||
             (!gameLogic.iAmP1 && gameLogic.game.winnerPlayer == WinnerPlayer.player2)
-            ? 'Your opponent time is up!' : 'Sorry, you lost.';
+            ? 'your_opponent_time_is_up'.tr : 'sorry_you_lost'.tr;
         break;
       default:
         break;
@@ -77,8 +77,9 @@ class VersusGameResultWidget extends StatelessWidget {
                     )
                 ),
               ),
-              Container(height: 16,),
-              Text(gameLogic.game.winByMode == WinByMode.opponentLeft || gameLogic.game.winByMode == WinByMode.opponentTimeUp? ''
+              Container(height: 12,),
+              AutoSizeText(
+                gameLogic.game.winByMode == WinByMode.opponentLeft || gameLogic.game.winByMode == WinByMode.opponentTimeUp? ''
                    : 'time_left'.tr +  StopWatchTimer.getDisplayTime(
                 gameLogic.iAmP1
                     ? gameLogic.game.playerOneGame.moves.last.timeStampMillis
@@ -88,16 +89,17 @@ class VersusGameResultWidget extends StatelessWidget {
                 style: GoogleFonts.robotoMono(
                     textStyle: const TextStyle(
                         color: Colors.green,
-                        fontSize: 18
-                    )
+                        fontSize: 16,
+                    ),
                 ),
+                textAlign: TextAlign.center,
               ),
               Text(gameLogic.game.winByMode == WinByMode.opponentLeft || gameLogic.game.winByMode == WinByMode.opponentTimeUp? ''
                   : 'guesses'.tr + '${gameLogic.game.playerOneGame.moves.length}',
                 style: GoogleFonts.robotoMono(
                     textStyle: const TextStyle(
                         color: Colors.green,
-                        fontSize: 18
+                        fontSize: 16
                     )
                 ),
               ),

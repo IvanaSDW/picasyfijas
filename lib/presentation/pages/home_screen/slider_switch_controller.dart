@@ -76,7 +76,6 @@ class SliderSwitchController extends GetxController {
       sliderThresholdLeft = (sliderTrackWidth - sliderThumbWidth) / 2;
       sliderThresholdRight = sliderTrackWidth - sliderThresholdLeft;
       sliderMaxThumbX = sliderTrackWidth - sliderThumbWidth;
-      logger.i('Thumb width: $sliderThumbWidth, Track width: $sliderTrackWidth');
     }
 
   void toggleDrawer() {
@@ -97,7 +96,6 @@ class SliderSwitchController extends GetxController {
   }
 
   void closeDrawer() {
-    logger.i('Called when drawerSlider value is: ${appController.drawerSlideValue}');
     if (appController.drawerSlideValue > 0.0) {
       appController.playEffect('audio/door-close.wav');
       appController.drawerSlideValue = 0.0;

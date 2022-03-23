@@ -46,7 +46,6 @@ class VersusMatchButtonController extends GetxController {
   }
 
   void onPressed() {
-    logger.i('called, authState is: ${appController.authState}');
     isDown = false;
     if (appController.authState == AuthState.google) {
       Get.toNamed(Routes.findOpponent);
@@ -55,7 +54,6 @@ class VersusMatchButtonController extends GetxController {
         title: 'Requires Google sign in',
         middleText: 'Sign in with your google account to enable multiplayer mode.',
         textConfirm: 'Sign in',
-        // textCancel: 'Back',
         backgroundColor: Colors.green.withOpacity(0.5),
         buttonColor: originalColors.accentColor2,
         cancelTextColor: originalColors.reverseTextColor,

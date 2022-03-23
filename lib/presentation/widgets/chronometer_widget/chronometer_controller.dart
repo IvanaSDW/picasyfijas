@@ -40,8 +40,6 @@ class ChronometerController extends GetxController {
 
   @override
   void onInit() {
-    logger.i('called');
-
     _timer = Chronometer(isLapHours: false,
         mode: mode,
         presetMillisecond: mode == ChronometerMode.countUp
