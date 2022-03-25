@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:audioplayers/audioplayers.dart';
+import 'package:bulls_n_cows_reloaded/data/ip_locator.dart';
 import 'package:bulls_n_cows_reloaded/data/models/player.dart';
 import 'package:bulls_n_cows_reloaded/domain/players_use_cases.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -58,9 +59,13 @@ class AppController extends GetxController {
   final Rx<Locale?> _locale = Get.locale.obs;
   Locale? get locale => _locale.value;
 
-  final RxString _countryCode =
-      Get.locale.toString().split('_').last.toLowerCase().obs;
+  final _countryCode = RxString(Get.locale.toString().split('_').last.toLowerCase());
   String get countryCode => _countryCode.value;
+  set countryCode(String value) => _countryCode.value = value;
+
+  final _countryName = RxString(Get.locale.toString().split('_').last.toLowerCase());
+  String get countryName => _countryName.value;
+  set countryName(String value) => _countryName.value = value;
 
   final Rx<AuthState> _authState = AuthState.booting.obs;
   AuthState get authState => _authState.value;
@@ -104,7 +109,6 @@ class AppController extends GetxController {
   }
 
   void resetState() {
-    logger.i('called');
     drawerSlideValue = 0.0;
     backPanelOn = true;
   }
@@ -123,9 +127,10 @@ class AppController extends GetxController {
   }
 
   @override
-  void onInit() {
+  Future<void> onInit() async {
     super.onInit();
-
+    countryCode = await IpLocator().getCountryCode();
+    countryName = await IpLocator().getCountryName();
     if(currentPlayer.pushToken == null) {
       FirebaseMessaging.instance.getToken().then((value) => {
         firestoreService.updatePlayerToken(playerId: auth.currentUser!.uid, newToken: value!)
@@ -133,7 +138,6 @@ class AppController extends GetxController {
       );
     }
     checkInternet();
-    // firestoreService.reportOnline();
   }
 
   Future<AudioPlayer> playEffect(String fileName) async {
@@ -147,7 +151,6 @@ class AppController extends GetxController {
   }
 
   void stopSplashEffect() {
-    logger.i('called');
     splashPlayer?.stop();
     splashCache?.clearAll();
   }
@@ -174,19 +177,15 @@ class AppController extends GetxController {
     } else if (currentUser.isAnonymous) {
       if (authState != AuthState.anonymous) {
         authState = AuthState.anonymous;
-        logger.i('authState is now: $authState, isFirstRun: $isFirstRun');
         if (isFirstRun) { //Just signed in anonymously
           await firestoreService.checkInAnonymousPlayer(currentUser);
-          logger.i('Anonymous player should have been checked in in firestore. Taking user to homepage...');
           await Future.delayed(const Duration(seconds: 10));
           Get.offAllNamed(Routes.home);
           appController.isBusy = false;
           //Player object will be refreshed there;
         } else { //App run from already signed anonymous user
-          logger.i('App run from already signed anonymous user: ${currentUser.uid}, .. refreshing player object');
           await refreshPlayer();
           await Future.delayed(const Duration(seconds: 6));
-          logger.i('Taking anonymous user to Home page..');
           Get.offAllNamed(Routes.home);
           appController.isBusy = false;
         }

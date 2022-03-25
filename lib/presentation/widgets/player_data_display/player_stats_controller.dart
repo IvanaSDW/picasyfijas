@@ -5,6 +5,8 @@ import 'package:bulls_n_cows_reloaded/domain/solo_games_use_cases.dart';
 import 'package:bulls_n_cows_reloaded/shared/constants.dart';
 import 'package:get/get.dart';
 
+import '../../../navigation/routes.dart';
+
 
 class PlayerStatsController extends GetxController {
 
@@ -39,8 +41,16 @@ class PlayerStatsController extends GetxController {
         timeAverage = sumOfTime / soloGamesCount;
         guessesAverage = sumOfGuesses / soloGamesCount;
       }
-
-      await firestoreService.updatePlayerSoloAverages(playerId, timeAverage, guessesAverage);
+      if (appController.currentPlayer.isVsUnlocked!) {
+        await firestoreService.updatePlayerSoloAverages(playerId, timeAverage, guessesAverage, false);
+      } else {
+        if ((soloGamesCount >= minSoloGamesToUnlockVsMode) && (timeAverage <= maxTimeAverageToUnlockVsMode)) {
+          await firestoreService.updatePlayerSoloAverages(playerId, timeAverage, guessesAverage, true);
+          Get.toNamed(Routes.modeUnlocked);
+        } else {
+          await firestoreService.updatePlayerSoloAverages(playerId, timeAverage, guessesAverage, false);
+        }
+      }
 
       Map<String, dynamic> soloRankings = await firestoreService.getSoloRankings(playerId);
 

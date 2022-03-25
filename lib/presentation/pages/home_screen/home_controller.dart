@@ -2,6 +2,7 @@ import 'package:bulls_n_cows_reloaded/presentation/widgets/matrix_effect/matrix_
 import 'package:bulls_n_cows_reloaded/shared/constants.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+
 import '../../../data/ad_helper.dart';
 
 
@@ -14,9 +15,8 @@ class HomeController extends GetxController {
   @override
   void onInit() {
     if (Get.isRegistered<MatrixEffectController>()) Get.delete<MatrixEffectController>();
-    _createBottomBannerAd();
-    logger.i('Will stop playing splash sound.. splashPlayer is null = ${appController.splashPlayer == null}');
     appController.stopSplashEffect();
+    _createBottomBannerAd();
     super.onInit();
   }
 
@@ -38,7 +38,7 @@ class HomeController extends GetxController {
   }
 
   void onAvatarTapped() {
-
+    // Get.toNamed(Routes.modeUnlocked);
   }
 
   void googleSignIn() async {

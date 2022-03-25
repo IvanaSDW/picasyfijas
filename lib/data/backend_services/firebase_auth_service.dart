@@ -54,7 +54,6 @@ class FirebaseAuthService {
     dynamic userOrCredential;
     await _googleSignIn.signIn()
         .then((account) async {
-      logger.i('Google account to link: ${account?.email}');
       if (account != null) {
         final GoogleSignInAuthentication signInAuthentication =
         await account.authentication;
@@ -65,7 +64,6 @@ class FirebaseAuthService {
         await user.linkWithCredential(credential)
             .then((credential) {
           userOrCredential = credential.user;
-          logger.i('Account linked successfully. Returning user: $userOrCredential');
         })
         .catchError((error) {
           userOrCredential = credential;
@@ -73,7 +71,6 @@ class FirebaseAuthService {
           logger.i('Returning credential: $userOrCredential');
         });
       } else {
-        logger.i('Account null when signing in to google');
         userOrCredential = 'signInAborted';
       }
     });
@@ -89,16 +86,13 @@ class FirebaseAuthService {
   }
 
   Future<void> removeUserAccount(User user) async {
-    logger.i('called');
     return await user.delete().then((_) {
-      logger.i('User account deleted from firebase auth!');
     }).catchError((error) {
       logger.e('Error deleting user account from Firebase: $error)');
     });
   }
 
   Future<void> signOut() async {
-    logger.i('called');
     appController.isBusy = true;
     appController.needLand = true;
     appController.isUpgrade = false;
@@ -110,7 +104,6 @@ class FirebaseAuthService {
     try {
       if(!auth.currentUser!.isAnonymous) await _googleSignIn.signOut();
       await auth.signOut();
-      logger.i('Successfully signed out');
     } on PlatformException catch (e) {
       logger.e('Error signing out: ${e.toString()}');
       appController.isBusy = false;

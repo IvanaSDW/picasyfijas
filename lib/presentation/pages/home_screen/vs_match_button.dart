@@ -47,7 +47,25 @@ class VersusMatchButtonController extends GetxController {
 
   void onPressed() {
     isDown = false;
-    if (appController.authState == AuthState.google) {
+
+    if (!appController.currentPlayer.isVsUnlocked!) {
+      Get.defaultDialog(
+        title: 'versus_mode_locked'.tr,
+        middleText: '''
+        ${'to_unlock_need'.tr}
+        -> ${'at_least_min_games'.tr}
+        -> ${'time_average_below_max'.tr}
+        ''',
+        textConfirm: 'OK',
+        backgroundColor: Colors.green.withOpacity(0.5),
+        buttonColor: originalColors.accentColor2,
+        cancelTextColor: originalColors.reverseTextColor,
+        confirmTextColor: originalColors.textColorLight,
+        onConfirm: () {
+          Get.back();
+        },
+      );
+    } else if (appController.authState == AuthState.google) {
       Get.toNamed(Routes.findOpponent);
     } else {
       Get.defaultDialog(
@@ -65,5 +83,4 @@ class VersusMatchButtonController extends GetxController {
       );
     }
   }
-
 }

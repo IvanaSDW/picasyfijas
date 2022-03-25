@@ -2,7 +2,6 @@ import 'package:bulls_n_cows_reloaded/data/backend_services/firebase_auth_servic
 import 'package:bulls_n_cows_reloaded/data/backend_services/firestore_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:logger/logger.dart';
-
 import 'controllers/app_controller.dart';
 import 'controllers/auth_controller.dart';
 
@@ -20,7 +19,7 @@ final FirestoreService firestoreService = FirestoreService.instance;
 final FirebaseAuthService authService = FirebaseAuthService.instance;
 
 final Logger logger = Logger();
-FirebaseAuth auth = FirebaseAuth.instance;
+final FirebaseAuth auth = FirebaseAuth.instance;
 
 const String playersTableName = 'players';
 const String playerIdFN = 'id';
@@ -37,6 +36,7 @@ const String playerCountryCodeFN = 'country_code';
 const String playerIsOnlineFN = 'is_online';
 const String playerPushTokenFN = 'push_token';
 const String playerRatingFN = 'rating';
+const String playerIsVsUnlockedFN = 'is_vs_unlocked';
 
 const String soloGamesTableName = 'solo_matches';
 const String soloGamePlayerIdFN = 'player_id';
@@ -82,6 +82,8 @@ const String appGlobalsVersusGamesCountFN = 'vs_games_count';
 
 const int versusModeTimePresetMillis = 300000;
 const int playerPresetRating = 1500;
+const int minSoloGamesToUnlockVsMode = 2;
+const int maxTimeAverageToUnlockVsMode = 300000;
 
 const monthsEng = <String>[ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', ];
 const monthsSpa = <String>[ 'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic', ];

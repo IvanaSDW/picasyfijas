@@ -22,13 +22,9 @@ class AuthController extends FullLifeCycleController with FullLifeCycleMixin{
   }
 
   Future<void> signInAnonymously() async {
-    logger.i('Called');
     await _signInAnonymously().then(
             (user) async {
           if(user != null ) {
-            logger.i('User signed is anonymously as ${user.uid}, should have triggered updateAuthState() ...');
-            // logger.i('User signed is anonymously as ${user.uid}, proceeding to check it in in firestore');
-            // await firestoreService.checkInAnonymousPlayer(user);
           }
         }
     );
@@ -39,7 +35,7 @@ class AuthController extends FullLifeCycleController with FullLifeCycleMixin{
     await _signInWithGoogle().then(
             (user) async {
           if (user != null) {
-            await firestoreService.checkInGooglePlayer(user);
+            await firestoreService.checkInGooglePlayer(user, false);
           }
           appController.isBusy = false;
         }
@@ -47,15 +43,13 @@ class AuthController extends FullLifeCycleController with FullLifeCycleMixin{
   }
 
   Future<void> upgradeAnonymousToGoogle() async {
-    logger.i('called');
     appController.isBusy = true;
     String oldId = auth.currentUser!.uid;
-    logger.i('Current anonymous id: $oldId');
     await _signInAnonymousToGoogle(auth.currentUser!)
         .then((userOrCredential) async {
       appController.isUpgrade = true;
       if (userOrCredential is User) {
-        await firestoreService.checkInGooglePlayer(userOrCredential);
+        await firestoreService.checkInGooglePlayer(userOrCredential, true);
         appController.updateAuthState(userOrCredential);
         appController.isBusy = false;
       } else if (userOrCredential is String) {
@@ -67,7 +61,7 @@ class AuthController extends FullLifeCycleController with FullLifeCycleMixin{
         _signInWithCredential(userOrCredential)
             .then((value) async {
           if (value != null) {
-            await firestoreService.checkInGooglePlayer(value);
+            await firestoreService.checkInGooglePlayer(value, true);
             firestoreService.moveOldIdSoloGames(oldId, value.uid);
             appController.needUpdateSoloStats.value = true;
             appController.needUpdateVsStats.value = true;

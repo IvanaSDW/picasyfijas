@@ -137,7 +137,6 @@ class VersusMatchMaker {
   }
 
   Stream<DocumentSnapshot<VersusGame>> _subscribeToVersusGameRef(DocumentReference<VersusGame> gameReference) {
-    logger.i('called to subscribe to game id: ${gameReference.id}');
     _postedChallengeStream.cancel();
     return gameReference.snapshots();
   }

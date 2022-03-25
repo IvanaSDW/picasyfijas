@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:bulls_n_cows_reloaded/data/models/player_stats.dart';
 import 'package:bulls_n_cows_reloaded/presentation/widgets/player_data_display/player_stats_controller.dart';
+import 'package:bulls_n_cows_reloaded/shared/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
@@ -110,12 +111,15 @@ class PlayerStatsWidget extends StatelessWidget {
           Expanded(
             flex: 13,
             child: AutoSizeText(
-              'vs_mode'.tr + ' (${stats.vsGamesCount} games)',
+              appController.currentPlayer.isVsUnlocked!
+                  ? 'vs_mode'.tr + ' (${stats.vsGamesCount} games)'
+                  : 'vs_mode'.tr + ' ( '+ 'locked'.tr + ' )',
               style: statsTitle,
               textAlign: TextAlign.start,
             ),
           ),
-          Expanded(flex: 13,
+          appController.currentPlayer.isVsUnlocked!
+              ? Expanded(flex: 13,
             child: Row(
               children: [
                 Expanded(
@@ -136,9 +140,39 @@ class PlayerStatsWidget extends StatelessWidget {
                 ),
               ],
             ),
+          )
+              : Expanded(flex: 13,
+            child: Row(
+              children: [
+                Expanded(
+                    flex: 80,
+                    child: AutoSizeText(
+                      'solo_games_left_unlock'.tr,
+                      style: statsSubTitle,
+                      textAlign: TextAlign.start,
+                    )),
+                Expanded(flex: 10,
+                    child: AutoSizeText(
+                      (minSoloGamesToUnlockVsMode - stats.soloGamesCount).toString(),
+                      style: statsText,
+                      textAlign: TextAlign.start,
+                    )
+                ),
+                Expanded(flex: 10,
+                    child: AutoSizeText(
+                      stats.soloGamesCount < minSoloGamesToUnlockVsMode
+                          ? '\u274c'
+                          : '\u2714',
+                      style: statsText,
+                      textAlign: TextAlign.center,
+                    )
+                ),
+              ],
+            ),
           ),
           Expanded(flex: 13,
-            child: Row(
+            child: appController.currentPlayer.isVsUnlocked!
+                ? Row(
               children: [
                 Expanded(flex: 50,
                     child: AutoSizeText(
@@ -159,6 +193,28 @@ class PlayerStatsWidget extends StatelessWidget {
                       stats.vsGamesCount == 0 ? "--" : 'Rank: ' + stats.vsWorldRank.toString(),
                       style: statsSubTitle,
                       textAlign: TextAlign.start,
+                    )
+                ),
+              ],
+            )
+                : Row(
+              children: [
+                Expanded(
+                    flex: 80,
+                    child: AutoSizeText(
+                      'time_average_below_max'.tr + ':',
+                      style: statsSubTitle,
+                      textAlign: TextAlign.start,
+                    )),
+                Expanded(flex: 20,
+                    child: AutoSizeText(
+                      stats.soloGamesCount == 0
+                          ? '\u274c'
+                          : stats.timeAverage <= maxTimeAverageToUnlockVsMode
+                          ? '\u2714'
+                          : '\u274c',
+                      style: statsText,
+                      textAlign: TextAlign.end,
                     )
                 ),
               ],

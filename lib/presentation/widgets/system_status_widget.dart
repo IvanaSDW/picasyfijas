@@ -1,7 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:bulls_n_cows_reloaded/shared/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 
 import '../../shared/theme.dart';
@@ -34,7 +33,7 @@ class SystemStatusView extends StatelessWidget {
                     Expanded(flex: 19,
                       child: Row(
                         children: [
-                          Expanded(flex: 32,
+                          Expanded(flex: 28,
                             child: AutoSizeText(
                               'player_status'.tr,
                               textAlign: TextAlign.left,
@@ -58,7 +57,7 @@ class SystemStatusView extends StatelessWidget {
                           ),
                           Expanded(flex: 24,
                             child: AutoSizeText(
-                              'locale'.tr,
+                              'country'.tr,
                               style: TextStyle(
                                 color: originalColors.textColor2,
                                 fontSize: 18,
@@ -66,9 +65,10 @@ class SystemStatusView extends StatelessWidget {
                               ),
                             ),
                           ),
-                          Expanded(flex: 16,
+                          Expanded(flex: 20,
                             child: AutoSizeText(
-                              "${Get.locale}",
+                              appController.countryName,
+                              overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                 color: originalColors.textColor3,
                                 fontSize: 18,
@@ -82,7 +82,7 @@ class SystemStatusView extends StatelessWidget {
                     Expanded(flex: 19,
                       child: Row(
                         children: [
-                          Expanded(flex: 32,
+                          Expanded(flex: 28,
                             child: AutoSizeText(
                               'network'.tr,
                               style: TextStyle(
@@ -104,7 +104,7 @@ class SystemStatusView extends StatelessWidget {
                           ),
                           Expanded(flex: 24,
                             child: AutoSizeText(
-                              'players_online'.tr,
+                              'language'.tr,
                               style: TextStyle(
                                 color: originalColors.textColor2,
                                 fontSize: 18,
@@ -112,22 +112,15 @@ class SystemStatusView extends StatelessWidget {
                               ),
                             ),
                           ),
-                          Expanded(flex: 16,
-                            child: StreamBuilder(
-                                stream: firestoreService.appGeneralInfo(),
-                                builder: (context, AsyncSnapshot snapshot) {
-                                  return snapshot.connectionState == ConnectionState.waiting || !snapshot.hasData
-                                      ? SpinKitThreeBounce(color: originalColors.textColorLight, size: 20,)
-                                      : AutoSizeText(
-                                    snapshot.data![appGlobalsOnLineCountFN].toString(),
-                                    style: TextStyle(
-                                      color: originalColors.textColor3,
-                                      fontSize: 18,
-                                      fontFamily: 'Digital',
-                                    ),
-                                  );
-                                }
+                          Expanded(flex: 20,
+                            child: AutoSizeText(
+                            Get.locale!.toLanguageTag(),
+                            style: TextStyle(
+                              color: originalColors.textColor3,
+                              fontSize: 18,
+                              fontFamily: 'Digital',
                             ),
+                          ),
                           ),
                         ],
                       ),

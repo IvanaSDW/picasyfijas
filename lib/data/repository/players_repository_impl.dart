@@ -11,8 +11,8 @@ class PlayersRepositoryImpl extends PlayersRepository {
   }
 
   @override
-  Future<void> checkInGooglePlayer(User user) async {
-    await firestoreService.checkInGooglePlayer(user);
+  Future<void> checkInGooglePlayer(User user, bool isVsUnlocked) async {
+    await firestoreService.checkInGooglePlayer(user, isVsUnlocked);
   }
 
   @override

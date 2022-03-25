@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 abstract class PlayersRepository {
 
-  Future<void> checkInGooglePlayer(User user);
+  Future<void> checkInGooglePlayer(User user, bool isVsUnlocked);
 
   Future<void> checkInAnonymousPlayer(User user);
 

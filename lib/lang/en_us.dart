@@ -1,4 +1,6 @@
 //English Translations
+import 'package:bulls_n_cows_reloaded/shared/constants.dart';
+
 const Map<String, String> enUS = {
   'instructions': 'Instructions',
   'instructions_detail_1': 'Your goal is to decipher a secret number consisting of 4 different digits.',
@@ -93,4 +95,18 @@ const Map<String, String> enUS = {
   'sorry_you_lost' : 'Sorry, you lost.',
   'amazing' : 'Amazing!!',
   'its_a_draw' : 'it\'s a DRAW',
+  'country' : 'Country',
+  'language' : 'Language',
+  'solo_games_left_unlock' : 'Solo games left to unlock:',
+  'time_average_below_max' : 'Time average below ${maxTimeAverageToUnlockVsMode~/60000} min.',
+  'versus_mode_locked' : '** Versus mode locked **',
+  'to_unlock_need' : 'To unlock you need:',
+  'at_least_min_games' : '-> At least $minSoloGamesToUnlockVsMode games in "Solo" mode.',
+  'locked' : '** Locked **',
+  'unlocked' : 'UNLOCKED',
+  'enjoy_playing_vs_mode_line1' : 'Enjoy playing against your friends',
+  'enjoy_playing_vs_mode_line2' : 'or people around the world',
+  'requires_google_sign_in' : 'Requires Google sign in',
+  'sign_in_with_google_for_multiplayer_mode.' : 'Sign in with your google account to enable multiplayer mode.',
+  'sign_in' : 'Sign in',
 };

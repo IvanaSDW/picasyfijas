@@ -16,7 +16,7 @@ class Player {
   bool? isOnline;
   String? pushToken;
   int? rating;
-
+  bool? isVsUnlocked = false;
 
   Player({
     required this.id,
@@ -31,6 +31,7 @@ class Player {
     required this.isOnline,
     required this.pushToken,
     required this.rating,
+    required this.isVsUnlocked,
   });
 
   Player.empty();
@@ -49,6 +50,7 @@ class Player {
     playerIsOnlineFN: isOnline,
     playerPushTokenFN: pushToken,
     playerRatingFN: rating,
+    playerIsVsUnlockedFN: isVsUnlocked,
   };
 
   factory Player.fromJson(Map<String, dynamic> json) => Player(
@@ -58,12 +60,13 @@ class Player {
     photoUrl: json[playerGoogleAvatarFN],
     isNewPlayer: json[playerIsNewPlayerFN],
     createdAt: (json[playerCreatedAtFN] as Timestamp).toDate(),
-    soloGuessesAverage: double.parse(json[playerGuessesAverageFN].toString()),
-    soloTimeAverage: double.parse(json[playerTimeAverageFN].toString()),
+    soloGuessesAverage: json[playerGuessesAverageFN] == null ? null : double.parse(json[playerGuessesAverageFN].toString()),
+    soloTimeAverage: json[playerTimeAverageFN] == null ? null : double.parse(json[playerTimeAverageFN].toString()),
     countryCode: json[playerCountryCodeFN],
     isOnline: json[playerIsOnlineFN],
     pushToken: json[playerPushTokenFN],
     rating: json[playerRatingFN],
+    isVsUnlocked: json[playerIsVsUnlockedFN],
   );
 
 }

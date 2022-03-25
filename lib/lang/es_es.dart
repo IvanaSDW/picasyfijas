@@ -1,3 +1,5 @@
+import '../shared/constants.dart';
+
 const Map<String, String> esES = {
   'instructions' : 'Instrucciones',
   'instructions_detail_1': 'Tu objetivo es descifrar un número secreto compuesto por 4 dígitos diferentes.',
@@ -92,4 +94,18 @@ const Map<String, String> esES = {
   'sorry_you_lost' : 'Lo siento, perdiste.',
   'amazing' : 'Asombroso!!',
   'its_a_draw' : 'es un empate',
+  'country' : 'Pais',
+  'language' : 'Idioma',
+  'solo_games_left_unlock' : 'Partidas "Solo" faltantes:',
+  'time_average_below_max' : 'Tiempo promedio menor a ${maxTimeAverageToUnlockVsMode~/60000} min',
+  'versus_mode_locked' : '** Modo Versus bloquedado **',
+  'to_unlock_need' : 'Para desbloquear necesitas:',
+  'at_least_min_games' : 'Mínimo $minSoloGamesToUnlockVsMode juegos en modo "Solo".',
+  'locked' : '** Bloqueado **',
+  'unlocked' : 'DESBLOQUEADO',
+  'enjoy_playing_vs_mode_line1' : 'Disfruta jugando con tus amigos',
+  'enjoy_playing_vs_mode_line2' : 'o gente al rededor del mundo',
+  'requires_google_sign_in' : 'Ingresa con Google',
+  'sign_in_with_google_for_multiplayer_mode.' : 'Regístrate con tu cuenta de Google para habilitar multijugador.',
+  'sign_in' : 'Registrarme',
 };

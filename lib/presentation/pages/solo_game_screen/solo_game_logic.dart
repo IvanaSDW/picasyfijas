@@ -1,5 +1,6 @@
 import 'package:bulls_n_cows_reloaded/domain/solo_games_use_cases.dart';
 import 'package:bulls_n_cows_reloaded/presentation/widgets/chronometer_widget/chronometer_controller.dart';
+import 'package:bulls_n_cows_reloaded/presentation/widgets/player_data_display/player_stats_controller.dart';
 import 'package:bulls_n_cows_reloaded/shared/chronometer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -111,12 +112,15 @@ class SoloGameLogic extends GetxController {
   }
 
   void onNumberFound() async {
-    logger.i('called');
     numberFound = true;
     matchState = SoloGameStatus.finished;
     timer.stopTimer();
     await _saveSoloMatchToFS(match)
-        .then((value) => appController.needUpdateSoloStats.value = true);
+        .then((value) async {
+      appController.needUpdateSoloStats.value = true;
+      logger.i('isVsUnlocked is: ${appController.currentPlayer.isVsUnlocked}');
+      if(!appController.currentPlayer.isVsUnlocked!) await Get.find<PlayerStatsController>().refreshStats(auth.currentUser!.uid);
+    });
     intercom.postMessage('mission_successfully_completed'.tr);
   }
 

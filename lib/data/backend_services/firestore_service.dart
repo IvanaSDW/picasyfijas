@@ -1,3 +1,4 @@
+import 'package:bulls_n_cows_reloaded/data/ip_locator.dart';
 import 'package:bulls_n_cows_reloaded/data/models/four_digits.dart';
 import 'package:bulls_n_cows_reloaded/data/models/game_move.dart';
 import 'package:bulls_n_cows_reloaded/data/models/player.dart';
@@ -65,13 +66,11 @@ class FirestoreService {
           fromFirestore: (snapshot, _) => Player.fromJson(snapshot.data()!),
           toFirestore: (player, _) => player.toJson());
 
-  Future<void> checkInGooglePlayer(User user) async {
-    logger.i('called for user: ${user.uid}');
+  Future<void> checkInGooglePlayer(User user, bool isVsUnlocked) async {
     DocumentReference playerRef = players.doc(user.uid);
     DocumentSnapshot firestoreUser = await playerRef.get();
     UserInfo userInfo = user.providerData[0];
     if (!firestoreUser.exists) {
-      logger.i('user not yet in firestore, lets create it...');
       await playerRef.set({
         playerIdFN: user.uid,
         playerNameFN: userInfo.displayName,
@@ -80,13 +79,13 @@ class FirestoreService {
         playerPhoneFN: userInfo.phoneNumber,
         playerGoogleAvatarFN: userInfo.photoURL,
         playerCreatedAtFN: Timestamp.now(),
-        playerCountryCodeFN: Get.locale.toString().split('_').last.toLowerCase(),
+        playerCountryCodeFN: await IpLocator().getCountryCode(),
         playerIsOnlineFN: true,
+        playerIsVsUnlockedFN: isVsUnlocked,
       }).catchError(
               (error) => logger.e("Failed to create user in firestore: $error"));
     } else {
       //user exists in firestore
-      logger.i('user already in firestore, lets update it...');
       await playerRef
           .update({
         playerNameFN: userInfo.displayName,
@@ -94,6 +93,7 @@ class FirestoreService {
         playerPhoneFN: userInfo.phoneNumber,
         playerGoogleAvatarFN: userInfo.photoURL,
         playerIsOnlineFN: true,
+        playerIsVsUnlockedFN: isVsUnlocked,
       })
           .catchError((error) {
         logger.e("Failed to update user in firestore: $error");});
@@ -101,12 +101,10 @@ class FirestoreService {
   }
 
   Future<void> checkInAnonymousPlayer(User user) async {
-    logger.i('called');
     DocumentReference playerRef = players.doc(user.uid);
     DocumentSnapshot firestoreUser = await playerRef.get();
 
     if (!firestoreUser.exists) { //user not yet created in firestore
-      logger.i('user not yet in firestore, lets create it...');
       await playerRef.set({
         playerIdFN: user.uid,
         playerNameFN: 'Guest',
@@ -114,9 +112,10 @@ class FirestoreService {
         playerCreatedAtFN: Timestamp.now(),
         playerGuessesAverageFN: double.infinity,
         playerTimeAverageFN: double.infinity,
-        playerCountryCodeFN: Get.locale.toString().split('_').last.toLowerCase(),
+        playerCountryCodeFN: await IpLocator().getCountryCode(),
         playerIsOnlineFN: true,
         playerRatingFN: playerPresetRating,
+        playerIsVsUnlockedFN: false,
       }).then(
               (_) => appController.refreshPlayer()
       )
@@ -128,6 +127,7 @@ class FirestoreService {
       logger.i('user already in firestore, lets update it...');
       await playerRef.update({
         playerNameFN: 'Guest',
+        playerIsVsUnlockedFN: false,
       }).then(
               (value) => appController.refreshPlayer()
       )
@@ -138,11 +138,10 @@ class FirestoreService {
   }
 
   Future<void> deletePlayer(String playerId) async {
-    logger.i('called');
     await players
         .doc(playerId)
         .delete()
-        .then((value) {logger.i('Player account deleted!');})
+        .then((value) {})
         .catchError(
             (error) {logger.e('Error deleting player account: $error');});
   }
@@ -151,12 +150,22 @@ class FirestoreService {
       String playerId,
       double timeAverage,
       double guessesAverage,
+      bool unlockVsMode,
       ) async {
-    await players.doc(playerId).update({
-      playerTimeAverageFN: timeAverage,
-      playerGuessesAverageFN: guessesAverage,
-      playerCountryCodeFN: Get.locale.toString().split('_').last.toLowerCase(), //Use this chance to update locale
-    });
+    if(unlockVsMode) {
+      await players.doc(playerId).update({
+        playerTimeAverageFN: timeAverage,
+        playerGuessesAverageFN: guessesAverage,
+        playerIsVsUnlockedFN: true,
+        playerCountryCodeFN: appController.countryCode, //Use this chance to update locale
+      }).then((value) => {appController.refreshPlayer()});
+    } else {
+      await players.doc(playerId).update({
+        playerTimeAverageFN: timeAverage,
+        playerGuessesAverageFN: guessesAverage,
+        playerCountryCodeFN: appController.countryCode, //Use this chance to update locale
+      });
+    }
   }
 
   Future<void> updatePlayerVsStats({
@@ -273,6 +282,7 @@ class FirestoreService {
       for (var doc in value.docs) {
         doc.reference.update({soloGamePlayerIdFN : newId})
       }
+
     });
   }
 
@@ -280,7 +290,7 @@ class FirestoreService {
     return await soloMatches.add(match)
         .then((value) => value as DocumentReference<SoloGame>)
         .catchError((error) {
-        });
+    });
   }
 
   Future<List<SoloGame>> getSoloGamesByPlayerId(String playerId) async {

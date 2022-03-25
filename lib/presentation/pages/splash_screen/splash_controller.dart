@@ -1,6 +1,5 @@
 
 import 'package:bulls_n_cows_reloaded/presentation/widgets/matrix_effect/matrix_effect_controller.dart';
-import 'package:bulls_n_cows_reloaded/shared/constants.dart';
 import 'package:get/get.dart';
 
 class SplashController extends GetxController {

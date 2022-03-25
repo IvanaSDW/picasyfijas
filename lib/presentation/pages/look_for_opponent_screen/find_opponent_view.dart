@@ -47,7 +47,7 @@ class FindOpponentView extends StatelessWidget {
                         child: controller.matrixVisible
                             ? ClipRRect(
                             borderRadius: const BorderRadius.all(Radius.circular(45.0)),
-                            child: MatrixEffect(controller: Get.put(MatrixEffectController(speedMillis: 500), tag: 'find_opponent',))
+                            child: MatrixEffect(controller: Get.put(MatrixEffectController(speedMillis: 100), tag: 'find_opponent',))
                         )
                         : const SizedBox.shrink(),
                       );
@@ -83,7 +83,7 @@ class FindOpponentView extends StatelessWidget {
                     : Column(
                   children: [
                     Text(
-                      snapshot.data![appGlobalsOnLineCountFN].toString() + '_players'.tr,
+                      (snapshot.data![appGlobalsVersusGamesCountFN]*2.5).toStringAsFixed(0) + '_players'.tr,
                       style: defaultTextStyle,
                     ),
                     const SizedBox(height: 6,),

@@ -2,6 +2,7 @@ import 'package:bulls_n_cows_reloaded/di/find_opponent_binding.dart';
 import 'package:bulls_n_cows_reloaded/di/solo_game_binding.dart';
 import 'package:bulls_n_cows_reloaded/di/versus_game_binding.dart';
 import 'package:bulls_n_cows_reloaded/presentation/pages/landing_signed_out_view/landing_screen.dart';
+import 'package:bulls_n_cows_reloaded/presentation/pages/mode_unlocked_screen/mode_unlocked_view.dart';
 import 'package:bulls_n_cows_reloaded/presentation/pages/player_profile_screen/player_profile_view.dart';
 import 'package:bulls_n_cows_reloaded/presentation/pages/versus_game_screen/versus_game_view.dart';
 import 'package:flutter/animation.dart';
@@ -21,6 +22,7 @@ abstract class Routes {
   static const soloGame = '/SoloGame';
   static const versusGame = '/VersusGame';
   static const profile = '/Profile';
+  static const modeUnlocked = '/ModeUnlocked';
 }
 
 final appPages = [
@@ -61,8 +63,14 @@ final appPages = [
   GetPage(
     name: Routes.profile,
     page: () => PlayerProfileView(),
-    // binding: FindOpponentBindings(),
     transition: Transition.fade,
+    curve: Curves.easeInOut,
+    transitionDuration: const Duration(milliseconds: 1000),
+  ),
+  GetPage(
+    name: Routes.modeUnlocked,
+    page: () => ModeUnlockedView(),
+    transition: Transition.cupertino,
     curve: Curves.easeInOut,
     transitionDuration: const Duration(milliseconds: 1000),
   ),

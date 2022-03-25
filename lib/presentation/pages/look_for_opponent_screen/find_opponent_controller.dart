@@ -23,10 +23,7 @@ class FindOpponentController extends GetxController {
       if (isPlayerOne) {
         await gameReference.get().then((value) async {
           if( !value.exists) {
-            logger.i('Game reference $gameReference does not exist!!');
           } else {
-            logger.i(
-                'We are player 1, fetching opponent player...');
             _playerOnePlayer = appController.currentPlayer;
             _playerTwoPlayer = (await firestoreService.fetchPlayer(value.data()!.playerTwoId))!;
             _opponentPlayer = _playerTwoPlayer;
@@ -44,7 +41,6 @@ class FindOpponentController extends GetxController {
           }
         });
       }
-      logger.i('passing arguments to game page..');
       Get.offAndToNamed(Routes.versusGame,
           arguments: {
             'gameStream' : stream,

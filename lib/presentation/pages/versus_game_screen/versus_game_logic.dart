@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:bulls_n_cows_reloaded/shared/chronometer.dart';
 import 'package:bulls_n_cows_reloaded/shared/theme.dart';
@@ -158,7 +157,6 @@ class VersusGameLogic extends GetxController {
     iAmP1
         ? await firestoreService.addPlayerTwoSecretNumberToVersusGame(gameReference.id, secretNumber)
         : await firestoreService.addPlayerOneSecretNumberToVersusGame(gameReference.id, secretNumber);
-    logger.i('Automatically added secret number to player in firestore: ${secretNumber.toJson()}');
     showNumberInput = false;
   }
 
@@ -168,14 +166,9 @@ class VersusGameLogic extends GetxController {
     iAmP1
         ? await firestoreService.addPlayerTwoSecretNumberToVersusGame(gameReference.id, number)
         : await firestoreService.addPlayerOneSecretNumberToVersusGame(gameReference.id, number);
-    logger.i('Added your secret number to game in firestore: $number');
   }
 
   Future<void> onGameStateReceived(DocumentSnapshot<VersusGame> gameSnapshot) async {
-    logger.i('iAmPlayerOne = $iAmP1   --  Current status is: $gameStatus');
-    logger.i('Received game update: ${gameSnapshot.data()!.toJson()},');
-    logger.i('Game initialized = : $_gameIsInitialized,');
-    logger.i('winnerPlayer in snapshot is: ${gameSnapshot.data()!.winnerPlayer}');
 
     if (_gameIsInitialized) {
       game = gameSnapshot.data()!;
@@ -184,11 +177,9 @@ class VersusGameLogic extends GetxController {
       }
       if (game.winByMode == WinByMode.opponentLeft || game.winByMode == WinByMode.opponentTimeUp) {
         if(game.winnerId == appController.currentPlayer.id) {
-          logger.i('This player won because: ${game.winByMode.toString().split('.').last}!!');
           onGameFinished();
         } else {
           if(game.winByMode == WinByMode.opponentTimeUp) onGameFinished();
-          logger.i('This player lost because: ${game.winByMode.toString().split('.').last}!!');
         }
       }
     }
@@ -203,11 +194,9 @@ class VersusGameLogic extends GetxController {
         break;
       case VersusGameStatus.created :
         if (game.playerOneGame.secretNum != null && game.playerTwoGame.secretNum != null) {
-          logger.i('Both players ready...');
           gameStatus = VersusGameStatus.started;
           continue started;
         } else {
-          logger.i('Players still not ready...');
         }
         break;
 
@@ -225,7 +214,6 @@ class VersusGameLogic extends GetxController {
         if (playerTwoGame!.moves.isNotEmpty) {
           p2TimeLeft = playerTwoGame!.moves.last.timeStampMillis;
           if (playerTwoGame!.moves.last.moveResult.bulls == 4) {
-            logger.i('player 2 found the number first. Game needs to be finished...');
             p1Timer.stopTimer();
             p2Timer.stopTimer();
             gameStatus = VersusGameStatus.finished;
@@ -242,7 +230,6 @@ class VersusGameLogic extends GetxController {
         p2TimeLeft = playerTwoGame!.moves.last.timeStampMillis;
         if (playerTwoGame!.moves.length == playerTwoGame!.moves.length) {
           p2Timer.stopTimer();
-          logger.i('player 2 completed last move, game is finished...');
           gameStatus = VersusGameStatus.finished;
           continue finished;
         } else {
@@ -255,12 +242,10 @@ class VersusGameLogic extends GetxController {
         onGameFinished();
         break;
       case VersusGameStatus.cancelled:
-        logger.i('game was cancelled');
         Get.snackbar('game_canceled'.tr, 'game_was_canceled'.tr, backgroundColor: Colors.green);
         Future.delayed(const Duration(milliseconds: 1000), () => Get.back(closeOverlays: true));
         break;
     }
-    logger.i('After state is $gameStatus, player to move = $whoIsToMove, p1Time: $p1TimeLeft, p2Time: $p2TimeLeft');
   }
 
   void onToggleMove(VersusPlayer whoIsToMove) {
@@ -273,7 +258,7 @@ class VersusGameLogic extends GetxController {
         p1Timer.timer.startFromNewPreset(p1TimeLeft);
         p2Timer.stopTimer();
         if (iAmP1) { // Is my move
-          logger.i('Is this player move ');
+          appController.playEffect('audio/beep-24.wav');
           HapticFeedback.mediumImpact();
           showKeyboard = true;
           switch (playerOneGame!.moves.length) {
@@ -306,7 +291,6 @@ class VersusGameLogic extends GetxController {
         p2Timer.restartFromNewPreset(p2TimeLeft);
         // playerTwoTimer.startTimer();
         if (iAmP1) { // Player2 is moving
-          logger.i('Is opponent move ');
           showKeyboard = false;
           switch (playerTwoGame!.moves.length) {
             case 1:
@@ -341,17 +325,13 @@ class VersusGameLogic extends GetxController {
   }
 
   void addDummyMoveToPlayer(VersusPlayer player) {
-    logger.i('called for $player');
     if (player == VersusPlayer.player1) {
       _playerOneGame.update((val) {
         val!.moves.add(GameMove.dummy());
-        logger.i('moves are now: ${jsonEncode(
-            playerOneGame!.moves)}, qty = ${playerOneGame!.moves.length}');
       });
     } else {
       _playerTwoGame.update((val) {
         val!.moves.add(GameMove.dummy());
-        logger.i('moves are now: ${jsonEncode(playerTwoGame!.moves)}, qty = ${playerTwoGame!.moves.length}');
       });
     }
     needsScrollToLast = true;
@@ -366,7 +346,6 @@ class VersusGameLogic extends GetxController {
   }
 
   void scrollToLastItem() {
-    logger.i('Scrolling to last item...');
     myScrollController.animateTo(myScrollController.position.maxScrollExtent,
         duration: const Duration(milliseconds: 400), curve: Curves.easeInOut);
     oppScrollController.animateTo(myScrollController.position.maxScrollExtent,
@@ -382,7 +361,6 @@ class VersusGameLogic extends GetxController {
   }
 
   Future<void> onThisPlayerNewGuess(FourDigits guess) async {
-    logger.i('onNewGuess-> called with guess: ${guess.toJson()}');
     if (iAmP1) {
       DigitMatchResult guessResult = getMatchResult(playerOneGame!.secretNum!, guess);
       GameMove newMove = GameMove(
@@ -391,7 +369,6 @@ class VersusGameLogic extends GetxController {
         timeStampMillis: p1Timer.timer.rawTime.value,
       );
       needsScrollToLast = true;
-      logger.i('Proceeding to add one move of player one...');
       await firestoreService.addMoveToPlayerOneInVersusGame(gameReference, newMove);
     } else { //I am player two
       DigitMatchResult guessResult = getMatchResult(playerTwoGame!.secretNum!, guess);
@@ -400,7 +377,6 @@ class VersusGameLogic extends GetxController {
         moveResult: guessResult,
         timeStampMillis: p2Timer.timer.rawTime.value,
       );
-      logger.i('Proceeding to add one move of player two...');
       if (gameStatus == VersusGameStatus.semiFinished) {
         firestoreService.addLastMoveToPlayerTwoInVersusGame(gameReference, newMove);
       } else {
@@ -410,7 +386,6 @@ class VersusGameLogic extends GetxController {
   }
 
   Future<void> onMyTimeIsUp(bool isMyTimeUp) async {
-    logger.i('Called with time up: $isMyTimeUp, iAmP1: $iAmP1');
     if (!isMyTimeUp) return;
     if (iAmP1) {
       WinnerPlayer winnerPlayer = WinnerPlayer.player2;
@@ -422,7 +397,6 @@ class VersusGameLogic extends GetxController {
           winByMode: winByMode,
           winnerId: winnerId
       );
-      logger.i('Game updated with p2 as winner, now setting p1TimeUp again to false...');
       appController.setP1TimeIsUp = false;
     } else { //I am player two and my time is up
       WinnerPlayer winnerPlayer = WinnerPlayer.player1;
@@ -434,24 +408,19 @@ class VersusGameLogic extends GetxController {
           winByMode: winByMode,
           winnerId: winnerId
       );
-      logger.i('Game updated with p1 as winner, now setting p2TimeUp again to false...');
       appController.setP2TimeIsUp = false;
     }
   }
 
   void onGameFinished() {
-    logger.i('called');
     if (iAmP1) {
       if(game.winnerPlayer == null) {
-        logger.i('Still not received final result...');
       } else {
-        logger.i('As player1, received final result from firestore');
         showFinalResult = true;
         appController.needUpdateVsStats.value = true;
       }
     } else { // I am player 2
       if (game.winnerPlayer == null) {
-        logger.i('As player 2, proceeding to judge game and update firestore...');
         WinnerPlayer winnerPlayer;
         WinByMode winByMode;
         String winnerId;
@@ -459,7 +428,6 @@ class VersusGameLogic extends GetxController {
           if (game.playerOneGame.moves.last.moveResult.bulls == 4) { // Both players found it equal in moves, need judge by time
             int playerOneTimeLeft = game.playerOneGame.moves.last.timeStampMillis ~/1000;
             int playerTwoTimeLeft = game.playerTwoGame.moves.last.timeStampMillis ~/1000;
-            logger.i('Player one time left: $playerOneTimeLeft - Player two: $playerTwoTimeLeft');
             if (playerOneTimeLeft == playerTwoTimeLeft) { //Equal in moves and time => draw
               winnerPlayer = WinnerPlayer.draw;
               winByMode = WinByMode.draw;
@@ -490,7 +458,6 @@ class VersusGameLogic extends GetxController {
             winnerId: winnerId
         );
       } else {
-        logger.i('As player2, received final result from firestore');
         showFinalResult = true;
         appController.needUpdateVsStats.value = true;
       }
@@ -499,7 +466,6 @@ class VersusGameLogic extends GetxController {
 
 
   Future<bool> onBackPressed() async {
-    logger.i('back button pressed');
     if (showFinalResult) return true;
     String middleText = '';
     if (iAmP1) {
@@ -533,18 +499,16 @@ class VersusGameLogic extends GetxController {
   }
 
   void onCancelGame() async {
-    logger.i('called');
     await firestoreService.updateVersusGameStatus(gameReference, VersusGameStatus.cancelled);
   }
 
   void onQuitGame() {
-    logger.i('Quitting with p1 moves = ${game.playerOneGame.moves.length} and p2 moves = ${game.playerTwoGame.moves.length}');
     if (iAmP1) {
       if(game.playerOneGame.moves.isEmpty) { //Game cancelled by me
         logger.i('Cancelled by me before first move');
         onCancelGame();
       } else if (game.playerOneGame.moves.last.guess.isDummy()) {
-        logger.i('Cancelled by me before first move');
+        // Cancelled by this player before first move
         onCancelGame();
       } else {
         WinnerPlayer winnerPlayer = WinnerPlayer.player2;

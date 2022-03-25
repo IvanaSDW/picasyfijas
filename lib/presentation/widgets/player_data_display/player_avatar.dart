@@ -23,9 +23,6 @@ class PlayerAvatar extends StatelessWidget {
                 border: Border.all(color: isP1 ? Colors.white : originalColors.accentColor2!, width: 0.5,)
               ),
             ),
-            // Center(
-            //   child: Image.asset('assets/images/user_image_frame.png'),
-            // ),
             Column(
               children: [
                 Expanded(flex: 80,
