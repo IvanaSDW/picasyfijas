@@ -8,7 +8,6 @@ import 'package:bulls_n_cows_reloaded/shared/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
-
 import '../../widgets/matrix_effect/matrix_effect_controller.dart';
 
 class FindOpponentView extends StatelessWidget {

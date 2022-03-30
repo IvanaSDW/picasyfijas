@@ -103,11 +103,12 @@ class FirestoreService {
   Future<void> checkInAnonymousPlayer(User user) async {
     DocumentReference playerRef = players.doc(user.uid);
     DocumentSnapshot firestoreUser = await playerRef.get();
+    logger.i('looking for player: ${user.uid}, exists = ${firestoreUser.exists}');
 
     if (!firestoreUser.exists) { //user not yet created in firestore
       await playerRef.set({
         playerIdFN: user.uid,
-        playerNameFN: 'Guest',
+        playerNameFN: 'guest'.tr,
         playerIsNewPlayerFN: true,
         playerCreatedAtFN: Timestamp.now(),
         playerGuessesAverageFN: double.infinity,
@@ -126,7 +127,7 @@ class FirestoreService {
       //user exists in firestore
       logger.i('user already in firestore, lets update it...');
       await playerRef.update({
-        playerNameFN: 'Guest',
+        playerNameFN: 'guest'.tr,
         playerIsVsUnlockedFN: false,
       }).then(
               (value) => appController.refreshPlayer()
@@ -183,10 +184,18 @@ class FirestoreService {
     required String playerId,
     required String newToken,
   }) async {
-    await players.doc(playerId).update({
-      playerPushTokenFN: newToken,
-      'tokenTimeStamp': DateTime.now(),
-    });
+
+    DocumentReference playerRef = players.doc(playerId);
+    DocumentSnapshot firestoreUser = await playerRef.get();
+    logger.i('looking for player: $playerId, exists = ${firestoreUser.exists}');
+
+    if(firestoreUser.exists) {
+      await players.doc(playerId).update(
+          {playerPushTokenFN: newToken,
+            'tokenTimeStamp': DateTime.now(),},
+          );
+    }
+
   }
 
 

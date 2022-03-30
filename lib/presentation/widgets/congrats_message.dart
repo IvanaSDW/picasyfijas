@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class CongratsMessage extends StatelessWidget {
@@ -15,7 +16,7 @@ class CongratsMessage extends StatelessWidget {
       Center(
         child: Column(
           children: [
-            Text('Well done!!',
+            Text('well_done'.tr,
               style: GoogleFonts.robotoMono(
                   textStyle: const TextStyle(
                       color: Colors.green,
@@ -23,7 +24,7 @@ class CongratsMessage extends StatelessWidget {
                   )
               ),
             ),
-            Text('Mission completed in:',
+            Text('mission_completed_in'.tr,
               style: GoogleFonts.robotoMono(
                   textStyle: const TextStyle(
                       color: Colors.green,
@@ -32,7 +33,7 @@ class CongratsMessage extends StatelessWidget {
               ),
             ),
             Container(height: 8,),
-            Text('Time: $totalTime',
+            Text('time'.tr +  totalTime,
               style: GoogleFonts.robotoMono(
                   textStyle: const TextStyle(
                       color: Colors.green,
@@ -40,7 +41,7 @@ class CongratsMessage extends StatelessWidget {
                   )
               ),
             ),
-            Text('Guesses: $totalMoves',
+            Text('guesses'.tr + '$totalMoves',
               style: GoogleFonts.robotoMono(
                   textStyle: const TextStyle(
                       color: Colors.green,

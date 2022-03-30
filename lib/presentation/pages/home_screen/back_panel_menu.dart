@@ -1,3 +1,4 @@
+import 'package:bulls_n_cows_reloaded/navigation/routes.dart';
 import 'package:bulls_n_cows_reloaded/presentation/pages/home_screen/back_panel_controller.dart';
 import 'package:bulls_n_cows_reloaded/presentation/widgets/player_data_display/player_stats_controller.dart';
 import 'package:bulls_n_cows_reloaded/shared/constants.dart';
@@ -51,6 +52,16 @@ class BackPanelMenu extends StatelessWidget {
                 ListTile(
                   contentPadding: const EdgeInsets.only(left: 6),
                   horizontalTitleGap: 0.0,
+                  enabled: enabled,
+                  onTap: () => Get.toNamed(Routes.instructions),
+                  leading: Icon(Icons.help_outline, color: iconColor,),
+                  title: Text('instructions'.tr,
+                    style: TextStyle(color: menuTextColor, fontFamily: 'Mainframe', fontSize: 13),
+                  ),
+                ),
+                ListTile(
+                  contentPadding: const EdgeInsets.only(left: 6),
+                  horizontalTitleGap: 0.0,
                   enabled: enabled && appController.authState != AuthState.anonymous,
                   onTap: () => authController.signOut(),
                   leading: Icon(Icons.logout, color: appController.authState == AuthState.anonymous ? Colors.black45 : iconColor,),
@@ -62,7 +73,7 @@ class BackPanelMenu extends StatelessWidget {
                   ),
                 ),
               ],
-            )
+            ),
           ],
         ),
       );

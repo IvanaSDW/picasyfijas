@@ -82,7 +82,7 @@ const String appGlobalsVersusGamesCountFN = 'vs_games_count';
 
 const int versusModeTimePresetMillis = 300000;
 const int playerPresetRating = 1500;
-const int minSoloGamesToUnlockVsMode = 2;
+const int minSoloGamesToUnlockVsMode = 3;
 const int maxTimeAverageToUnlockVsMode = 300000;
 
 const monthsEng = <String>[ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', ];

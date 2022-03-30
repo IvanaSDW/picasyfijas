@@ -1,3 +1,4 @@
+import 'package:bulls_n_cows_reloaded/presentation/widgets/player_data_display/player_stats_controller.dart';
 import 'package:bulls_n_cows_reloaded/shared/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -66,6 +67,7 @@ class VersusMatchButtonController extends GetxController {
         },
       );
     } else if (appController.authState == AuthState.google) {
+      Get.find<PlayerStatsController>().refreshStats(auth.currentUser!.uid);
       Get.toNamed(Routes.findOpponent);
     } else {
       Get.defaultDialog(

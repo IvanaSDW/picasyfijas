@@ -108,4 +108,8 @@ const Map<String, String> esES = {
   'requires_google_sign_in' : 'Ingresa con Google',
   'sign_in_with_google_for_multiplayer_mode.' : 'Regístrate con tu cuenta de Google para habilitar multijugador.',
   'sign_in' : 'Registrarme',
+  'guest' : 'Invitado',
+  'well_done' : 'Bien hecho!!',
+  'mission_completed_in': 'Misión completada en:',
+  'time' : 'Tiempo:',
 };

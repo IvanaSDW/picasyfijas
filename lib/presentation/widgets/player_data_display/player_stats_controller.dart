@@ -92,6 +92,7 @@ class PlayerStatsController extends GetxController {
     }
     appController.needUpdateSoloStats.value = false;
     appController.needUpdateVsStats.value = false;
+    await appController.refreshPlayer();
   }
 
   Future<Map<String, dynamic>> getVsStats(String playerId) async {

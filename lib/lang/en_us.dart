@@ -109,4 +109,9 @@ const Map<String, String> enUS = {
   'requires_google_sign_in' : 'Requires Google sign in',
   'sign_in_with_google_for_multiplayer_mode.' : 'Sign in with your google account to enable multiplayer mode.',
   'sign_in' : 'Sign in',
+  'guest' : 'Guest',
+  'well_done' : 'Well done!!',
+  'mission_completed_in': 'Mission completed in:',
+  'time' : 'Time:',
+
 };

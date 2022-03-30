@@ -60,7 +60,7 @@ class ModeUnlockedView extends StatelessWidget {
                 visible: controller.showLittleText1,
                 child: AnimatedTextKit(
                   isRepeatingAnimation: false,
-                  onFinished: () => Future.delayed(const Duration(milliseconds: 500), () => controller.showLittleText2WithEffect()),
+                  onFinished: () => Future.delayed(const Duration(milliseconds: 300), () => controller.showLittleText2WithEffect()),
                   animatedTexts: [
                     TyperAnimatedText('enjoy_playing_vs_mode_line1'.tr,
                       textStyle: TextStyle(

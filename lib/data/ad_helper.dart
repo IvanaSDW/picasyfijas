@@ -41,6 +41,15 @@ class AdHelper {
     }
   }
 
+  static String get afterSoloGameInterstitialAdUnitId {
+    if (GetPlatform.isAndroid) {
+      return "ca-app-pub-9780033679028237/7736086842";
+    } else {
+      throw UnsupportedError("Unsupported platform");
+    }
+  }
+
+
   static String get testInterstitialAdUnitId {
     if (GetPlatform.isAndroid) {
       return "ca-app-pub-3940256099942544/1033173712";

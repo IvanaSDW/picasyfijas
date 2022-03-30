@@ -16,10 +16,8 @@ class VersusMatchMaker {
 
   late StreamSubscription _acceptedChallengeStream;
   late StreamSubscription _postedChallengeStream;
-
   late DocumentReference<VersusGameChallenge> acceptedChallengeReference;
   late DocumentReference<VersusGameChallenge> postedChallengeReference;
-
   final PostNewChallengeUC _postNewChallenge = PostNewChallengeUC();
   final FindChallengeUC _findChallenge = FindChallengeUC();
   final AcceptVersusChallengeUC _acceptVersusChallenge = AcceptVersusChallengeUC();
@@ -81,7 +79,7 @@ class VersusMatchMaker {
           });
         }
       } else {
-        Get.snackbar('Game canceled', 'game was canceled', backgroundColor: Colors.green);
+        Get.snackbar('game_canceled'.tr, 'game_was_canceled'.tr, backgroundColor: Colors.green);
         Future.delayed(const Duration(milliseconds: 1000), () => Get.back(closeOverlays: true));
       }
     });
@@ -116,9 +114,7 @@ class VersusMatchMaker {
     _acceptedChallengeStream = challengeReference.snapshots().listen((event) {
       VersusGameChallenge? challenge = event.data();
       if( challenge != null) {
-        logger.i('Received a snapshot from challenge subscription : ${challenge.toJson()}');
         if(challenge.assignedGameId != null) { //Game is created by challenger player, we are player 2
-          logger.i('Received an assigned game: ${challenge.assignedGameId}, we are player 2');
           _acceptedChallengeStream.cancel();
           challengeReference.delete();
           var gameStream = _subscribeToVersusGameId(challenge.assignedGameId!);
@@ -142,7 +138,6 @@ class VersusMatchMaker {
   }
 
   Stream<DocumentSnapshot<VersusGame>> _subscribeToVersusGameId(String gameId) {
-    logger.i('called to subscribe to game id: $gameId');
     _acceptedChallengeStream.cancel();
     return firestoreService.versusGames.doc(gameId).snapshots() as Stream<DocumentSnapshot<VersusGame>>;
   }

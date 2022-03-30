@@ -1,13 +1,13 @@
 import 'package:bulls_n_cows_reloaded/di/find_opponent_binding.dart';
 import 'package:bulls_n_cows_reloaded/di/solo_game_binding.dart';
 import 'package:bulls_n_cows_reloaded/di/versus_game_binding.dart';
+import 'package:bulls_n_cows_reloaded/presentation/pages/first_run_screen/instructions_widget.dart';
 import 'package:bulls_n_cows_reloaded/presentation/pages/landing_signed_out_view/landing_screen.dart';
 import 'package:bulls_n_cows_reloaded/presentation/pages/mode_unlocked_screen/mode_unlocked_view.dart';
 import 'package:bulls_n_cows_reloaded/presentation/pages/player_profile_screen/player_profile_view.dart';
 import 'package:bulls_n_cows_reloaded/presentation/pages/versus_game_screen/versus_game_view.dart';
 import 'package:flutter/animation.dart';
 import 'package:get/get.dart';
-
 import '../di/home_binding.dart';
 import '../presentation/pages/home_screen/home_view.dart';
 import '../presentation/pages/look_for_opponent_screen/find_opponent_view.dart';
@@ -23,6 +23,7 @@ abstract class Routes {
   static const versusGame = '/VersusGame';
   static const profile = '/Profile';
   static const modeUnlocked = '/ModeUnlocked';
+  static const instructions = '/Instructions';
 }
 
 final appPages = [
@@ -70,6 +71,13 @@ final appPages = [
   GetPage(
     name: Routes.modeUnlocked,
     page: () => ModeUnlockedView(),
+    transition: Transition.cupertino,
+    curve: Curves.easeInOut,
+    transitionDuration: const Duration(milliseconds: 1000),
+  ),
+  GetPage(
+    name: Routes.instructions,
+    page: () => InstructionsWidget(onContinueTappedAction: ()=> Get.back()),
     transition: Transition.cupertino,
     curve: Curves.easeInOut,
     transitionDuration: const Duration(milliseconds: 1000),

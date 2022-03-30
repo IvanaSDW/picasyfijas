@@ -108,4 +108,8 @@ const Map<String, String> ptBR = {
   'requires_google_sign_in' : 'Requer login do Google',
   'sign_in_with_google_for_multiplayer_mode.' : 'Faça login com sua conta do Google para ativar o modo multijogador.',
   'sign_in' : 'Entrar',
+  'guest' : 'Convidado',
+  'well_done' : 'Bem feito!!',
+  'mission_completed_in': 'Missão concluída em:',
+  'time' : 'Tempo:',
 };

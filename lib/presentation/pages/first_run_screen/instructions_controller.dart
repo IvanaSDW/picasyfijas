@@ -2,10 +2,6 @@ import 'package:get/get.dart';
 
 class InstructionsController extends GetxController {
 
-  final _logoVisible = true.obs;
-  set logoVisible(value) => _logoVisible.value = value;
-  get logoVisible => _logoVisible.value;
-
   final _instructionsTextVisible = false.obs;
   set instructionsTextVisible(value) => _instructionsTextVisible.value = value;
   get instructionsTextVisible => _instructionsTextVisible.value;
@@ -54,10 +50,4 @@ class InstructionsController extends GetxController {
   set continueButtonVisible(value) => _continueButtonVisible.value = value;
   get continueButtonVisible => _continueButtonVisible.value;
 
-  @override
-  void onInit() async {
-    await Future.delayed(const Duration(milliseconds: 3000));
-    logoVisible = false;
-    super.onInit();
-  }
 }

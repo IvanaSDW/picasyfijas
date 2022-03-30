@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:bulls_n_cows_reloaded/shared/chronometer.dart';
 import 'package:bulls_n_cows_reloaded/shared/theme.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -7,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-
 import '../../../data/ad_helper.dart';
 import '../../../data/models/digit_match_result.dart';
 import '../../../data/models/four_digits.dart';

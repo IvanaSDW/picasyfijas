@@ -5,7 +5,9 @@ import 'package:bulls_n_cows_reloaded/shared/chronometer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
+import '../../../data/ad_helper.dart';
 import '../../../data/models/digit_match_result.dart';
 import '../../../data/models/four_digits.dart';
 import '../../../data/models/game_move.dart';
@@ -19,6 +21,11 @@ import '../../widgets/numeric_keyboard/numeric_keyboard_controller.dart';
 class SoloGameLogic extends GetxController {
   final NumericKeyboardController _keyboard = Get.find();
   final SaveSoloGameToFirestoreUC _saveSoloMatchToFS = SaveSoloGameToFirestoreUC();
+
+  //Ads logic
+  InterstitialAd? _interstitialAd;
+  static const int maxFailedLoadAttempts = 3;
+  int _interstitialLoadAttempts = 0;
 
   late Rx<SoloGame> _match;
   SoloGame get match => _match.value;
@@ -84,6 +91,7 @@ class SoloGameLogic extends GetxController {
   }
 
   void onContinuePressed() {
+    _showInterstitialAd();
     Get.back();
   }
 
@@ -127,6 +135,43 @@ class SoloGameLogic extends GetxController {
   Future<bool> onBackPressed() async {
     appController.playEffect('audio/door-open.wav');
     return true;
+  }
+
+  void _createInterstitialAd() {
+    InterstitialAd.load(
+      adUnitId: AdHelper.afterSoloGameInterstitialAdUnitId,
+      request: const AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (InterstitialAd ad) {
+          _interstitialLoadAttempts = 0;
+          _interstitialAd = ad;
+        },
+        onAdFailedToLoad: (LoadAdError error) {
+          _interstitialLoadAttempts += 1;
+          _interstitialAd = null;
+          if (_interstitialLoadAttempts <= maxFailedLoadAttempts) {
+            _createInterstitialAd();
+          }
+        },
+      ),
+    );
+  }
+
+  void _showInterstitialAd() {
+    logger.i('called');
+    if (_interstitialAd != null) {
+      _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
+        onAdDismissedFullScreenContent: (InterstitialAd ad) {
+          ad.dispose();
+          _createInterstitialAd();
+        },
+        onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
+          ad.dispose();
+          _createInterstitialAd();
+        },
+      );
+      _interstitialAd!.show();
+    }
   }
 
 }
