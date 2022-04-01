@@ -113,5 +113,11 @@ const Map<String, String> enUS = {
   'well_done' : 'Well done!!',
   'mission_completed_in': 'Mission completed in:',
   'time' : 'Time:',
-
+  'share' : 'Share',
+  'rate' : 'Rate the app',
+  'share_message' : 'I would like to play this game with you. Install it from ',
+  'share_subject' : 'This game is fun.',
+  'refresh_leaderboard' : 'Refresh',
+  'leaderboard' : 'Leaderboard',
+  'leaderboard_title' : 'Leaderboard',
 };

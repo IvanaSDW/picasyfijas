@@ -76,11 +76,13 @@ class PlayerStatsController extends GetxController {
         playerStats.vsGamesLost = value['vsGamesLost'];
         playerStats.vsWinRate = value['vsWinRate'];
         playerStats.rating = value['rating'];
+        playerStats.isRated = value['isRated'];
       });
       await firestoreService.updatePlayerVsStats(
-          playerId: playerId,
-          winRate: playerStats.vsWinRate,
-          rating: playerStats.rating
+        playerId: playerId,
+        winRate: playerStats.vsWinRate,
+        rating: playerStats.rating,
+        isRated: playerStats.isRated,
       );
 
       await firestoreService.getPlayerRatingRank(playerId).then((value) {
@@ -112,8 +114,9 @@ class PlayerStatsController extends GetxController {
     int vsGamesWon = 0;
     int vsGamesDraw = 0;
     int vsGamesLost = 0;
-    int rating = 1500;
+    int rating = playerPresetRating;
     double vsWinRate = double.infinity;
+    bool isRated = false;
     if (vsGamesCount > 0) {
       for (var game in vsGames) {
         if (game.winnerId == playerId) {
@@ -126,12 +129,12 @@ class PlayerStatsController extends GetxController {
       }
       vsWinRate = vsGamesWon / vsGamesCount;
       rating = (vsGamesWon*400 - vsGamesLost*400 + sumOfOpsElo) ~/ vsGamesCount;
-
+      if (vsGamesCount >= 5) isRated = true;
     }
     return {
       'vsGamesCount' : vsGamesCount, 'vsGamesWon' : vsGamesWon,
       'vsGamesDraw' : vsGamesDraw, 'vsGamesLost' : vsGamesLost,
-      'vsWinRate' : vsWinRate, 'rating': rating,
+      'vsWinRate' : vsWinRate, 'rating': rating, 'isRated': isRated,
     };
   }
 

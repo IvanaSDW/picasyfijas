@@ -49,6 +49,14 @@ class AdHelper {
     }
   }
 
+  static String get leaderboardBannerAdUnitId {
+    if (GetPlatform.isAndroid) {
+      return "ca-app-pub-9780033679028237/3862197114";
+    } else {
+      throw UnsupportedError("Unsupported platform");
+    }
+  }
+
 
   static String get testInterstitialAdUnitId {
     if (GetPlatform.isAndroid) {

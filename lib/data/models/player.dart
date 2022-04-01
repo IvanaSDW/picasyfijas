@@ -17,6 +17,7 @@ class Player {
   String? pushToken;
   int? rating;
   bool? isVsUnlocked = false;
+  bool? isRated = false;
 
   Player({
     required this.id,
@@ -32,6 +33,7 @@ class Player {
     required this.pushToken,
     required this.rating,
     required this.isVsUnlocked,
+    required this.isRated,
   });
 
   Player.empty();
@@ -51,6 +53,7 @@ class Player {
     playerPushTokenFN: pushToken,
     playerRatingFN: rating,
     playerIsVsUnlockedFN: isVsUnlocked,
+    playerIsRatedFN: isRated,
   };
 
   factory Player.fromJson(Map<String, dynamic> json) => Player(
@@ -67,6 +70,7 @@ class Player {
     pushToken: json[playerPushTokenFN],
     rating: json[playerRatingFN],
     isVsUnlocked: json[playerIsVsUnlockedFN],
+    isRated: json[playerIsRatedFN],
   );
 
 }

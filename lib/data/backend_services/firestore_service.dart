@@ -61,7 +61,9 @@ class FirestoreService {
 
   Query<Player> playersByRatingQuery() =>
       _firestore.collection(playersTableName)
+          .where(playerIsRatedFN, isEqualTo: true)
           .orderBy(playerRatingFN, descending: true)
+          .limit(100)
           .withConverter<Player>(
           fromFirestore: (snapshot, _) => Player.fromJson(snapshot.data()!),
           toFirestore: (player, _) => player.toJson());
@@ -158,6 +160,7 @@ class FirestoreService {
         playerTimeAverageFN: timeAverage,
         playerGuessesAverageFN: guessesAverage,
         playerIsVsUnlockedFN: true,
+        playerRatingFN: playerPresetRating,
         playerCountryCodeFN: appController.countryCode, //Use this chance to update locale
       }).then((value) => {appController.refreshPlayer()});
     } else {
@@ -173,10 +176,12 @@ class FirestoreService {
     required String playerId,
     required double winRate,
     required int rating,
+    required bool isRated,
   }) async {
     await players.doc(playerId).update({
       playerVsModeWinRateFN: winRate,
       playerRatingFN: rating,
+      playerIsRatedFN: isRated,
     });
   }
 
@@ -191,9 +196,9 @@ class FirestoreService {
 
     if(firestoreUser.exists) {
       await players.doc(playerId).update(
-          {playerPushTokenFN: newToken,
-            'tokenTimeStamp': DateTime.now(),},
-          );
+        {playerPushTokenFN: newToken,
+          'tokenTimeStamp': DateTime.now(),},
+      );
     }
 
   }
@@ -265,10 +270,14 @@ class FirestoreService {
     return soloRankings;
   }
 
-  Future<Map<String, dynamic>> getPlayerRatingRank(String playerId) async {
-    List<Player> orderedByRating = await playersByRatingQuery()
+  Future<List<Player>> getLeaderboard() async {
+    return await playersByRatingQuery()
         .get()
         .then((value) => value.docs.map((e) => e.data()).toList());
+  }
+
+  Future<Map<String, dynamic>> getPlayerRatingRank(String playerId) async {
+    List<Player> orderedByRating = await getLeaderboard();
     int rankIndex = orderedByRating.indexWhere((player) => player.id == playerId) + 1;
     double percentile = (orderedByRating.length- rankIndex) / orderedByRating.length;
     return {'rank' : rankIndex, 'percentile' : percentile};
@@ -496,5 +505,21 @@ class FirestoreService {
 
   Stream<DocumentSnapshot<Map<String, dynamic>>> appGeneralInfo() =>
       _firestore.collection(appGlobalsTableName).doc(appGlobalsGeneralInfoDN).snapshots();
+
+  //Settings database services:
+  Future<String?> fetchPlayStoreDynamicLink() async {
+    String? link;
+    await _firestore.collection(appGlobalsTableName).doc(appGlobalsSettingsDN)
+        .get()
+        .then((value) {
+      if (value.exists) {
+        if (value.data() != null) {
+          link = value.data()![appSettingsPlayStoreDynamicLinkFN];
+        }
+      }
+    });
+    logger.i('Returning link: $link');
+    return link;
+  }
 
 }

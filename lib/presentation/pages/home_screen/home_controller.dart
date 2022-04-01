@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import '../../../data/ad_helper.dart';
+import '../../../navigation/routes.dart';
 
 
 class HomeController extends GetxController {
@@ -38,7 +39,7 @@ class HomeController extends GetxController {
   }
 
   void onAvatarTapped() {
-    // Get.toNamed(Routes.modeUnlocked);
+    // Get.toNamed(Routes.leaderboard);
   }
 
   void googleSignIn() async {

@@ -12,11 +12,11 @@ class PanelLogoWidget extends StatelessWidget {
       return Image(
         image: Get.locale.toString().substring(0, 2) == 'es'
             ? appController.backPanelOn
-            ? const AssetImage('assets/images/panel_logo_eng.png',)
-            : const AssetImage('assets/images/panel_logo_spa.png',)
+            ? const AssetImage('assets/images/panel_logo_en.png',)
+            : const AssetImage('assets/images/panel_logo_es.png',)
             : appController.backPanelOn
-            ? const AssetImage('assets/images/panel_logo_eng.png',)
-            : const AssetImage('assets/images/panel_logo_spa.png',),
+            ? const AssetImage('assets/images/panel_logo_en.png',)
+            : const AssetImage('assets/images/panel_logo_es.png',),
       );
     });
   }

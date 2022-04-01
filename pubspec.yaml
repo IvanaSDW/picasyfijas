@@ -58,6 +58,9 @@ dependencies:
   google_mobile_ads: ^1.1.0
   country_codes: ^2.1.1
   http: ^0.13.4
+  firebase_dynamic_links: ^4.1.1
+  share_plus: ^4.0.3
+  launch_review: ^3.0.1
 
 dev_dependencies:
   flutter_test:
@@ -106,10 +109,10 @@ flutter:
     - family: Digital
       fonts:
         - asset: assets/fonts/digital_7_mono.ttf
-    - family: SFDigitalHeavyObliq
+    - family: Cascadia
       fonts:
-        #        - asset: assets/fonts/SFDigitalReadout-Heavy.ttf
-        - asset: assets/fonts/SFDigitalReadout-HeavyObliq.ttf
+        - asset: assets/fonts/CascadiaCode.ttf
+#        - asset: assets/fonts/SFDigitalReadout-HeavyObliq.ttf
     #        - asset: assets/fonts/SFDigitalReadout-Light.ttf
     #        - asset: assets/fonts/SFDigitalReadout-LightObliq.ttf
     #        - asset: assets/fonts/SFDigitalReadout-Medium.ttf

@@ -13,11 +13,12 @@ class PlayerStats {
   int vsWorldRank = 0;
   double vsPercentile = 0;
   int rating = 0;
+  bool isRated = false;
 
   PlayerStats(this.soloGamesCount, this.timeAverage, this.guessesAverage,
       this.timeRank, this.guessesRank, this.soloWorldRank, this.vsGamesCount,
       this.vsWinRate, this.vsWorldRank, this.vsGamesWon, this.vsGamesDraw,
-      this.vsGamesLost, this.vsPercentile, this.rating,
+      this.vsGamesLost, this.vsPercentile, this.rating, this.isRated,
       );
 
   PlayerStats.blank();

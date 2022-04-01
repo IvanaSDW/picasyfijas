@@ -14,7 +14,6 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-
 import 'data/backend_services/firebase_auth_service.dart';
 import 'data/models/push_notification.dart';
 import 'firebase_options.dart';

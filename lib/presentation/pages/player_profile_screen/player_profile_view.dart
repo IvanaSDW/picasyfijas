@@ -63,7 +63,9 @@ class PlayerProfileView extends StatelessWidget {
                           style: playerProfileAccentTitle,
                         ),
                         AutoSizeText(
-                          stats.rating.toString(),
+                          stats.isRated
+                            ? stats.rating.toString()
+                          : stats.rating.toString() + '?',
                           style: profilePlayerWhiteTextStyle,
                         ),
                       ],
@@ -199,7 +201,8 @@ class PlayerProfileView extends StatelessWidget {
                                 style: profilePlayerWhiteTextStyle,
                               ),
                               AutoSizeText(
-                                stats.guessesAverage.toStringAsFixed(1),
+                                stats.guessesAverage == double.infinity
+                                    ? '--' : stats.guessesAverage.toStringAsFixed(1),
                                 style: profilePlayerWhiteTextStyle,
                               ),
                             ],
@@ -265,6 +268,8 @@ class PlayerProfileView extends StatelessWidget {
                                 style: profilePlayerWhiteTextStyle,
                               ),
                               AutoSizeText(
+                                stats.vsWinRate == double.infinity
+                                    ? '--' :
                                 (stats.vsWinRate *100).toStringAsFixed(1) + '%',
                                 style: profilePlayerWhiteTextStyle,
                               ),
@@ -277,6 +282,8 @@ class PlayerProfileView extends StatelessWidget {
                                 style: profilePlayerWhiteTextStyle,
                               ),
                               AutoSizeText(
+                                stats.vsGamesCount == 0
+                                    ? '--' :
                                 stats.vsWorldRank.toString(),
                                 style: profilePlayerWhiteTextStyle,
                               ),
@@ -289,6 +296,8 @@ class PlayerProfileView extends StatelessWidget {
                                 style: profilePlayerWhiteTextStyle,
                               ),
                               AutoSizeText(
+                                stats.vsGamesCount == 0
+                                    ? '--' :
                                 (stats.vsPercentile*100).toStringAsFixed(1),
                                 style: profilePlayerWhiteTextStyle,
                               ),
@@ -322,17 +331,17 @@ class PlayerProfileView extends StatelessWidget {
             ),
             Expanded(flex: 20,
                 child: Container(
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          Color(0xFF4E524E),
-                          Color(0xFF899288),
-                          Color(0xFFA9B8A8),
-                          Color(0xFFBACEB8),
-                          Color(0xFF939E92),
-                          Color(0xFF818B81),
-                          Color(0xFF5C615C),
-                          Color(0xFF424442),
+                          const Color(0xFF4E524E).withOpacity(0.2),
+                          const Color(0xFF899288).withOpacity(0.2),
+                          const Color(0xFFA9B8A8).withOpacity(0.2),
+                          const Color(0xFFBACEB8).withOpacity(0.2),
+                          const Color(0xFF939E92).withOpacity(0.2),
+                          const Color(0xFF818B81).withOpacity(0.2),
+                          const Color(0xFF5C615C).withOpacity(0.2),
+                          const Color(0xFF424442).withOpacity(0.2),
                         ],
                         begin: Alignment.bottomLeft,
                         end: Alignment.topRight,

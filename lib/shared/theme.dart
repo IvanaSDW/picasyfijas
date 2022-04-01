@@ -23,7 +23,7 @@ ColorPalette originalColors = ColorPalette(
   myTimerColor: const Color(0xFFFF0000),
   oppTimerColor: const Color(0xFF084A00),
   playerOneBackground: const Color(0xFF829782),
-  playerTwoBackground: const Color(0xff617f5f),
+  playerTwoBackground: const Color(0xff3d503c),
 );
 
 class ColorPalette {

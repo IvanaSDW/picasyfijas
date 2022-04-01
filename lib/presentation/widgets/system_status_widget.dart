@@ -36,6 +36,7 @@ class SystemStatusView extends StatelessWidget {
                           Expanded(flex: 28,
                             child: AutoSizeText(
                               'player_status'.tr,
+                              maxLines: 1,
                               textAlign: TextAlign.left,
                               style: TextStyle(
                                 fontFamily: 'Digital',
@@ -47,6 +48,7 @@ class SystemStatusView extends StatelessWidget {
                           Expanded(flex: 28,
                             child: AutoSizeText(
                               appController.authState.toString().split('.').last,
+                              maxLines: 1,
                               textAlign: TextAlign.left,
                               style: TextStyle(
                                 color: originalColors.textColor3,
@@ -58,6 +60,7 @@ class SystemStatusView extends StatelessWidget {
                           Expanded(flex: 24,
                             child: AutoSizeText(
                               'country'.tr,
+                              maxLines: 1,
                               style: TextStyle(
                                 color: originalColors.textColor2,
                                 fontSize: 18,
@@ -68,6 +71,7 @@ class SystemStatusView extends StatelessWidget {
                           Expanded(flex: 20,
                             child: AutoSizeText(
                               appController.countryName,
+                              maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                 color: originalColors.textColor3,
@@ -85,6 +89,7 @@ class SystemStatusView extends StatelessWidget {
                           Expanded(flex: 28,
                             child: AutoSizeText(
                               'network'.tr,
+                              maxLines: 1,
                               style: TextStyle(
                                 color: originalColors.textColor2,
                                 fontSize: 18,
@@ -95,6 +100,7 @@ class SystemStatusView extends StatelessWidget {
                           Expanded(flex: 28,
                             child: AutoSizeText(
                               "${appController.internetStatus}",
+                              maxLines: 1,
                               style: TextStyle(
                                 color: originalColors.textColor3,
                                 fontSize: 18,
@@ -105,6 +111,7 @@ class SystemStatusView extends StatelessWidget {
                           Expanded(flex: 24,
                             child: AutoSizeText(
                               'language'.tr,
+                              maxLines: 1,
                               style: TextStyle(
                                 color: originalColors.textColor2,
                                 fontSize: 18,
@@ -115,6 +122,7 @@ class SystemStatusView extends StatelessWidget {
                           Expanded(flex: 20,
                             child: AutoSizeText(
                             Get.locale!.toLanguageTag(),
+                            maxLines: 1,
                             style: TextStyle(
                               color: originalColors.textColor3,
                               fontSize: 18,

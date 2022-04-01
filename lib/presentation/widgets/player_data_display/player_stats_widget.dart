@@ -183,7 +183,9 @@ class PlayerStatsWidget extends StatelessWidget {
                 ),
                 Expanded(flex: 25,
                     child: AutoSizeText(
-                      stats.rating.toString(),
+                      stats.isRated
+                      ? stats.rating.toString()
+                      : stats.rating.toString() + '?',
                       style: statsText,
                       textAlign: TextAlign.start,
                     )

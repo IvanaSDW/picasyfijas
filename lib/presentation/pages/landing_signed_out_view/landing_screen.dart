@@ -23,7 +23,11 @@ class LandingUnsignedScreen extends StatelessWidget {
               absorbing: appController.isBusy,
               child: Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Image.asset('assets/images/panel_logo_eng.png'),
+                  Image(
+                    image: Get.locale.toString().substring(0, 2) == 'es'
+                        ? const AssetImage('assets/images/panel_logo_es.png',)
+                        : const AssetImage('assets/images/panel_logo_en.png',),
+                  ),
                   const GoogleSignInButtonSquared(),
                   const AnonymousSignInButton(),
                 ],

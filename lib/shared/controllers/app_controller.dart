@@ -25,12 +25,15 @@ class AppController extends GetxController {
 
   final FetchPlayerByIdUC _fetchPlayerById = FetchPlayerByIdUC();
 
+  String? playStoreDynamicLink;
+
   final RxBool _needLand = false.obs;
   bool get needLand => _needLand.value;
   set needLand(bool value) => _needLand.value = value;
 
   final RxBool needUpdateSoloStats = true.obs;
   final RxBool needUpdateVsStats = true.obs;
+  final RxBool needUpdateLeaderboard = true.obs;
 
   bool canUpdateAuthState = true;
 
@@ -131,6 +134,7 @@ class AppController extends GetxController {
     super.onInit();
     countryCode = await IpLocator().getCountryCode();
     countryName = await IpLocator().getCountryName();
+    playStoreDynamicLink = await firestoreService.fetchPlayStoreDynamicLink();
     if(currentPlayer.pushToken == null) {
       FirebaseMessaging.instance.getToken().then((value) => {
         firestoreService.updatePlayerToken(playerId: auth.currentUser!.uid, newToken: value!)

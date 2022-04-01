@@ -127,3 +127,27 @@ const TextStyle profilePlayerWhiteTextStyle = TextStyle(
   color: Colors.white,
   fontSize: 18,
 );
+
+TextStyle leaderBoardKingRatingStyle = TextStyle(
+  fontFamily: 'Digital',
+  color: originalColors.playerOneBackground,
+  fontSize: 30,
+);
+
+TextStyle leaderBoardSecondRatingStyle = TextStyle(
+  fontFamily: 'Digital',
+  color: originalColors.playerOneBackground,
+  fontSize: 26,
+);
+
+final TextStyle leaderPodiumNameStyle = TextStyle(
+  fontFamily: 'Mainframe',
+  color: originalColors.playerOneBackground,
+  fontSize: 16,
+);
+
+final TextStyle leaderboardTitleStyle = TextStyle(
+  fontFamily: 'Cascadia',
+  color: originalColors.keyOffColor,
+  fontSize: 22,
+);

@@ -112,4 +112,11 @@ const Map<String, String> esES = {
   'well_done' : 'Bien hecho!!',
   'mission_completed_in': 'Misión completada en:',
   'time' : 'Tiempo:',
+  'share' : 'Compartir',
+  'rate' : 'Calificar',
+  'share_message' : 'Me gustaría jugar esto contigo. Instala este juego ',
+  'share_subject' : 'Te recomiendo este juego.',
+  'refresh_leaderboard' : 'Actualizar',
+  'leaderboard' : 'Clasificación',
+  'leaderboard_title' : 'Tabla de Posiciones',
 };

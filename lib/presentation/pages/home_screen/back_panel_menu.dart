@@ -20,7 +20,6 @@ class BackPanelMenu extends StatelessWidget {
         width: appController.panelWidth,
         padding: const EdgeInsets.all(0.0),
         child: Column(
-          // mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ListView(
               shrinkWrap: true,
@@ -32,6 +31,16 @@ class BackPanelMenu extends StatelessWidget {
                   onTap: () => Get.find<BackPanelController>().onProfileMenuPressed(),
                   leading: Icon(Icons.person, color: iconColor,),
                   title: Text('profile'.tr,
+                    style: TextStyle(color: menuTextColor, fontFamily: 'Mainframe', fontSize: 13),
+                  ),
+                ),
+                ListTile(
+                  contentPadding: const EdgeInsets.only(left: 6),
+                  horizontalTitleGap: 0.0,
+                  enabled: enabled,
+                  onTap: () => Get.find<BackPanelController>().onLeaderboardMenuPressed(),
+                  leading: Icon(Icons.leaderboard_outlined, color: iconColor,),
+                  title: Text('leaderboard'.tr,
                     style: TextStyle(color: menuTextColor, fontFamily: 'Mainframe', fontSize: 13),
                   ),
                 ),
@@ -59,6 +68,32 @@ class BackPanelMenu extends StatelessWidget {
                     style: TextStyle(color: menuTextColor, fontFamily: 'Mainframe', fontSize: 13),
                   ),
                 ),
+                Divider(color: originalColors.playerTwoBackground,),
+                ListTile(
+                  contentPadding: const EdgeInsets.only(left: 6),
+                  horizontalTitleGap: 0.0,
+                  enabled: enabled && appController.playStoreDynamicLink != null,
+                  onTap: () => Get.find<BackPanelController>().onShare(),
+                  leading: Icon(Icons.share_outlined, color: appController.playStoreDynamicLink != null
+                      ? iconColor : originalColors.reverseTextColor,),
+                  title: Text('share'.tr,
+                    style: TextStyle( fontFamily: 'Mainframe', fontSize: 13,
+                      color: appController.playStoreDynamicLink != null
+                      ? menuTextColor : originalColors.reverseTextColor,
+                    ),
+                  ),
+                ),
+                ListTile(
+                  contentPadding: const EdgeInsets.only(left: 6),
+                  horizontalTitleGap: 0.0,
+                  enabled: enabled,
+                  onTap: () => Get.find<BackPanelController>().onRate(),
+                  leading: Icon(Icons.rate_review_outlined, color: iconColor,),
+                  title: Text('rate'.tr,
+                    style: TextStyle(color: menuTextColor, fontFamily: 'Mainframe', fontSize: 13),
+                  ),
+                ),
+                Divider(color: originalColors.playerTwoBackground,),
                 ListTile(
                   contentPadding: const EdgeInsets.only(left: 6),
                   horizontalTitleGap: 0.0,

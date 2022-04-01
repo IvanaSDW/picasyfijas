@@ -37,6 +37,7 @@ const String playerIsOnlineFN = 'is_online';
 const String playerPushTokenFN = 'push_token';
 const String playerRatingFN = 'rating';
 const String playerIsVsUnlockedFN = 'is_vs_unlocked';
+const String playerIsRatedFN = 'is_rated';
 
 const String soloGamesTableName = 'solo_matches';
 const String soloGamePlayerIdFN = 'player_id';
@@ -79,6 +80,9 @@ const String appGlobalsTableName = 'app_globals';
 const String appGlobalsGeneralInfoDN = 'general_info';
 const String appGlobalsOnLineCountFN = 'online_count';
 const String appGlobalsVersusGamesCountFN = 'vs_games_count';
+
+const String appGlobalsSettingsDN = 'settings';
+const String appSettingsPlayStoreDynamicLinkFN = 'play_store_dynamic_link';
 
 const int versusModeTimePresetMillis = 300000;
 const int playerPresetRating = 1500;

@@ -112,4 +112,11 @@ const Map<String, String> ptBR = {
   'well_done' : 'Bem feito!!',
   'mission_completed_in': 'Missão concluída em:',
   'time' : 'Tempo:',
+  'share' : 'Compartilhar',
+  'rate' : 'Avaliar app',
+  'share_message' : 'Eu gostaria de jogar isso com você. Instale este jogo ',
+  'share_subject' : 'Eu recomendo esse jogo.',
+  'refresh_leaderboard' : 'Atualizar',
+  'leaderboard' : 'Classificação',
+  'leaderboard_title' : 'Tabela de Posições',
 };
