@@ -54,6 +54,15 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
+      builder: (context, widget) {
+        final MediaQueryData data = MediaQuery.of(context);
+        return MediaQuery(
+            data: data.copyWith(
+              textScaleFactor: data.textScaleFactor.clamp(1.0, 1.1)
+            ),
+            child: widget!,
+        );
+      },
       defaultTransition: Transition.native,
       transitionDuration: const Duration(milliseconds: 500),
       debugShowCheckedModeBanner: false,

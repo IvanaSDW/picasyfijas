@@ -30,7 +30,7 @@ class ChronometerWidget extends StatelessWidget {
                       ? originalColors.textColorLight
                       : originalColors.accentColor1,
                   fontSize: snap.data! < 3600000 ? 35 : 25,
-                  fontFamily: 'SFDigitalHeavyObliq',
+                  fontFamily: 'Readout',
                 ),
               ),
             ],

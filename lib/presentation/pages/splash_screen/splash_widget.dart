@@ -46,7 +46,7 @@ class SplashWidget extends StatelessWidget {
                             : MatrixEffect(
                           key: const ValueKey(2),
                           controller: Get.put(
-                              MatrixEffectController(speedMillis: 100),
+                              MatrixEffectController(speedMillis: 50),
                               tag: 'splash'),
                         )
                     );

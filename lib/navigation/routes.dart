@@ -1,7 +1,7 @@
 import 'package:bulls_n_cows_reloaded/di/find_opponent_binding.dart';
 import 'package:bulls_n_cows_reloaded/di/solo_game_binding.dart';
 import 'package:bulls_n_cows_reloaded/di/versus_game_binding.dart';
-import 'package:bulls_n_cows_reloaded/presentation/pages/first_run_screen/instructions_widget.dart';
+import 'package:bulls_n_cows_reloaded/presentation/pages/instructions_screen/instructions_widget.dart';
 import 'package:bulls_n_cows_reloaded/presentation/pages/landing_signed_out_view/landing_screen.dart';
 import 'package:bulls_n_cows_reloaded/presentation/pages/leaderboard_screen/leaderboard_view.dart';
 import 'package:bulls_n_cows_reloaded/presentation/pages/mode_unlocked_screen/mode_unlocked_view.dart';

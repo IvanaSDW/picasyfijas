@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:bulls_n_cows_reloaded/presentation/pages/versus_game_screen/versus_game_logic.dart';
 import 'package:bulls_n_cows_reloaded/presentation/widgets/numeric_keyboard/numeric_keyboard_view.dart';
 import 'package:bulls_n_cows_reloaded/shared/text_styles.dart';
@@ -34,8 +35,9 @@ class InputSecretNumberWidget extends StatelessWidget {
                   value: Get.find<VersusGameLogic>().progressValue.value / 10000,
                 ),
                 InkWell(
-                  child: Text(
+                  child: AutoSizeText(
                     'auto_generate_number'.tr, textAlign: TextAlign.center,
+                    maxLines: 1,
                     style: const TextStyle(fontSize: 20, color: Colors.black87),
                   ),
                   onTap: () => Get.find<VersusGameLogic>().onAutoGenerateSecretNumber(),

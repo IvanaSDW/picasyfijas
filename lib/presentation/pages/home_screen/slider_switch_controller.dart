@@ -36,16 +36,6 @@ class SliderSwitchController extends GetxController {
   set sliderMaxThumbX(double value) => _sliderMaxThumbX.value = value;
   double get sliderMaxThumbX => _sliderMaxThumbX.value;
 
-  // void onSliderTapDown(DragDownDetails details) {
-  //   refreshSliderRenderInfo();
-  //   sliderDuration = 0;
-  // }
-  //
-  // void onSliderTap() {
-  //   refreshSliderRenderInfo();
-  //   sliderDuration = 0;
-  // }
-
   void onSliderDragStart(DragStartDetails details) {
     HapticFeedback.lightImpact();
     refreshSliderRenderInfo();
@@ -88,18 +78,18 @@ class SliderSwitchController extends GetxController {
 
   void openDrawer() {
     if (appController.drawerSlideValue < 1.0) {
-      appController.playEffect('audio/door-open.wav');
+      appController.playEffect('audio/multi-plier-open.wav');
       appController.drawerSlideValue = 1.0;
-      sliderDuration = 1500;
+      sliderDuration = 800;
       sliderThumbX.value = sliderMaxThumbX;
     }
   }
 
   void closeDrawer() {
     if (appController.drawerSlideValue > 0.0) {
-      appController.playEffect('audio/door-close.wav');
+      appController.playEffect('audio/multi-plier-close.wav');
       appController.drawerSlideValue = 0.0;
-      sliderDuration = 1000;
+      sliderDuration = 800;
       sliderThumbX.value = 0;
     }
   }

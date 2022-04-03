@@ -119,4 +119,6 @@ const Map<String, String> esES = {
   'refresh_leaderboard' : 'Actualizar',
   'leaderboard' : 'Clasificación',
   'leaderboard_title' : 'Tabla de Posiciones',
+  'play_solo' : 'Jugar Solo',
+  'play_versus' : 'Jugar Versus',
 };

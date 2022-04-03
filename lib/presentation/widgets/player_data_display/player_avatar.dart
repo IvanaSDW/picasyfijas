@@ -58,7 +58,7 @@ class PlayerAvatar extends StatelessWidget {
             ),
             Positioned(top: 4.0, left: 4.0,
               child: SizedBox(
-                  width: 32,
+                  width: 28,
                   child: Image.asset(
                       'icons/flags/png/${player.countryCode}.png',
                       package: 'country_icons')

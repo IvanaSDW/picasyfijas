@@ -77,7 +77,7 @@ class AppController extends GetxController {
   final RxDouble _drawerSlideValue = 0.0.obs;
   set drawerSlideValue(value) => _drawerSlideValue.value = value;
   double get drawerSlideValue => _drawerSlideValue.value;
-  final panelWidth = Get.width * 0.58;
+  final panelWidth = Get.width * 0.61;
   final _backPanelOn = true.obs;
   set backPanelOn(bool value) => _backPanelOn.value = value;
   bool get backPanelOn => _backPanelOn.value;
@@ -183,13 +183,13 @@ class AppController extends GetxController {
         authState = AuthState.anonymous;
         if (isFirstRun) { //Just signed in anonymously
           await firestoreService.checkInAnonymousPlayer(currentUser);
-          await Future.delayed(const Duration(seconds: 10));
+          await Future.delayed(const Duration(seconds: 8));
           Get.offAllNamed(Routes.home);
           appController.isBusy = false;
           //Player object will be refreshed there;
         } else { //App run from already signed anonymous user
           await refreshPlayer();
-          await Future.delayed(const Duration(seconds: 6));
+          await Future.delayed(const Duration(seconds: 4));
           Get.offAllNamed(Routes.home);
           appController.isBusy = false;
         }
@@ -200,7 +200,7 @@ class AppController extends GetxController {
     if (currentUser.providerData.first.providerId == 'google.com'){ //User is signed in with Google account
       if (authState != AuthState.google) {
         authState = AuthState.google;
-        await Future.delayed(const Duration(seconds: 3));
+        await Future.delayed(const Duration(seconds: 2));
         if (isUpgrade) { //Just signed with Google from previous anonymous account
           await refreshPlayer();
         } else { //App run from already signed google user
@@ -233,7 +233,7 @@ class AppController extends GetxController {
         // middleText: 'press_exit_to_leave_app'.tr,
         textConfirm: 'exit'.tr,
         textCancel: 'cancel'.tr,
-        backgroundColor: Colors.green.withOpacity(0.5),
+        backgroundColor: Colors.green.withOpacity(0.6),
         buttonColor: originalColors.accentColor2,
         cancelTextColor: originalColors.reverseTextColor,
         confirmTextColor: originalColors.textColorLight,

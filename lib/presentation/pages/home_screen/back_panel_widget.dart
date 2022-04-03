@@ -42,27 +42,31 @@ class BackPanelWidget extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const BackPanelMenu(),
-                        Row(
-                          children: [
-                            Expanded(flex: 74,
-                              child: VolumeWidget(),
-                            ),
-                            Expanded(flex: 3, child: Container(),),
-                            Expanded(flex: 23,
-                              child: InkWell(
-                                onTap: () => controller.toggleMuteOnOff(),
-                                child: appController.backPanelOn
-                                    ? appController.isMuted
-                                    ? Image.asset(
-                                    'assets/images/mute_button_on_sound_off.png')
-                                    : Image.asset(
-                                    'assets/images/mute_button_on_sound_on.png')
-                                    : Image.asset(
-                                    'assets/images/mute_button_off.png'),
+                        const Expanded(flex: 90,
+                            child: BackPanelMenu()
+                        ),
+                        Expanded(flex: 10,
+                          child: Row(
+                            children: [
+                              Expanded(flex: 74,
+                                child: VolumeWidget(),
                               ),
-                            ),
-                          ],
+                              Expanded(flex: 3, child: Container(),),
+                              Expanded(flex: 23,
+                                child: InkWell(
+                                  onTap: () => controller.toggleMuteOnOff(),
+                                  child: appController.backPanelOn
+                                      ? appController.isMuted
+                                      ? Image.asset(
+                                      'assets/images/mute_button_on_sound_off.png')
+                                      : Image.asset(
+                                      'assets/images/mute_button_on_sound_on.png')
+                                      : Image.asset(
+                                      'assets/images/mute_button_off.png'),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
@@ -74,15 +78,10 @@ class BackPanelWidget extends StatelessWidget {
                 Expanded(flex: 14,
                   child: Container(
                     padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        appController.backPanelOn
-                            ? Image.asset('assets/images/copyright_on.png',
-                          width: appController.panelWidth * 0.8,)
-                            : Image.asset('assets/images/copyright_off.png',
-                          width: appController.panelWidth * 0.8,),
-                      ],
+                    child: Padding(
+                      padding: const EdgeInsets.all(28.0),
+                      child: Image.asset('assets/images/copyright_on.png',
+                        ),
                     ),
                   ),
                 ),

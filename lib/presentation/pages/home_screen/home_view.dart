@@ -1,5 +1,5 @@
 import 'package:bulls_n_cows_reloaded/shared/constants.dart';
-import 'package:bulls_n_cows_reloaded/presentation/pages/first_run_screen/instructions_widget.dart';
+import 'package:bulls_n_cows_reloaded/presentation/pages/instructions_screen/instructions_widget.dart';
 import 'package:bulls_n_cows_reloaded/presentation/pages/home_screen/back_panel_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -30,7 +30,7 @@ class HomeView extends StatelessWidget {
                 BackPanelWidget(),
                 TweenAnimationBuilder(
                     tween: Tween<double>(begin: 0, end: appController.drawerSlideValue),
-                    duration: const Duration(milliseconds: 1300),
+                    duration: const Duration(milliseconds: 800),
                     curve: Curves.easeInCirc,
                     builder: (_, double val, __) {
                       return(

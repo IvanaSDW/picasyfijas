@@ -15,7 +15,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.0.1+2
+version: 1.0.2+3
 
 environment:
   sdk: ">=2.15.0 <3.0.0"
@@ -112,7 +112,6 @@ flutter:
     - family: Cascadia
       fonts:
         - asset: assets/fonts/CascadiaCode.ttf
-#        - asset: assets/fonts/SFDigitalReadout-HeavyObliq.ttf
     #        - asset: assets/fonts/SFDigitalReadout-Light.ttf
     #        - asset: assets/fonts/SFDigitalReadout-LightObliq.ttf
     #        - asset: assets/fonts/SFDigitalReadout-Medium.ttf
@@ -120,3 +119,6 @@ flutter:
     - family: Mainframe
       fonts:
         - asset: assets/fonts/mainframe-opto.ttf
+    - family: Readout
+      fonts:
+        - asset: assets/fonts/SFDigitalReadout-HeavyObliq.ttf

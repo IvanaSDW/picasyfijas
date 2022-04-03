@@ -100,7 +100,7 @@ const Map<String, String> ptBR = {
   'time_average_below_max' : 'Média de tempo abaixo de ${maxTimeAverageToUnlockVsMode~/60000} min.',
   'versus_mode_locked' : '** Modo versus bloqueado **',
   'to_unlock_need' : 'Para desbloquear você precisa:',
-  'at_least_min_games' : '-> Pelo menos $minSoloGamesToUnlockVsMode jogos no modo "Solo".',
+  'at_least_min_games' : 'Pelo menos $minSoloGamesToUnlockVsMode jogos no modo "Solo".',
   'locked' : '** Bloqueado **',
   'unlocked' : 'DESBLOQUEADO',
   'enjoy_playing_vs_mode_line1' : 'Divirta-se jogando contra seus amigos',
@@ -119,4 +119,6 @@ const Map<String, String> ptBR = {
   'refresh_leaderboard' : 'Atualizar',
   'leaderboard' : 'Classificação',
   'leaderboard_title' : 'Tabela de Posições',
+  'play_solo' : 'Jogar Solo',
+  'play_versus' : 'Jogar Versus',
 };

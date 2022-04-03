@@ -25,8 +25,8 @@ class LandingUnsignedScreen extends StatelessWidget {
                 children: [
                   Image(
                     image: Get.locale.toString().substring(0, 2) == 'es'
-                        ? const AssetImage('assets/images/panel_logo_es.png',)
-                        : const AssetImage('assets/images/panel_logo_en.png',),
+                        ? const AssetImage('assets/images/panel_logo_spa.png',)
+                        : const AssetImage('assets/images/panel_logo_eng.png',),
                   ),
                   const GoogleSignInButtonSquared(),
                   const AnonymousSignInButton(),

@@ -71,43 +71,43 @@ final TextStyle profilePlayerStatsSubTitleKeyStyle = TextStyle(
 final resultTextStyle = GoogleFonts.robotoMono(
     textStyle: TextStyle(
       color: originalColors.textColor3,
-      fontSize: 24,
+      fontSize: 22,
     ));
 
 final guessTextStyle = GoogleFonts.robotoMono(
     textStyle: TextStyle(
       color: originalColors.textColor1,
-      fontSize: 24,
+      fontSize: 22,
     ));
 
 final correctGuessStyle = GoogleFonts.robotoMono(
     textStyle: TextStyle(
         color: originalColors.correctGuessColor,
-        fontSize: 24,
+        fontSize: 22,
         fontWeight: FontWeight.bold));
 
 final resultTextStyleVersus = GoogleFonts.robotoMono(
     textStyle: TextStyle(
       color: originalColors.textColor3,
-      fontSize: 21,
+      fontSize: 18,
     ));
 
 final guessTextStyleVersusPlayer1 = GoogleFonts.robotoMono(
     textStyle: TextStyle(
       color: originalColors.textColor1,
-      fontSize: 21,
+      fontSize: 18,
     ));
 
 final guessTextStyleVersusPlayer2 = GoogleFonts.robotoMono(
     textStyle: TextStyle(
       color: originalColors.textColor1,
-      fontSize: 21,
+      fontSize: 18,
     ));
 
 final correctGuessStyleVersus = GoogleFonts.robotoMono(
     textStyle: TextStyle(
         color: originalColors.correctGuessColor,
-        fontSize: 21,
+        fontSize: 18,
         fontWeight: FontWeight.bold));
 
 final TextStyle statsTitle =
@@ -149,5 +149,17 @@ final TextStyle leaderPodiumNameStyle = TextStyle(
 final TextStyle leaderboardTitleStyle = TextStyle(
   fontFamily: 'Cascadia',
   color: originalColors.keyOffColor,
+  fontSize: 22,
+);
+
+const TextStyle playButtonTextStyle = TextStyle(
+  fontFamily: 'Mainframe',
+  color: Colors.black,
+  fontSize: 22,
+);
+
+final TextStyle playButtonTextLayer1 = TextStyle(
+  fontFamily: 'Mainframe',
+  color: originalColors.accentColor2!,
   fontSize: 22,
 );

@@ -101,7 +101,7 @@ const Map<String, String> enUS = {
   'time_average_below_max' : 'Time average below ${maxTimeAverageToUnlockVsMode~/60000} min.',
   'versus_mode_locked' : '** Versus mode locked **',
   'to_unlock_need' : 'To unlock you need:',
-  'at_least_min_games' : '-> At least $minSoloGamesToUnlockVsMode games in "Solo" mode.',
+  'at_least_min_games' : 'At least $minSoloGamesToUnlockVsMode games in "Solo" mode.',
   'locked' : '** Locked **',
   'unlocked' : 'UNLOCKED',
   'enjoy_playing_vs_mode_line1' : 'Enjoy playing against your friends',
@@ -120,4 +120,6 @@ const Map<String, String> enUS = {
   'refresh_leaderboard' : 'Refresh',
   'leaderboard' : 'Leaderboard',
   'leaderboard_title' : 'Leaderboard',
+  'play_solo' : 'Play Solo',
+  'play_versus' : 'Play Versus',
 };
