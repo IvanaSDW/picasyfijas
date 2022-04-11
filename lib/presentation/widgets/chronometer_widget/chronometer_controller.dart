@@ -51,7 +51,7 @@ class ChronometerController extends GetxController {
   }
 
   void onTimeIsUp() {
-    logger.i('Time is up, this player es $versusPlayer');
+    logger.i('Time is up, this chronometer is for $versusPlayer');
     if (versusPlayer == VersusPlayer.player1) appController.setP1TimeIsUp = true;
     if (versusPlayer == VersusPlayer.player2) appController.setP2TimeIsUp = true;
     logger.i('time flags status is: p1: ${appController.getP1TimeIsUp}, p2: ${appController.getP2TimeIsUp}');

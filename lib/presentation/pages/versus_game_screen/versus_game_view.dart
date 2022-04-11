@@ -44,6 +44,8 @@ class VersusGamePage extends StatelessWidget {
                         : (logic.gameStatus == VersusGameStatus.unknown) ||
                         (logic.gameStatus == VersusGameStatus.created)
                         ? const SpinKitDancingSquare(color: Colors.white,)
+                        : logic.playerOneGame == null
+                        ? SpinKitSpinningLines(color: originalColors.accentColor2!,)
                         : Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -144,6 +146,7 @@ class VersusGamePage extends StatelessWidget {
                                     child: BlinkText(
                                       'waiting_opponent_to_be_ready'.tr,
                                       style: defaultTextStyle,
+                                      textAlign: TextAlign.center,
                                     )
                                 )
                                     : logic.showFinalResult

@@ -23,7 +23,7 @@ class FirestoreService {
       toFirestore: (player, _) => player.toJson()
   );
   CollectionReference get players => _firestore.collection(playersTableName);
-  CollectionReference get soloMatches =>
+  CollectionReference<SoloGame> get soloGames =>
       _firestore.collection(soloGamesTableName)
           .withConverter<SoloGame>(
           fromFirestore: (snapshot, _) => SoloGame.fromData(snapshot.data()!),
@@ -203,6 +203,12 @@ class FirestoreService {
 
   }
 
+  Future<void> updateBotPlayerRandomData({
+    required Map<String,dynamic> data
+  }) async {
+    await players.doc(botPlayerDocId).update(data);
+  }
+
 
   Future<Player?> fetchPlayer(String playerId) async {
     final fetchedPlayer = players
@@ -284,13 +290,40 @@ class FirestoreService {
   }
 
   //SoloGames database services
-  Query<SoloGame> soloGamesQuery(String playerId) =>
+  Query<SoloGame> soloGamesByPlayerIdQuery(String playerId) =>
       _firestore.collection(soloGamesTableName)
           .where(soloGamePlayerIdFN, isEqualTo: playerId)
           .orderBy(soloGameCreatedAtFN, descending: true)
           .withConverter<SoloGame>(
           fromFirestore: (snapshot, _) => SoloGame.fromData(snapshot.data()!),
           toFirestore: (soloMatch, _) => soloMatch.toJson());
+
+  Future<List<SoloGame>> getSoloGamesByPlayerId(String playerId) async {
+    return await soloGamesByPlayerIdQuery(playerId)
+        .get()
+        .then((value) => value.docs.map((e) => e.data()).toList());
+  }
+
+  Future<List<SoloGame>> getLastThousandSoloGames() async {
+    return await lastThousandSoloGames().get()
+        .then((value) => value.docs.map((e) => e.data()).toList());
+  }
+
+  Query<SoloGame> lastThousandSoloGames() =>
+      soloGames.orderBy(soloGameCreatedAtFN, descending: true).limit(1000);
+
+  Query<SoloGame> soloGamesBySecretNumberQuery(FourDigits secretNumber) =>
+      _firestore.collection(soloGamesTableName)
+          .where(soloGameSecretNumberFN, isEqualTo: secretNumber)
+          .withConverter<SoloGame>(
+          fromFirestore: (snapshot, _) => SoloGame.fromData(snapshot.data()!),
+          toFirestore: (soloMatch, _) => soloMatch.toJson());
+
+  Future<List<SoloGame>> getSoloGamesWhereSecretNumber(FourDigits number) async {
+    return await soloGamesBySecretNumberQuery(number)
+        .get()
+        .then((value) => value.docs.map((e) => e.data()).toList());
+  }
 
   Future<void> moveOldIdSoloGames(String oldId, String newId) async {
     _firestore.collection(soloGamesTableName)
@@ -305,22 +338,18 @@ class FirestoreService {
   }
 
   Future<DocumentReference<SoloGame>> addSoloGame(SoloGame match) async {
-    return await soloMatches.add(match)
-        .then((value) => value as DocumentReference<SoloGame>)
+    return await soloGames.add(match)
+        .then((value) => value)
         .catchError((error) {
     });
-  }
-
-  Future<List<SoloGame>> getSoloGamesByPlayerId(String playerId) async {
-    return await soloGamesQuery(playerId)
-        .get()
-        .then((value) => value.docs.map((e) => e.data()).toList());
   }
 
   //Versus Challenges database services
   Query<VersusGameChallenge> versusChallengesOrderedByDate() =>
       _firestore.collection(versusChallengesTableName)
           .where(versusChallengeOpponentIdFN, isNull: true)
+          .where(versusChallengeChallengerIdFN, isNotEqualTo: auth.currentUser!.uid)
+          .orderBy(versusChallengeChallengerIdFN)
           .orderBy(versusChallengeCreatedAtFN)
           .withConverter(
           fromFirestore: (snapshot, _) => VersusGameChallenge.fromJson(snapshot.data()!),

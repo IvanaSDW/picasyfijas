@@ -82,7 +82,7 @@ class ModeUnlockedView extends StatelessWidget {
                   animatedTexts: [
                     TyperAnimatedText('enjoy_playing_vs_mode_line2'.tr,
                       textStyle: TextStyle(
-                          fontSize: 14,
+                          fontSize: 16,
                           color: originalColors.keyOnColor,
                           fontFamily: 'Digital'
                       ),

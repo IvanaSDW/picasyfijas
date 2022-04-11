@@ -117,16 +117,16 @@ class AuthController extends FullLifeCycleController with FullLifeCycleMixin{
   void didChangeAppLifecycleState(AppLifecycleState state) {
     switch (state) {
       case AppLifecycleState.resumed:
-        logger.i('App lifecycle state changed to resumed');
+        // logger.i('App lifecycle state changed to resumed');
         break;
       case AppLifecycleState.inactive:
-        logger.i('App lifecycle state changed to inactive');
+        // logger.i('App lifecycle state changed to inactive');
         break;
       case AppLifecycleState.paused:
-        logger.i('App lifecycle state changed to paused');
+        // logger.i('App lifecycle state changed to paused');
         break;
       case AppLifecycleState.detached:
-        logger.i('App lifecycle state changed to detached');
+        // logger.i('App lifecycle state changed to detached');
         break;
     }
     super.didChangeAppLifecycleState(state);
@@ -134,24 +134,24 @@ class AuthController extends FullLifeCycleController with FullLifeCycleMixin{
 
   @override
   void onDetached() async {
-    logger.i('App lifecycle state changed to detached');
+    // logger.i('App lifecycle state changed to detached');
     // await firestoreService.reportOffline();
   }
 
   @override
   void onInactive() {
-    logger.i('App lifecycle state changed to inactive');
+    // logger.i('App lifecycle state changed to inactive');
   }
 
   @override
   void onPaused() async {
-    logger.i('App lifecycle state changed to paused');
+    // logger.i('App lifecycle state changed to paused');
     // await firestoreService.reportOffline();
   }
 
   @override
   void onResumed() {
-    logger.i('App lifecycle state changed to resumed');
+    // logger.i('App lifecycle state changed to resumed');
     // firestoreService.reportOnline();
   }
 }

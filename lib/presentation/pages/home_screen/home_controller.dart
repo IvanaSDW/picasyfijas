@@ -22,6 +22,7 @@ class HomeController extends GetxController {
   void _createBottomBannerAd() {
     bottomBannerAd = BannerAd(
       adUnitId: AdHelper.homeBannerAdUnitId,
+      // adUnitId: AdHelper.testHomeBannerAdUnitId,
       size: AdSize.largeBanner,
       request: const AdRequest(),
       listener: BannerAdListener(

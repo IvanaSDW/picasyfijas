@@ -6,7 +6,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-
 import '../../../data/ad_helper.dart';
 import '../../../data/models/digit_match_result.dart';
 import '../../../data/models/four_digits.dart';
@@ -16,7 +15,6 @@ import '../../../presentation/widgets/intercom_box/intercom_box_logic.dart';
 import '../../../shared/constants.dart';
 import '../../../shared/game_logic.dart';
 import '../../widgets/numeric_keyboard/numeric_keyboard_controller.dart';
-
 
 class SoloGameLogic extends GetxController {
   final NumericKeyboardController _keyboard = Get.find();
@@ -62,6 +60,7 @@ class SoloGameLogic extends GetxController {
       createdAt: Timestamp.now(),
     ).obs;
     _keyboard.onNewInput((newInput) => onNewGuess(newInput));
+    _createInterstitialAd();
   }
 
   void startSinglePlayerMatch() {
@@ -91,8 +90,8 @@ class SoloGameLogic extends GetxController {
   }
 
   void onContinuePressed() {
-    _showInterstitialAd();
     Get.back();
+    _showInterstitialAd();
   }
 
   void onNewGuess(FourDigits guess) {
@@ -139,6 +138,7 @@ class SoloGameLogic extends GetxController {
 
   void _createInterstitialAd() {
     InterstitialAd.load(
+      // adUnitId: AdHelper.testInterstitialAdUnitId,
       adUnitId: AdHelper.afterSoloGameInterstitialAdUnitId,
       request: const AdRequest(),
       adLoadCallback: InterstitialAdLoadCallback(
@@ -172,6 +172,12 @@ class SoloGameLogic extends GetxController {
       );
       _interstitialAd!.show();
     }
+  }
+
+  @override
+  void dispose() {
+    _interstitialAd?.dispose();
+    super.dispose();
   }
 
 }

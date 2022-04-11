@@ -22,7 +22,7 @@ class LeaderboardController extends GetxController {
   @override
   void onInit() async {
     super.onInit();
-    refreshLeaderboard();
+    await refreshLeaderboard();
     _createBottomBannerAd();
   }
 
@@ -35,8 +35,9 @@ class LeaderboardController extends GetxController {
 
   void _createBottomBannerAd() {
     bottomBannerAd = BannerAd(
+      // adUnitId: AdHelper.testLeaderboardBannerAdUnitId,
       adUnitId: AdHelper.leaderboardBannerAdUnitId,
-      size: AdSize.largeBanner,
+      size: AdSize.banner,
       request: const AdRequest(),
       listener: BannerAdListener(
         onAdLoaded: (_) {

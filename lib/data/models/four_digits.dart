@@ -42,6 +42,17 @@ class FourDigits {
     );
   }
 
+  List<int> toList() => [digit0, digit1, digit2, digit3];
+
+  FourDigits.fromList(List<int> digits)
+      : digit0 = digits[0],
+        digit1 = digits[1],
+        digit2 = digits[2],
+        digit3 = digits[3];
+
+  @override
+  String toString() => digit0.toString()+digit1.toString()+digit2.toString()+digit3.toString();
+
   @override
   bool operator ==(Object other) {
     return hashCode == other.hashCode;

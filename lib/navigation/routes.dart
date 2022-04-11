@@ -11,7 +11,7 @@ import 'package:flutter/animation.dart';
 import 'package:get/get.dart';
 import '../di/home_binding.dart';
 import '../presentation/pages/home_screen/home_view.dart';
-import '../presentation/pages/look_for_opponent_screen/find_opponent_view.dart';
+import '../presentation/pages/find_opponent_screen/find_opponent_view.dart';
 import '../presentation/pages/solo_game_screen/solo_game_view.dart';
 import '../presentation/pages/splash_screen/splash_widget.dart';
 

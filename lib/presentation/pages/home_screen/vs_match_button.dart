@@ -1,7 +1,5 @@
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:bulls_n_cows_reloaded/presentation/widgets/player_data_display/player_stats_controller.dart';
 import 'package:bulls_n_cows_reloaded/shared/constants.dart';
-import 'package:bulls_n_cows_reloaded/shared/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -21,32 +19,13 @@ class VersusMatchButton extends StatelessWidget {
         onTapDown: (details) => controller.onTapDown(),
         onTapCancel: () => controller.onTapCancel(),
         child: Obx(() {
-          return Stack(
-            alignment: Alignment.center,
-            children: [
-              controller.isDown
-                  ? Image.asset('assets/images/play_button_tapped.png')
-                  : Image.asset('assets/images/play_button_untapped.png'),
-              Padding(
-                padding: const EdgeInsets.only(top: 12.0, left: 12.0, bottom: 12.0, right: 12.0),
-                child: AutoSizeText(
-                  'play_versus'.tr,
-                  maxLines: 2,
-                  style: playButtonTextStyle,
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 11.0, left: 11.0, bottom: 13.0, right: 13.0),
-                child: AutoSizeText(
-                  'play_versus'.tr,
-                  maxLines: 2,
-                  style: playButtonTextLayer1,
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ],
-          );
+          return controller.isDown
+              ? Get.locale.toString().split('_').first.toLowerCase() == 'es'
+              ? Image.asset('assets/images/btn_play_vs_es_tapped.png')
+              : Image.asset('assets/images/btn_play_vs_en_tapped.png')
+              : Get.locale.toString().split('_').first.toLowerCase() == 'es'
+              ? Image.asset('assets/images/btn_play_vs_es_untapped.png')
+              : Image.asset('assets/images/btn_play_vs_en_untapped.png');
         })
     );
   }

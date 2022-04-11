@@ -21,6 +21,7 @@ class PlayerProfileController extends GetxController {
 
   void _createBottomBannerAd() {
     bottomBannerAd = BannerAd(
+      // adUnitId: AdHelper.testProfileBannerAdUnitId,
       adUnitId: AdHelper.profileBannerAdUnitId,
       size: AdSize.largeBanner,
       request: const AdRequest(),

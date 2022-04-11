@@ -99,13 +99,16 @@ class AppController extends GetxController {
   bool get getP2TimeIsUp => p2TimeIsUp.value;
 
   Future<void> checkInternet() async {
+    logger.i('called');
     internetListener = InternetConnectionChecker().onStatusChange.listen((status) {
       switch (status) {
         case InternetConnectionStatus.connected:
           internetStatus.value = 'connected'.tr;
+          hasInterNetConnection.value = true;
           break;
         case InternetConnectionStatus.disconnected:
           internetStatus.value = 'not_connected'.tr;
+          hasInterNetConnection.value = false;
           break;
       }
     });
@@ -124,6 +127,11 @@ class AppController extends GetxController {
         authService.signOut();
         return Player.empty();
       } else {
+        // logger.i('Checking if avatar is changed: inFirestore: ${player.photoUrl}, in google: ${auth.currentUser!.providerData[0].photoURL}');
+        if (!auth.currentUser!.isAnonymous && appController.hasInterNetConnection.value) {
+          auth.currentUser!.providerData[0].photoURL == player.photoUrl
+              ? null : player.photoUrl = auth.currentUser!.providerData[0].photoURL;
+        }
         return player;
       }
     });
@@ -132,6 +140,7 @@ class AppController extends GetxController {
   @override
   Future<void> onInit() async {
     super.onInit();
+    await checkInternet();
     countryCode = await IpLocator().getCountryCode();
     countryName = await IpLocator().getCountryName();
     playStoreDynamicLink = await firestoreService.fetchPlayStoreDynamicLink();
@@ -141,7 +150,6 @@ class AppController extends GetxController {
       }
       );
     }
-    checkInternet();
   }
 
   Future<AudioPlayer> playEffect(String fileName) async {

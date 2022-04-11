@@ -1,5 +1,5 @@
-import 'package:bulls_n_cows_reloaded/presentation/pages/look_for_opponent_screen/radar_controller.dart';
-import 'package:bulls_n_cows_reloaded/presentation/pages/look_for_opponent_screen/radar_painter.dart';
+import 'package:bulls_n_cows_reloaded/presentation/pages/find_opponent_screen/radar_controller.dart';
+import 'package:bulls_n_cows_reloaded/presentation/pages/find_opponent_screen/radar_painter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 

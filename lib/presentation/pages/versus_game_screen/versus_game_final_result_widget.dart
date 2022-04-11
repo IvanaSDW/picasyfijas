@@ -77,7 +77,7 @@ class VersusGameResultWidget extends StatelessWidget {
                     )
                 ),
               ),
-              Container(height: 12,),
+              const Spacer(),
               AutoSizeText(
                 gameLogic.game.winByMode == WinByMode.opponentLeft || gameLogic.game.winByMode == WinByMode.opponentTimeUp? ''
                    : 'time_left'.tr +  StopWatchTimer.getDisplayTime(
@@ -94,7 +94,7 @@ class VersusGameResultWidget extends StatelessWidget {
                 ),
                 textAlign: TextAlign.center,
               ),
-              Text(gameLogic.game.winByMode == WinByMode.opponentLeft || gameLogic.game.winByMode == WinByMode.opponentTimeUp? ''
+              AutoSizeText(gameLogic.game.winByMode == WinByMode.opponentLeft || gameLogic.game.winByMode == WinByMode.opponentTimeUp? ''
                   : 'guesses'.tr + '${gameLogic.game.playerOneGame.moves.length}',
                 style: GoogleFonts.robotoMono(
                     textStyle: const TextStyle(
@@ -102,6 +102,7 @@ class VersusGameResultWidget extends StatelessWidget {
                         fontSize: 16
                     )
                 ),
+                maxLines: 1,
               ),
             ],
           ),

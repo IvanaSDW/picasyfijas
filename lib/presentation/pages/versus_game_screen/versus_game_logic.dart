@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:bulls_n_cows_reloaded/presentation/pages/versus_game_screen/bot_player.dart';
 import 'package:bulls_n_cows_reloaded/shared/chronometer.dart';
 import 'package:bulls_n_cows_reloaded/shared/theme.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -26,6 +27,13 @@ class VersusGameLogic extends GetxController {
   InterstitialAd? _interstitialAd;
   static const int maxFailedLoadAttempts = 3;
   int _interstitialLoadAttempts = 0;
+  //
+
+
+  //Logic for playing against bot
+  bool isPlayingAgainstBot = false;
+  NeoBot? neo;
+  //
 
   bool _gameIsInitialized = false;
 
@@ -117,6 +125,8 @@ class VersusGameLogic extends GetxController {
     playerOneData = Get.arguments['playerOneObject'];
     playerTwoData = Get.arguments['playerTwoObject'];
     gameStateListener = gameStateStream.listen((event) { onGameStateReceived(event); });
+    isPlayingAgainstBot = Get.arguments['isPlayingAgainstBot'];
+
     _keyboard.onNewInput((newInput) {
       if (showNumberInput) {
         onSecretNumberInput(newInput);
@@ -127,6 +137,9 @@ class VersusGameLogic extends GetxController {
     ever(_whoIsToMove, (VersusPlayer value) => onToggleMove(value));
     if(iAmP1) {
       ever(appController.p1TimeIsUp, (bool value) => onMyTimeIsUp(value));
+      if (isPlayingAgainstBot) {
+        ever(appController.p2TimeIsUp, (bool value) => neo!.onBotTimeIsUp(value));
+      }
     } else {
       ever(appController.p2TimeIsUp, (bool value) => onMyTimeIsUp(value));
     }
@@ -135,6 +148,11 @@ class VersusGameLogic extends GetxController {
 
   final RxDouble progressValue = 0.0.obs;
   late final Timer inputSecretNumberTimer;
+
+  Future<void> initBotAI(Player playerTwoData) async {
+    neo = NeoBot(gameReference: gameReference,);
+    await neo!.initMatch();
+  }
 
   void startInputSecretNumberProgress() {
     inputSecretNumberTimer = Timer.periodic(
@@ -156,6 +174,11 @@ class VersusGameLogic extends GetxController {
         ? await firestoreService.addPlayerTwoSecretNumberToVersusGame(gameReference.id, secretNumber)
         : await firestoreService.addPlayerOneSecretNumberToVersusGame(gameReference.id, secretNumber);
     showNumberInput = false;
+  }
+
+  Future<void> generateSecretForBot() async {
+    var secretNumber = generateSecretNum();
+        await firestoreService.addPlayerOneSecretNumberToVersusGame(gameReference.id, secretNumber);
   }
 
   Future<void> onSecretNumberInput(FourDigits number) async {
@@ -189,10 +212,16 @@ class VersusGameLogic extends GetxController {
         gameStatus = VersusGameStatus.created;
         showNumberInput = true;
         startInputSecretNumberProgress();
+        if (isPlayingAgainstBot) {
+          generateSecretForBot();
+        }
         break;
       case VersusGameStatus.created :
         if (game.playerOneGame.secretNum != null && game.playerTwoGame.secretNum != null) {
           gameStatus = VersusGameStatus.started;
+          if (isPlayingAgainstBot) {
+            await initBotAI(playerTwoData!);
+          }
           continue started;
         } else {
         }
@@ -212,6 +241,7 @@ class VersusGameLogic extends GetxController {
         if (playerTwoGame!.moves.isNotEmpty) {
           p2TimeLeft = playerTwoGame!.moves.last.timeStampMillis;
           if (playerTwoGame!.moves.last.moveResult.bulls == 4) {
+            logger.i('Player 2 have found number...');
             p1Timer.stopTimer();
             p2Timer.stopTimer();
             gameStatus = VersusGameStatus.finished;
@@ -300,8 +330,12 @@ class VersusGameLogic extends GetxController {
             default:
               break;
           }
+          if(isPlayingAgainstBot) {
+            neo!.move(playerTwoGame!.moves.length-1);
+          }
         } else { // I am player 2 and is my move
           showKeyboard = true;
+          appController.playEffect('audio/beep-24.wav');
           HapticFeedback.mediumImpact();
           switch (playerTwoGame!.moves.length) {
             case 1:
@@ -413,6 +447,10 @@ class VersusGameLogic extends GetxController {
   void onGameFinished() {
     if (iAmP1) {
       if(game.winnerPlayer == null) {
+        if (isPlayingAgainstBot) {
+          //Bot found number
+          neo!.onGameFinished(game);
+        }
       } else {
         showFinalResult = true;
         appController.needUpdateVsStats.value = true;
@@ -464,10 +502,13 @@ class VersusGameLogic extends GetxController {
 
 
   Future<bool> onBackPressed() async {
+    logger.i('called, iAmP1 = $iAmP1, p1Game = $playerOneGame');
     if (showFinalResult) return true;
     String middleText = '';
     if (iAmP1) {
-      if (playerOneGame!.moves.isEmpty) {
+      if(playerOneGame == null) {
+        middleText = 'your_opponent_is_still_active'.tr;
+      } else if (playerOneGame!.moves.isEmpty) {
         middleText = 'your_opponent_is_still_active'.tr;
       } else if(playerOneGame!.moves.length == 1 && playerOneGame!.moves.last.guess.isDummy()) {
         middleText = 'your_opponent_is_still_active'.tr;
@@ -536,10 +577,12 @@ class VersusGameLogic extends GetxController {
     }
     appController.playEffect('audio/door-open.wav');
     Get.back(closeOverlays: true);
+    _showInterstitialAd();
   }
 
   void _createInterstitialAd() {
     InterstitialAd.load(
+      // adUnitId: AdHelper.testInterstitialAdUnitId,
       adUnitId: AdHelper.afterVersusGameInterstitialAdUnitId,
       request: const AdRequest(),
       adLoadCallback: InterstitialAdLoadCallback(
@@ -585,4 +628,5 @@ class VersusGameLogic extends GetxController {
   void onClose() {
     gameStateListener.cancel();
   }
+
 }

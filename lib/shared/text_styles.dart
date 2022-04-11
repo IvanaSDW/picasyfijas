@@ -8,8 +8,12 @@ final TextStyle reverseTitleTextStyle = TextStyle(
     color: originalColors.reverseTextColor,
     fontSize: 30,
     fontFamily: 'Mainframe');
+
 final TextStyle defaultTextStyle = TextStyle(
     color: originalColors.textColor3, fontSize: 16, fontFamily: 'Mainframe');
+
+final TextStyle leaderboardItemStyle = TextStyle(
+    color: originalColors.textColor3, fontSize: 15, fontFamily: 'Mainframe');
 
 final TextStyle textButtonStyle = TextStyle(
   color: originalColors.mainTitleColor,
@@ -119,6 +123,9 @@ final TextStyle statsSubTitle = TextStyle(
 final TextStyle statsText =
 TextStyle(color: originalColors.textColor3, fontFamily: 'Mainframe');
 
+final TextStyle checkMarkText =
+TextStyle(color: originalColors.textColor3, fontFamily: 'Mainframe', fontSize: 14);
+
 final TextStyle playerProfileAccentTitle =
 TextStyle(color: originalColors.accentColor2, fontFamily: 'Digital', fontSize: 18);
 
@@ -142,7 +149,7 @@ TextStyle leaderBoardSecondRatingStyle = TextStyle(
 
 final TextStyle leaderPodiumNameStyle = TextStyle(
   fontFamily: 'Mainframe',
-  color: originalColors.playerOneBackground,
+  color: originalColors.correctGuessColor,
   fontSize: 16,
 );
 

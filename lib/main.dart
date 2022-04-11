@@ -33,7 +33,12 @@ Future<void> main() async {
   } on Exception catch (e) {
     logger.i('Error at booting: $e');
   }
-  MobileAds.instance.initialize();
+
+  await MobileAds.instance.initialize();
+  RequestConfiguration configuration =
+  RequestConfiguration(testDeviceIds: testDeviceIds);
+  MobileAds.instance.updateRequestConfiguration(configuration);
+
   await CountryCodes.init();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   runApp(const MyApp());
@@ -57,10 +62,10 @@ class MyApp extends StatelessWidget {
       builder: (context, widget) {
         final MediaQueryData data = MediaQuery.of(context);
         return MediaQuery(
-            data: data.copyWith(
+          data: data.copyWith(
               textScaleFactor: data.textScaleFactor.clamp(1.0, 1.1)
-            ),
-            child: widget!,
+          ),
+          child: widget!,
         );
       },
       defaultTransition: Transition.native,

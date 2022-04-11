@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:bulls_n_cows_reloaded/data/backend_services/http_services.dart';
 import 'package:bulls_n_cows_reloaded/data/models/versus_game.dart';
 import 'package:bulls_n_cows_reloaded/data/models/versus_game_challenge.dart';
 import 'package:bulls_n_cows_reloaded/domain/versus_challenges_use_cases.dart';
@@ -21,9 +22,11 @@ class VersusMatchMaker {
   final PostNewChallengeUC _postNewChallenge = PostNewChallengeUC();
   final FindChallengeUC _findChallenge = FindChallengeUC();
   final AcceptVersusChallengeUC _acceptVersusChallenge = AcceptVersusChallengeUC();
+  final AcceptVersusChallengeAsBotUC _acceptVersusChallengeAsBot = AcceptVersusChallengeAsBotUC();
   final CreateVersusGameUC _createVersusGame = CreateVersusGameUC();
   final AssignGameToVersusChallengeUC _assignGameToChallenge = AssignGameToVersusChallengeUC();
   final CancelPostedVersusChallengeUC _cancelPostedChallenge = CancelPostedVersusChallengeUC();
+  bool isPlayingAgainstBot = false;
 
   void Function(
       Stream<DocumentSnapshot<VersusGame>> stream,
@@ -57,6 +60,13 @@ class VersusMatchMaker {
     });
   }
 
+  void makeMatchWithRobot({required String playerId}) async {
+    logger.i('called');
+    Map<String, dynamic> newBotData = await HttpService().loadRandomUserData();
+    firestoreService.updateBotPlayerRandomData(data: newBotData);
+    _acceptVersusChallengeAsBot(postedChallengeReference, botPlayerDocId);
+  }
+
   void _postChallenge({required VersusGameChallenge challenge,}) async {
     await _postNewChallenge(challenge)
         .then((value) {
@@ -74,9 +84,15 @@ class VersusMatchMaker {
           await _createGame(challenge: challenge)
               .then((value) async {
             await _assignGameToChallenge(challengeReference: postedChallengeReference, gameId: value.id);
+            logger.i('Created game with id: ${value.id}');
             var gameStream = _subscribeToVersusGameRef(value);
             if (_onGameCreated != null) _onGameCreated!(gameStream, value, true);
+
           });
+          if(challenge.playerTwoId == botPlayerDocId) {
+            logger.i('Challenge accepted by bot, deleting posted challenge in firestore');
+            postedChallengeReference.delete();
+          }
         }
       } else {
         Get.snackbar('game_canceled'.tr, 'game_was_canceled'.tr, backgroundColor: Colors.green);

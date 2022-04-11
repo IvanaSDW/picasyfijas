@@ -163,7 +163,7 @@ class PlayerStatsWidget extends StatelessWidget {
                       stats.soloGamesCount < minSoloGamesToUnlockVsMode
                           ? '\u274c'
                           : '\u2714',
-                      style: statsText,
+                      style: checkMarkText,
                       textAlign: TextAlign.center,
                     )
                 ),
@@ -215,7 +215,7 @@ class PlayerStatsWidget extends StatelessWidget {
                           : stats.timeAverage <= maxTimeAverageToUnlockVsMode
                           ? '\u2714'
                           : '\u274c',
-                      style: statsText,
+                      style: checkMarkText,
                       textAlign: TextAlign.end,
                     )
                 ),

@@ -1,8 +1,8 @@
 import 'package:bulls_n_cows_reloaded/data/models/player.dart';
 import 'package:bulls_n_cows_reloaded/navigation/routes.dart';
 import 'package:bulls_n_cows_reloaded/presentation/widgets/matrix_effect/matrix_effect_controller.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-
 import '../../../shared/constants.dart';
 import '../../../shared/managers/versus_match_maker.dart';
 
@@ -12,6 +12,8 @@ class FindOpponentController extends GetxController {
 
   final RxBool _matrixVisible = true.obs;
   get matrixVisible => _matrixVisible.value;
+
+  bool isPlayingAgainstBot = false;
 
   @override
   void onInit() {
@@ -41,6 +43,8 @@ class FindOpponentController extends GetxController {
           }
         });
       }
+      HapticFeedback.mediumImpact();
+      appController.playEffect('audio/match_created.wav');
       Get.offAndToNamed(Routes.versusGame,
           arguments: {
             'gameStream' : stream,
@@ -49,6 +53,7 @@ class FindOpponentController extends GetxController {
             'opponentPlayer' : _opponentPlayer,
             'playerOneObject' : _playerOnePlayer,
             'playerTwoObject' : _playerTwoPlayer,
+            'isPlayingAgainstBot' : isPlayingAgainstBot,
           });
     });
     matchMaker.makeMatch(playerId: appController.currentPlayer.id!);
@@ -56,6 +61,16 @@ class FindOpponentController extends GetxController {
       _matrixVisible.value = false;
       Get.delete<MatrixEffectController>(tag: 'find_opponent');
     });
+    Future.delayed(const Duration(seconds: 8), () {
+      activateBot();
+    });
+  }
+
+  void activateBot () {
+    logger.i('called');
+    // appController.botPlayerImage.evict();
+    isPlayingAgainstBot = true;
+    matchMaker.makeMatchWithRobot(playerId: appController.currentPlayer.id!);
   }
 
   void onChallengeCanceled() {

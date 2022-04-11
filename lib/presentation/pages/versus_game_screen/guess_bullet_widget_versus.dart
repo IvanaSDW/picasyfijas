@@ -33,7 +33,7 @@ class GuessBulletWidgetVersus extends StatelessWidget {
           children: [
             Container(
               height:1.0,
-              width:13,
+              width:10,
               color:Colors.green,
             ),
             CircleAvatar(
@@ -49,7 +49,7 @@ class GuessBulletWidgetVersus extends StatelessWidget {
               padding:const EdgeInsets.symmetric(horizontal:0),
               child:Container(
                 height:1.0,
-                width:13,
+                width:10,
                 color:Colors.green,),
             ),
           ]

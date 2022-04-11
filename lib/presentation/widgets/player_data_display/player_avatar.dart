@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:bulls_n_cows_reloaded/data/models/player.dart';
+import 'package:bulls_n_cows_reloaded/shared/constants.dart';
 import 'package:bulls_n_cows_reloaded/shared/text_styles.dart';
 import 'package:bulls_n_cows_reloaded/shared/theme.dart';
 import 'package:flutter/material.dart';
@@ -28,9 +29,15 @@ class PlayerAvatar extends StatelessWidget {
                 Expanded(flex: 80,
                   child: ClipOval(
                     child: player.photoUrl != null
-                        ? FadeInImage.assetNetwork(
+                        ?
+                    // player.id == botPlayerDocId ?
+                    //     Image(image: appController.botPlayerImage)
+                    //     :
+                    FadeInImage.assetNetwork(
                       placeholder: 'assets/images/user_photo_bg.png',
-                      image: player.photoUrl!,
+                      image: appController.hasInterNetConnection.value
+                          ? player.photoUrl!.replaceAll("s96-c", "s192-c")
+                      : player.photoUrl!,
                     )
                         : const Image(
                         image: AssetImage('assets/images/user_photo_bg.png')

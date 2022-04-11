@@ -42,7 +42,7 @@ class VersusGame {
         playerOneGame: SoloGame.fromData(json[versusGamePlayerOneMatchFN]),
         playerTwoGame: SoloGame.fromData(json[versusGamePlayerTwoMatchFN]),
         p1Rating: json[vsGameP1RatingFN],
-        p2Rating: json[vsGameP1RatingFN],
+        p2Rating: json[vsGameP2RatingFN],
         whoIsToMove: (json[versusGameWhoIsToMoveFN] as String).toPlayerToMove(),
         createdAt: json[versusGameCreatedAtFN],
         state: (json[versusGameStatusFN] as String).toMatchState(),

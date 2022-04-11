@@ -92,3 +92,11 @@ const int maxTimeAverageToUnlockVsMode = 300000;
 const monthsEng = <String>[ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', ];
 const monthsSpa = <String>[ 'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic', ];
 
+const String botPlayerDocId = 'botplayer';
+const String botPlayerAvatarUrl = 'https://source.unsplash.com/random/200x200/?face';
+const String randomUserUrl = 'https://randomuser.me/api/?results=1';
+
+const List<String> testDeviceIds = [
+  'B3EEABB8EE11C2BE770B684D95219ECB',
+  "AD402BC6C6000368CBBB4378010553EB",
+];
