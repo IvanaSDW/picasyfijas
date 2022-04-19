@@ -212,10 +212,10 @@ class NeoBot {
     return isCow;
   }
 
-  void refreshBotStats() {
+  Future<void> refreshBotStats() async {
     logger.i('called');
     appController.needUpdateVsStats.value = true;
-    Get.find<PlayerStatsController>().refreshStats(botPlayerDocId);
+    Get.find<PlayerStatsController>().refreshBotStats(botPlayerDocId);
   }
 
   int? isGuessDuplicated(String guess, List<GameMove> moves, int lastIndex) {

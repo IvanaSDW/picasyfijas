@@ -66,7 +66,7 @@ final appPages = [
   GetPage(
     name: Routes.profile,
     page: () => PlayerProfileView(),
-    transition: Transition.fade,
+    transition: Transition.cupertino,
     curve: Curves.easeInOut,
     transitionDuration: const Duration(milliseconds: 1000),
   ),

@@ -20,27 +20,32 @@ class PlayerAvatar extends StatelessWidget {
           children: [
             Container(
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(30.0),
-                border: Border.all(color: isP1 ? Colors.white : originalColors.accentColor2!, width: 0.5,)
+                  borderRadius: BorderRadius.circular(30.0),
+                  border: Border.all(color: isP1 ? Colors.white : originalColors.accentColor2!, width: 0.5,)
               ),
             ),
             Column(
               children: [
                 Expanded(flex: 80,
-                  child: ClipOval(
-                    child: player.photoUrl != null
-                        ?
-                    // player.id == botPlayerDocId ?
-                    //     Image(image: appController.botPlayerImage)
-                    //     :
-                    FadeInImage.assetNetwork(
-                      placeholder: 'assets/images/user_photo_bg.png',
-                      image: appController.hasInterNetConnection.value
-                          ? player.photoUrl!.replaceAll("s96-c", "s192-c")
-                      : player.photoUrl!,
-                    )
-                        : const Image(
-                        image: AssetImage('assets/images/user_photo_bg.png')
+                  child: AspectRatio(
+                    aspectRatio: 1.0,
+                    child: ClipOval(
+                      child: player.photoUrl != null
+                          ? FadeInImage.assetNetwork(
+                        placeholder: 'assets/images/user_photo_bg.png',
+                        image: player.addedAvatarsUrls != null
+                            ? player.addedAvatarsUrls!.isNotEmpty
+                            ? player.addedAvatarsUrls!.last
+                            : appController.hasInterNetConnection.value
+                            ? player.photoUrl!.replaceAll("s96-c", "s192-c")
+                            : player.photoUrl!
+                            : appController.hasInterNetConnection.value
+                            ? player.photoUrl!.replaceAll("s96-c", "s192-c")
+                            : player.photoUrl!, fit: BoxFit.cover,
+                      )
+                          : const Image(
+                          image: AssetImage('assets/images/user_photo_bg.png')
+                      ),
                     ),
                   ),
                 ),
@@ -52,9 +57,10 @@ class PlayerAvatar extends StatelessWidget {
                         size: 14,
                       )
                           : AutoSizeText(
-                        player.name!
-                            .split(' ')
-                            .first,
+                        player.nickName ??
+                            player.name!
+                                .split(' ')
+                                .first,
                         style: profilePlayerStatsSubTitleKeyStyle,
                         textAlign: TextAlign.center,
                       )

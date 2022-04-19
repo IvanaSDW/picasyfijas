@@ -1,9 +1,9 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:bulls_n_cows_reloaded/presentation/pages/versus_game_screen/versus_game_logic.dart';
+import 'package:bulls_n_cows_reloaded/shared/chronometer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:stop_watch_timer/stop_watch_timer.dart';
 import '../../../shared/constants.dart';
 
 class VersusGameResultWidget extends StatelessWidget {
@@ -80,7 +80,7 @@ class VersusGameResultWidget extends StatelessWidget {
               const Spacer(),
               AutoSizeText(
                 gameLogic.game.winByMode == WinByMode.opponentLeft || gameLogic.game.winByMode == WinByMode.opponentTimeUp? ''
-                   : 'time_left'.tr +  StopWatchTimer.getDisplayTime(
+                   : 'time_left'.tr +  Chronometer.getDisplayTime(
                 gameLogic.iAmP1
                     ? gameLogic.game.playerOneGame.moves.last.timeStampMillis
                     : gameLogic.game.playerTwoGame.moves.last.timeStampMillis,

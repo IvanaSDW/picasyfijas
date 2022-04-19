@@ -61,7 +61,7 @@ class FindOpponentController extends GetxController {
       _matrixVisible.value = false;
       Get.delete<MatrixEffectController>(tag: 'find_opponent');
     });
-    Future.delayed(const Duration(seconds: 8), () {
+    Future.delayed(const Duration(seconds: 6), () {
       activateBot();
     });
   }

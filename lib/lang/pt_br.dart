@@ -121,4 +121,10 @@ const Map<String, String> ptBR = {
   'leaderboard_title' : 'Tabela de Posições',
   'play_solo' : 'Jogar Solo',
   'play_versus' : 'Jogar Versus',
+  'save' : 'Salvar',
+  'edit_profile' : 'Editar Perfil',
+  'at_least_3_chars' : 'Deve ter pelo menos 3 caracteres',
+  'gallery' : 'Galeria',
+  'camera' : 'Câmera',
+  'volume' : 'Volume',
 };

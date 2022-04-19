@@ -42,10 +42,10 @@ class BackPanelWidget extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Expanded(flex: 90,
+                        const Expanded(flex: 88,
                             child: BackPanelMenu()
                         ),
-                        Expanded(flex: 10,
+                        Expanded(flex: 12,
                           child: Row(
                             children: [
                               Expanded(flex: 74,

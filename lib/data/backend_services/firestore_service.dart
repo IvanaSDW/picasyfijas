@@ -172,6 +172,20 @@ class FirestoreService {
     }
   }
 
+  Future<void> updatePlayerNickName(String playerId, String nickName) async {
+    await players.doc(playerId).update({playerNickNameFN: nickName})
+    .then((value) {
+      appController.refreshNickName(nickName);
+    });
+  }
+
+  Future<void> addPlayerAvatarUrl(String playerId, String avatarUrl) async {
+    await players.doc(playerId).update({playerAddedAvatarsUrlsFN : FieldValue.arrayUnion([avatarUrl])})
+    .then((value) {
+      appController.refreshPlayer();
+    });
+  }
+
   Future<void> updatePlayerVsStats({
     required String playerId,
     required double winRate,
@@ -248,42 +262,72 @@ class FirestoreService {
   }
 
   Future<Map<String, dynamic>> getSoloRankings(String playerId) async {
+
+    List<Map<String, dynamic>> soloRankings = await processSoloRankings();
+
     int timeRank = 0;
     int guessRank = 0;
     int worldRank = 0;
-    List<Map<String, dynamic>> wholeRank = <Map<String, dynamic>>[];
+
+    int playerIndex = soloRankings.indexWhere((element) => element['playerId'] == playerId);
+    Map<String, dynamic> playerMap = soloRankings[playerIndex];
+
+    timeRank = playerMap['timeRank'];
+    guessRank = playerMap['guessRank'];
+    worldRank = playerIndex + 1;
+
+    Map<String, dynamic> soloRanks = {
+      'timeRank' : timeRank,
+      'guessRank' : guessRank,
+      'worldRank' : worldRank,
+    };
+    return soloRanks;
+  }
+
+  Future<List<Map<String, dynamic>>> processSoloRankings() async {
+    List<Map<String, dynamic>> soloRanks = <Map<String, dynamic>>[];
     List<Player> orderedByTime = await playersByTimeRankQuery()
         .get()
         .then((value) => value.docs.map((e) => e.data()).toList());
     List<Player> orderedByGuesses = await playersByGuessesRankQuery()
         .get()
         .then((value) => value.docs.map((e) => e.data()).toList());
+
     for (Player player in orderedByTime) {
       int timeRank = orderedByTime.indexWhere((element) => element.id == player.id);
       int guessRank = orderedByGuesses.indexWhere((element) => element.id == player.id);
       int sumOfRank = timeRank + guessRank;
-      wholeRank.add({'playerId' : player.id, 'timeRank' : timeRank, 'guessRank' : guessRank, 'sumOfRank' : sumOfRank});
+      soloRanks.add({'playerId' : player.id, 'player' : player, 'timeRank' : timeRank, 'guessRank' : guessRank, 'sumOfRank' : sumOfRank});
     }
-    wholeRank.sort((a, b) => a['sumOfRank'].compareTo(b['sumOfRank']));
-    timeRank = orderedByTime.indexWhere((element) => element.id == playerId) + 1;
-    guessRank = orderedByGuesses.indexWhere((element) => element.id == playerId) + 1;
-    worldRank = wholeRank.indexWhere((element) => element['playerId'] == playerId) + 1;
-    Map<String, dynamic> soloRankings = {
-      'timeRank' : timeRank,
-      'guessRank' : guessRank,
-      'worldRank' : worldRank,
-    };
-    return soloRankings;
+
+    soloRanks.sort((a, b) => a['sumOfRank'].compareTo(b['sumOfRank']));
+    return soloRanks;
+
   }
 
-  Future<List<Player>> getLeaderboard() async {
+  Future<List<Player>> getSoloLeaderboard() async {
+    List<Player> allPlayersLeaderBoard = <Player>[];
+    List<Player> onlyGoogle = <Player>[];
+    List<Player> withoutInfinities = <Player>[];
+    // List<Player> soloLeaderBoard = <Player>[];
+    List<Map<String, dynamic>> soloRanks = await processSoloRankings();
+    for (Map<String, dynamic> element in soloRanks) {
+      allPlayersLeaderBoard.add(element['player']);
+    }
+
+    onlyGoogle = allPlayersLeaderBoard.where((player) => player.email != null).toList();
+    withoutInfinities = onlyGoogle.where((player) => player.soloTimeAverage != double.infinity).toList();
+    return withoutInfinities;
+  }
+
+  Future<List<Player>> getVsLeaderboard() async {
     return await playersByRatingQuery()
         .get()
         .then((value) => value.docs.map((e) => e.data()).toList());
   }
 
   Future<Map<String, dynamic>> getPlayerRatingRank(String playerId) async {
-    List<Player> orderedByRating = await getLeaderboard();
+    List<Player> orderedByRating = await getVsLeaderboard();
     int rankIndex = orderedByRating.indexWhere((player) => player.id == playerId) + 1;
     double percentile = (orderedByRating.length- rankIndex) / orderedByRating.length;
     return {'rank' : rankIndex, 'percentile' : percentile};

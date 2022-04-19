@@ -122,4 +122,10 @@ const Map<String, String> enUS = {
   'leaderboard_title' : 'Leaderboard',
   'play_solo' : 'Play Solo',
   'play_versus' : 'Play Versus',
+  'save' : 'Save',
+  'edit_profile' : 'Edit Profile',
+  'at_least_3_chars' : 'Must be at least 3 characters',
+  'gallery' : 'Gallery',
+  'camera' : 'Camera',
+  'volume' : 'Volume',
 };

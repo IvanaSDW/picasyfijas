@@ -8,8 +8,11 @@ import '../../../data/models/player.dart';
 
 class LeaderboardController extends GetxController {
 
-  final RxList<Player> _leaderBoard = <Player>[].obs;
-  List<Player> get leaderboard => _leaderBoard;
+  final RxList<Player> _vsLeaderBoard = <Player>[].obs;
+  List<Player> get vsLeaderboard => _vsLeaderBoard;
+
+  final RxList<Player> _soloLeaderBoard = <Player>[].obs;
+  List<Player> get soloLeaderboard => _soloLeaderBoard;
 
   late BannerAd bottomBannerAd;
   final RxBool _isBottomBannerAdLoaded = false.obs;
@@ -19,16 +22,21 @@ class LeaderboardController extends GetxController {
   set isSyncing(bool value) => _isSyncing.value = value;
   bool get isSyncing => _isSyncing.value;
 
+  final RxBool _showVersus = true.obs;
+  set showVersus(bool value) => _showVersus.value = value;
+  bool get showVersus => _showVersus.value;
+
   @override
   void onInit() async {
     super.onInit();
-    await refreshLeaderboard();
+    await refreshVsLeaderboard();
     _createBottomBannerAd();
   }
 
-  Future<void> refreshLeaderboard() async {
+  Future<void> refreshVsLeaderboard() async {
     isSyncing = true;
-    _leaderBoard.value = await firestoreService.getLeaderboard();
+    _vsLeaderBoard.value = await firestoreService.getVsLeaderboard();
+    _soloLeaderBoard.value = await firestoreService.getSoloLeaderboard();
     appController.needUpdateLeaderboard.value = false;
     isSyncing = false;
   }

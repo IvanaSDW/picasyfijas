@@ -24,6 +24,7 @@ class InputSecretNumberWidget extends StatelessWidget {
             style: defaultTextStyle,
           ),
           const NumericKeyboardWidget(),
+          const SizedBox(height: 40.0,),
           Obx(() {
             return Stack(
               alignment: Alignment.center,

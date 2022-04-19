@@ -41,7 +41,7 @@ class PlayerStatsController extends GetxController {
         timeAverage = sumOfTime / soloGamesCount;
         guessesAverage = sumOfGuesses / soloGamesCount;
       }
-      if (appController.currentPlayer.isVsUnlocked!) {
+      if (appController.currentPlayer.isVsUnlocked! || auth.currentUser!.uid != playerId) {
         await firestoreService.updatePlayerSoloAverages(playerId, timeAverage, guessesAverage, false);
       } else {
         if ((soloGamesCount >= minSoloGamesToUnlockVsMode) && (timeAverage <= maxTimeAverageToUnlockVsMode)) {
@@ -136,6 +136,32 @@ class PlayerStatsController extends GetxController {
       'vsGamesDraw' : vsGamesDraw, 'vsGamesLost' : vsGamesLost,
       'vsWinRate' : vsWinRate, 'rating': rating, 'isRated': isRated,
     };
+  }
+
+  Future<void> refreshBotStats(String botId) async {
+
+    PlayerStats botStats = PlayerStats.blank();
+    await getVsStats(botId)
+        .then((value) {
+      botStats.vsGamesCount = value['vsGamesCount'];
+      botStats.vsGamesWon = value['vsGamesWon'];
+      botStats.vsGamesDraw = value['vsGamesDraw'];
+      botStats.vsGamesLost = value['vsGamesLost'];
+      botStats.vsWinRate = value['vsWinRate'];
+      botStats.rating = value['rating'];
+      botStats.isRated = value['isRated'];
+    });
+    await firestoreService.updatePlayerVsStats(
+      playerId: botId,
+      winRate: botStats.vsWinRate,
+      rating: botStats.rating,
+      isRated: botStats.isRated,
+    );
+
+    await firestoreService.getPlayerRatingRank(botId).then((value) {
+      botStats.vsWorldRank = value['rank'];
+      botStats.vsPercentile = value['percentile'];
+    });
   }
 
   @override

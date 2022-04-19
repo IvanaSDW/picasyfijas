@@ -14,6 +14,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'data/backend_services/firebase_auth_service.dart';
 import 'data/models/push_notification.dart';
 import 'firebase_options.dart';
@@ -101,7 +102,11 @@ class Init {
         !Get.isRegistered<AuthController>() ||
         !Get.isRegistered<AppController>()
     );
-    appController.playSplashEffect('audio/matrix_sound.mp3');
+    final prefs = await SharedPreferences.getInstance();
+    final isMuted = prefs.getBool('isMuted') ?? false;
+    final volume = prefs.getDouble('volumeLevel') ?? 1.0;
+
+    appController.playSplashEffect('audio/matrix_sound.mp3', isMuted ? 0.0 : volume);
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
     await flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<

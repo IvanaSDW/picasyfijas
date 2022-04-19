@@ -147,6 +147,12 @@ TextStyle leaderBoardSecondRatingStyle = TextStyle(
   fontSize: 26,
 );
 
+TextStyle soloLeaderBoardSecondRatingStyle = TextStyle(
+  fontFamily: 'Digital',
+  color: originalColors.playerOneBackground,
+  fontSize: 20,
+);
+
 final TextStyle leaderPodiumNameStyle = TextStyle(
   fontFamily: 'Mainframe',
   color: originalColors.correctGuessColor,

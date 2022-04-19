@@ -12,6 +12,7 @@ import '../../../shared/text_styles.dart';
 import '../../widgets/congrats_message.dart';
 import '../../widgets/continue_button.dart';
 import '../../widgets/guess_display.dart';
+import '../../widgets/player_data_display/player_avatar.dart';
 import 'solo_game_logic.dart';
 
 class SoloGamePage extends StatelessWidget {
@@ -32,14 +33,16 @@ class SoloGamePage extends StatelessWidget {
               Expanded(flex: 8, // Header
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
+                  children: [
                     Expanded(flex: 20,
                         child: Hero(
                             tag: 'avatar',
-                            child: GuestAvatar()
+                            child: appController.authState == AuthState.google
+                                ? PlayerAvatar(player: appController.currentPlayer, isP1: true,)
+                                : const GuestAvatar(),
                         )
                     ),
-                    Expanded(flex: 80,
+                    const Expanded(flex: 80,
                         child: Center(child: SoloMatchHeader())
                     ),
                   ],

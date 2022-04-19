@@ -5,9 +5,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class Player {
   String? id;
   String? name;
+  String? nickName;
   String? email;
   String? phone;
   String? photoUrl;
+  List<String>? addedAvatarsUrls;
   bool? isNewPlayer = true;
   DateTime? createdAt;
   double? soloTimeAverage;
@@ -22,8 +24,10 @@ class Player {
   Player({
     required this.id,
     required this.name,
+    this.nickName,
     required this.email,
     required this.photoUrl,
+    this.addedAvatarsUrls,
     required this.isNewPlayer,
     required this.createdAt,
     required this.soloTimeAverage,
@@ -41,9 +45,11 @@ class Player {
   Map<String, dynamic> toJson() => {
     playerIdFN: id,
     playerNameFN: name,
+    playerNickNameFN: nickName,
     playerEmailFN: email,
     playerPhoneFN: phone,
     playerGoogleAvatarFN: photoUrl,
+    playerAddedAvatarsUrlsFN: addedAvatarsUrls,
     playerIsNewPlayerFN: isNewPlayer,
     playerCreatedAtFN: createdAt,
     playerGuessesAverageFN: soloGuessesAverage,
@@ -59,8 +65,10 @@ class Player {
   factory Player.fromJson(Map<String, dynamic> json) => Player(
     id: json[playerIdFN],
     name: json[playerNameFN],
+    nickName: json[playerNickNameFN],
     email: json[playerEmailFN],
     photoUrl: json[playerGoogleAvatarFN],
+    addedAvatarsUrls: json[playerAddedAvatarsUrlsFN] == null ? null : (json[playerAddedAvatarsUrlsFN] as List).map((e) => e.toString()).toList(),
     isNewPlayer: json[playerIsNewPlayerFN],
     createdAt: (json[playerCreatedAtFN] as Timestamp).toDate(),
     soloGuessesAverage: json[playerGuessesAverageFN] == null ? null : double.parse(json[playerGuessesAverageFN].toString()),

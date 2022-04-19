@@ -4,6 +4,7 @@ import 'package:bulls_n_cows_reloaded/presentation/pages/player_profile_screen/p
 import 'package:bulls_n_cows_reloaded/presentation/widgets/player_data_display/player_stats_controller.dart';
 import 'package:bulls_n_cows_reloaded/shared/chronometer.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -25,50 +26,123 @@ class PlayerProfileView extends StatelessWidget {
         return Column(
           children: [
             Expanded(flex: 25, // Avatar
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                child: Row(
                   children: [
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Image.asset('assets/images/profile_avatar_bg.png'),
-                        ClipOval(
-                          child: appController.currentPlayer.photoUrl != null
-                              ? FadeInImage.assetNetwork(
-                            placeholder: 'assets/images/profile_avatar_bg.png',
-                            image: appController.currentPlayer.photoUrl!, fit: BoxFit.contain,
+                    Expanded(flex: 50,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Image.asset('assets/images/profile_avatar_bg.png'),
+                              Hero(tag: 'avatar',
+                                child: SizedBox(
+                                  height: Get.height*0.14,
+                                  child: AspectRatio(
+                                    aspectRatio: 1.0,
+                                    child: ClipOval(
+                                      child: appController.currentPlayer.photoUrl != null
+                                          ? FadeInImage.assetNetwork(
+                                        placeholder: 'assets/images/profile_avatar_bg.png',
+                                        image: appController.currentPlayer.addedAvatarsUrls != null
+                                            ? appController.currentPlayer.addedAvatarsUrls!.isNotEmpty
+                                              ? appController.currentPlayer.addedAvatarsUrls!.last
+                                              : appController.hasInterNetConnection.value
+                                                ? appController.currentPlayer.photoUrl!.replaceAll("s96-c", "s192-c")
+                                                : appController.currentPlayer.photoUrl!
+                                            : appController.hasInterNetConnection.value
+                                              ? appController.currentPlayer.photoUrl!.replaceAll("s96-c", "s192-c")
+                                              : appController.currentPlayer.photoUrl!, fit: BoxFit.cover,
+                                      )
+                                          : const SizedBox.shrink(),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              controller.showEdits
+                                  ? InkWell(
+                                  onTap: () => controller.showPicker(context),
+                                  child: const Icon(Icons.add_a_photo_outlined, color: Colors.white, size: 36,)
+                              )
+                                  : const SizedBox.shrink(),
+                            ],
+                          ),
+                          SizedBox(height: controller.showEdits ? 4 : 10,),
+                          controller.showEdits
+                              ? Padding(
+                                padding: const EdgeInsets.only(left: 12.0),
+                                child: Form(
+                            key: controller.formKey,
+                            autovalidateMode: AutovalidateMode.disabled,
+                            child: TextFormField(
+                                controller: controller.nameController,
+                                validator: (value) => controller.validateNickName(value),
+                                cursorColor: originalColors.textColorLight,
+                                style: TextStyle(color: originalColors.textColorLight),
+                                keyboardType: TextInputType.name,
+                                inputFormatters: [
+                                  LengthLimitingTextInputFormatter(14),
+                                ],
+                                decoration: InputDecoration(
+                                    enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: originalColors.playerOneBackground!)),
+                                    focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: originalColors.textColorLight!)),
+                                    hintText: appController.currentPlayer.nickName ?? appController.currentPlayer.name,
+                                    hintStyle: TextStyle(color: originalColors.playerOneBackground)
+                                ),
+                            ),
+                          ),
+                              )
+                              : appController.currentPlayer.name == null
+                              ? const SpinKitThreeBounce(
+                            color: Colors.white,
+                            size: 14,
                           )
-                              : const SizedBox.shrink(),
-                        ),
-                      ],
+                              : AutoSizeText(
+                            appController.currentPlayer.nickName ??
+                                appController.currentPlayer.name!,
+                            maxLines: 2,
+                            style: profilePlayerStatsSubTitleKeyStyle,
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 10,),
+                          controller.showEdits
+                              ? const SizedBox.shrink()
+                              : Row(mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              AutoSizeText(
+                                'Rating: ',
+                                style: playerProfileAccentTitle,
+                              ),
+                              AutoSizeText(
+                                stats.isRated
+                                    ? stats.rating.toString()
+                                    : stats.rating.toString() + '?',
+                                style: profilePlayerWhiteTextStyle,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                    const SizedBox(height: 10,),
-                    appController.currentPlayer.name == null
-                        ? const SpinKitThreeBounce(
-                      color: Colors.white,
-                      size: 14,
-                    )
-                        : AutoSizeText(
-                      appController.currentPlayer.name!,
-                      maxLines: 2,
-                      style: profilePlayerStatsSubTitleKeyStyle,
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 10,),
-                    Row(mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        AutoSizeText(
-                          'Rating: ',
-                          style: playerProfileAccentTitle,
+                    Expanded(flex: 50,
+                      child: appController.authState == AuthState.google
+                      ? Container(
+                        alignment: Alignment.topRight,
+                        padding: const EdgeInsets.all(16.0),
+                        child: TextButton(
+                          style: TextButton.styleFrom(
+                            shape: StadiumBorder(side: BorderSide(color: originalColors.playerTwoBackground!)),
+                          ),
+                          onPressed: () => controller.onEditProfile(),
+                          child: AutoSizeText(
+                            controller.showEdits ? 'save'.tr : 'edit_profile'.tr,
+                            style: TextStyle(color: originalColors.accentColor2, fontSize: 14, fontFamily: 'Mainframe'),
+                          ),
                         ),
-                        AutoSizeText(
-                          stats.isRated
-                            ? stats.rating.toString()
-                          : stats.rating.toString() + '?',
-                          style: profilePlayerWhiteTextStyle,
-                        ),
-                      ],
+                      )
+                      : const SizedBox.shrink(),
                     ),
                   ],
                 )

@@ -12,22 +12,6 @@ class BackPanelController extends GetxController {
 
   final SliderSwitch sliderSwitch = SliderSwitch();
 
-  void togglePanelOnOff() async {
-    HapticFeedback.lightImpact();
-    if (appController.backPanelOn) {
-      appController.playEffect('audio/button-40.wav');
-      appController.backPanelOn = false;
-      sliderSwitch.controller.closeDrawer();
-      appController.quitApp();
-    } else {
-      appController.playEffect('audio/beep-21.wav');
-      appController.backPanelOn = true;
-      if(Get.isRegistered<MatrixEffectController>(tag: 'front_panel')) {
-        Get.delete<MatrixEffectController>(tag: 'front_panel');
-      }
-    }
-  }
-
   void toggleMuteOnOff() {
     HapticFeedback.lightImpact();
     if (appController.isMuted) {

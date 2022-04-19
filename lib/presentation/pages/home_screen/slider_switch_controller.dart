@@ -1,3 +1,4 @@
+import 'package:bulls_n_cows_reloaded/presentation/pages/home_screen/volume_widget_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -77,6 +78,7 @@ class SliderSwitchController extends GetxController {
   }
 
   void openDrawer() {
+    Get.find<VolumeWidgetController>().refreshVolumeRenderInfo();
     if (appController.drawerSlideValue < 1.0) {
       appController.playEffect('audio/multi-plier-open.wav');
       appController.drawerSlideValue = 1.0;
@@ -91,6 +93,7 @@ class SliderSwitchController extends GetxController {
       appController.drawerSlideValue = 0.0;
       sliderDuration = 800;
       sliderThumbX.value = 0;
+      appController.savePreferences();
     }
   }
 }

@@ -121,4 +121,10 @@ const Map<String, String> esES = {
   'leaderboard_title' : 'Tabla de Posiciones',
   'play_solo' : 'Jugar Solo',
   'play_versus' : 'Jugar Versus',
+  'save' : 'Guardar',
+  'edit_profile' : 'Editar Perfil',
+  'at_least_3_chars' : 'Ingresa al menos 3 caracteres',
+  'gallery' : 'Galería',
+  'camera' : 'Cámara',
+  'volume' : 'Volumen',
 };

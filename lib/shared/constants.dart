@@ -1,6 +1,8 @@
 import 'package:bulls_n_cows_reloaded/data/backend_services/firebase_auth_service.dart';
 import 'package:bulls_n_cows_reloaded/data/backend_services/firestore_service.dart';
+import 'package:bulls_n_cows_reloaded/data/backend_services/storage_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:logger/logger.dart';
 import 'controllers/app_controller.dart';
 import 'controllers/auth_controller.dart';
@@ -17,6 +19,8 @@ final AuthController authController = AuthController.instance;
 final AppController appController = AppController.instance;
 final FirestoreService firestoreService = FirestoreService.instance;
 final FirebaseAuthService authService = FirebaseAuthService.instance;
+final FirebaseStorage fbStorage = FirebaseStorage.instance;
+final StorageService storageService = StorageService();
 
 final Logger logger = Logger();
 final FirebaseAuth auth = FirebaseAuth.instance;
@@ -24,9 +28,11 @@ final FirebaseAuth auth = FirebaseAuth.instance;
 const String playersTableName = 'players';
 const String playerIdFN = 'id';
 const String playerNameFN = 'name';
+const String playerNickNameFN = 'nick_name';
 const String playerEmailFN = 'email';
 const String playerPhoneFN = 'phone';
 const String playerGoogleAvatarFN = 'google_avatar';
+const String playerAddedAvatarsUrlsFN = 'added_avatars';
 const String playerIsNewPlayerFN = 'is_new_user';
 const String playerCreatedAtFN = 'created_at';
 const String playerTimeAverageFN = 'time_average';
@@ -100,3 +106,5 @@ const List<String> testDeviceIds = [
   'B3EEABB8EE11C2BE770B684D95219ECB',
   "AD402BC6C6000368CBBB4378010553EB",
 ];
+
+const String playerAvatarStorageTN = 'avatar_images';

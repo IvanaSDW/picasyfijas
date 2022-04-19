@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../navigation/routes.dart';
 import '../constants.dart';
@@ -127,7 +128,6 @@ class AppController extends GetxController {
         authService.signOut();
         return Player.empty();
       } else {
-        // logger.i('Checking if avatar is changed: inFirestore: ${player.photoUrl}, in google: ${auth.currentUser!.providerData[0].photoURL}');
         if (!auth.currentUser!.isAnonymous && appController.hasInterNetConnection.value) {
           auth.currentUser!.providerData[0].photoURL == player.photoUrl
               ? null : player.photoUrl = auth.currentUser!.providerData[0].photoURL;
@@ -137,9 +137,26 @@ class AppController extends GetxController {
     });
   }
 
+  void refreshNickName(String nickName) {
+    _currentPlayer.update((val) {
+      val?.nickName = nickName;
+    });
+  }
+
+  void refreshAvatar(String avatarUrl) {
+    _currentPlayer.update((val) {
+      val?.addedAvatarsUrls?.add(avatarUrl);
+    });
+  }
+
+
   @override
   Future<void> onInit() async {
     super.onInit();
+    final prefs = await SharedPreferences.getInstance();
+    volumeLevel = prefs.getDouble('volumeLevel') ?? 1.0;
+    isMuted = prefs.getBool('isMuted') ?? false;
+    logger.i('Read volume level: $volumeLevel');
     await checkInternet();
     countryCode = await IpLocator().getCountryCode();
     countryName = await IpLocator().getCountryName();
@@ -157,9 +174,10 @@ class AppController extends GetxController {
     return await cache.play(fileName, volume: isMuted ? 0.0: volumeLevel,);
   }
 
-  void playSplashEffect(String fileName) async {
+  void playSplashEffect(String fileName, double volume) async {
     splashCache = AudioCache(fixedPlayer: splashPlayer);
-    splashPlayer = await splashCache?.play(fileName, volume: isMuted ? 0.0: volumeLevel,);
+    logger.i('Volume at start: $volumeLevel, is mute: $isMuted');
+    splashPlayer = await splashCache?.play(fileName, volume: volume,);
   }
 
   void stopSplashEffect() {
@@ -226,6 +244,12 @@ class AppController extends GetxController {
   void firstSignIn() async {
     appController.isBusy = true;
     await authController.signInAnonymously();
+  }
+
+  void savePreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setDouble('volumeLevel', volumeLevel);
+    prefs.setBool('isMuted', isMuted);
   }
 
   @override

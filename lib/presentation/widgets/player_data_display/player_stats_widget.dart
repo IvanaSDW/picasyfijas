@@ -1,10 +1,11 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:bulls_n_cows_reloaded/data/models/player_stats.dart';
 import 'package:bulls_n_cows_reloaded/presentation/widgets/player_data_display/player_stats_controller.dart';
+import 'package:bulls_n_cows_reloaded/shared/chronometer.dart';
 import 'package:bulls_n_cows_reloaded/shared/constants.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:stop_watch_timer/stop_watch_timer.dart';
 
 import '../../../shared/text_styles.dart';
 
@@ -42,7 +43,7 @@ class PlayerStatsWidget extends StatelessWidget {
                     child: AutoSizeText(
                       stats.timeAverage == double.infinity
                           ? '---'
-                          : StopWatchTimer.getDisplayTime(
+                          : Chronometer.getDisplayTime(
                           stats.timeAverage.toInt(),
                           hours: false,
                           milliSecond: false
@@ -52,8 +53,10 @@ class PlayerStatsWidget extends StatelessWidget {
                 ),
                 Expanded(flex: 25,
                     child: AutoSizeText(
-                      'Rank: ${stats.soloGamesCount == 0 ? "--" : stats.timeRank}',
+                      'Rank',
+                      // 'Rank: ${stats.soloGamesCount == 0 ? "--" : stats.timeRank}',
                       style: statsSubTitle,
+                      textAlign: TextAlign.center,
                     )
                 ),
               ],
@@ -80,34 +83,15 @@ class PlayerStatsWidget extends StatelessWidget {
                 ),
                 Expanded(flex: 25,
                     child: AutoSizeText(
-                      'Rank: ${stats.soloGamesCount == 0 ? "--" : stats.guessesRank}',
-                      style: statsSubTitle,
-                    )
-                ),
-              ],
-            ),
-          ),
-          Expanded(flex: 13,
-            child: Row(
-              children: [
-                Expanded(flex: 50,
-                    child: AutoSizeText(
-                      'world_ranking'.tr,
-                      style: statsSubTitle,
-                      textAlign: TextAlign.start,
-                    )
-                ),
-                Expanded(flex: 50,
-                    child: AutoSizeText(
                       stats.soloGamesCount == 0 ? "--" : stats.soloWorldRank.toString(),
                       style: statsText,
-                      textAlign: TextAlign.start,
+                      textAlign: TextAlign.center,
                     )
                 ),
               ],
             ),
           ),
-          const Spacer(flex: 5,),
+          const Spacer(flex: 10,),
           Expanded(
             flex: 13,
             child: AutoSizeText(
@@ -129,13 +113,20 @@ class PlayerStatsWidget extends StatelessWidget {
                       style: statsSubTitle,
                       textAlign: TextAlign.start,
                     )),
-                Expanded(flex: 50,
+                Expanded(flex: 25,
                     child: AutoSizeText(
                       stats.vsWinRate == double.infinity
                           ? '---'
                           : (stats.vsWinRate*100).toStringAsFixed(1),
                       style: statsText,
                       textAlign: TextAlign.start,
+                    )
+                ),
+                Expanded(flex: 25,
+                    child: AutoSizeText(
+                      'Rank',
+                      style: statsSubTitle,
+                      textAlign: TextAlign.center,
                     )
                 ),
               ],
@@ -192,9 +183,9 @@ class PlayerStatsWidget extends StatelessWidget {
                 ),
                 Expanded(flex: 25,
                     child: AutoSizeText(
-                      stats.vsGamesCount == 0 ? "--" : 'Rank: ' + stats.vsWorldRank.toString(),
-                      style: statsSubTitle,
-                      textAlign: TextAlign.start,
+                      stats.vsGamesCount == 0 ? "--" : stats.vsWorldRank.toString(),
+                      style: statsText,
+                      textAlign: TextAlign.center,
                     )
                 ),
               ],
