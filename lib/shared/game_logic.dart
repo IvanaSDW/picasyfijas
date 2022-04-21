@@ -1,4 +1,5 @@
 import 'dart:math';
+
 import 'package:bulls_n_cows_reloaded/data/models/digit_match_result.dart';
 import 'package:bulls_n_cows_reloaded/data/models/four_digits.dart';
 
@@ -47,4 +48,5 @@ FourDigits generateSecretNum() {
   } while (digits.length <= 3);
   return FourDigits(digit0: digits[0], digit1: digits[1], digit2: digits[2], digit3: digits[3]);
 }
+
 

@@ -28,6 +28,8 @@ class PlayerProfileController extends GetxController {
   String? imagePath;
   final _picker = ImagePicker();
 
+  String? nickNameErrorText;
+
 
   @override
   Future<void> onInit() async {
@@ -35,12 +37,18 @@ class PlayerProfileController extends GetxController {
     super.onInit();
   }
 
-  void onEditProfile() {
+  Future<void> onEditProfile() async {
     if (showEdits) {
       if (formKey.currentState!.validate()) {
         logger.i('New Nickname is: ${nameController.value.text}');
-        firestoreService.updatePlayerNickName(auth.currentUser!.uid, nameController.value.text);
-        _showEdits.toggle();
+        if (await firestoreService.nickNameDoesNotExist(nameController.value.text)) {
+          firestoreService.updatePlayerNickName(auth.currentUser!.uid, nameController.value.text);
+          _showEdits.toggle();
+        } else {
+          nickNameErrorText = 'Nickname already exists';
+          logger.i('Nickname already exists');
+        }
+
       } else {
         if (nameController.value.text.isEmpty) {
           _showEdits.toggle();
@@ -123,7 +131,7 @@ class PlayerProfileController extends GetxController {
     if (value == null) return null;
     return value.length < 3
         ? 'at_least_3_chars'.tr
-        : null;
+        : nickNameErrorText;
   }
 
   void _createBottomBannerAd() {
@@ -143,5 +151,14 @@ class PlayerProfileController extends GetxController {
       ),
     );
     bottomBannerAd.load();
+  }
+
+  Future<bool> onBackPressed() async {
+    if(showEdits) {
+      _showEdits.toggle();
+      return false;
+    } else {
+      return true;
+    }
   }
 }

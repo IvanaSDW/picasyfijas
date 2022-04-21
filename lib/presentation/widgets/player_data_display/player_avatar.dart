@@ -63,6 +63,7 @@ class PlayerAvatar extends StatelessWidget {
                                 .first,
                         style: profilePlayerStatsSubTitleKeyStyle,
                         textAlign: TextAlign.center,
+                        maxLines: 1,
                       )
                   ),
                 ),

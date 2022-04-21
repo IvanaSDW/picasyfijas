@@ -198,6 +198,7 @@ class VersusGameLogic extends GetxController {
       }
       if (game.winByMode == WinByMode.opponentLeft || game.winByMode == WinByMode.opponentTimeUp) {
         if(game.winnerId == appController.currentPlayer.id) {
+          logger.i('Calling onGameFinished...');
           onGameFinished();
         } else {
           if(game.winByMode == WinByMode.opponentTimeUp) onGameFinished();
@@ -449,6 +450,8 @@ class VersusGameLogic extends GetxController {
       if(game.winnerPlayer == null) {
         if (isPlayingAgainstBot) {
           //Bot found number
+          p1Timer.stopTimer();
+          p2Timer.stopTimer();
           neo!.onGameFinished(game);
         }
       } else {

@@ -47,8 +47,7 @@ class LeaderBoardView extends StatelessWidget {
                                       .spaceEvenly,
                                   children: [
                                     //Second player
-                                    Expanded(
-                                      flex: 33,
+                                    Expanded(flex: 33,
                                       child: Column(
                                         mainAxisAlignment: MainAxisAlignment
                                             .center,
@@ -144,15 +143,11 @@ class LeaderBoardView extends StatelessWidget {
                                                 size: 14,
                                               )
                                                   : AutoSizeText(
-                                                controller.vsLeaderboard[1]
-                                                    .name!
-                                                    .length > 10
-                                                    ? controller
-                                                    .vsLeaderboard[1]
-                                                    .name!.substring(0, 10)
-                                                    : controller
-                                                    .vsLeaderboard[1]
-                                                    .name!,
+                                                controller.vsLeaderboard[1].nickName != null
+                                                    ? controller.vsLeaderboard[1].nickName!
+                                                    : controller.vsLeaderboard[1].name!.length > 10
+                                                    ? controller.vsLeaderboard[1].name!.substring(0, 10)
+                                                    : controller.vsLeaderboard[1].name!,
                                                 maxLines: 1,
                                                 style: leaderPodiumNameStyle,
                                                 textAlign: TextAlign.center,
@@ -245,15 +240,11 @@ class LeaderBoardView extends StatelessWidget {
                                               size: 14,
                                             )
                                                 : AutoSizeText(
-                                              controller.vsLeaderboard.first
-                                                  .name!
-                                                  .length > 10
-                                                  ? controller.vsLeaderboard
-                                                  .first
-                                                  .name!.substring(0, 10)
-                                                  : controller.vsLeaderboard
-                                                  .first
-                                                  .name!,
+                                              controller.vsLeaderboard.first.nickName != null
+                                                  ? controller.vsLeaderboard.first.nickName!
+                                                  : controller.vsLeaderboard.first.name!.length > 10
+                                                  ? controller.vsLeaderboard.first.name!.substring(0, 10)
+                                                  : controller.vsLeaderboard.first.name!,
                                               maxLines: 1,
                                               style: leaderPodiumNameStyle,
                                               textAlign: TextAlign.center,
@@ -360,15 +351,11 @@ class LeaderBoardView extends StatelessWidget {
                                                 size: 14,
                                               )
                                                   : AutoSizeText(
-                                                controller.vsLeaderboard[2]
-                                                    .name!
-                                                    .length > 10
-                                                    ? controller
-                                                    .vsLeaderboard[2]
-                                                    .name!.substring(0, 10)
-                                                    : controller
-                                                    .vsLeaderboard[2]
-                                                    .name!,
+                                                controller.vsLeaderboard[2].nickName != null
+                                                    ? controller.vsLeaderboard[2].nickName!
+                                                    : controller.vsLeaderboard[2].name!.length > 10
+                                                    ? controller.vsLeaderboard[2].name!.substring(0, 10)
+                                                    : controller.vsLeaderboard[2].name!,
                                                 maxLines: 1,
                                                 style: leaderPodiumNameStyle,
                                                 textAlign: TextAlign.center,
@@ -434,8 +421,7 @@ class LeaderBoardView extends StatelessWidget {
                             ),
                           ),
                         ),
-                        Expanded(
-                          flex: controller.isBottomBannerAdLoaded ? 52 : 72,
+                        Expanded(flex: controller.isBottomBannerAdLoaded ? 52 : 72,
                           // Leaderboard listview
                           child: Container(
                             decoration: const BoxDecoration(
@@ -532,8 +518,7 @@ class LeaderBoardView extends StatelessWidget {
                                       .spaceEvenly,
                                   children: [
                                     //Second player
-                                    Expanded(
-                                      flex: 33,
+                                    Expanded(flex: 33,
                                       child: Column(
                                         mainAxisAlignment: MainAxisAlignment
                                             .center,
@@ -649,15 +634,9 @@ class LeaderBoardView extends StatelessWidget {
                                                   : AutoSizeText(
                                                 controller.soloLeaderboard[1].nickName != null
                                                     ? controller.soloLeaderboard[1].nickName!
-                                                    : controller.soloLeaderboard[1]
-                                                    .name!
-                                                    .length > 10
-                                                    ? controller
-                                                    .soloLeaderboard[1]
-                                                    .name!.substring(0, 10)
-                                                    : controller
-                                                    .soloLeaderboard[1]
-                                                    .name!,
+                                                    : controller.soloLeaderboard[1].name!.length > 10
+                                                    ? controller.soloLeaderboard[1].name!.substring(0, 10)
+                                                    : controller.soloLeaderboard[1].name!,
                                                 maxLines: 1,
                                                 style: leaderPodiumNameStyle,
                                                 textAlign: TextAlign.center,
@@ -1090,8 +1069,7 @@ class VersusLeaderboardItem extends StatelessWidget {
             ),
           ),
           const Spacer(flex: 5,),
-          Expanded(
-            flex: 49,
+          Expanded(flex: 49,
             child: AutoSizeText(
               leaderboard[index + 3].nickName ?? leaderboard[index + 3].name!,
               style: leaderboardItemStyle,
@@ -1103,8 +1081,7 @@ class VersusLeaderboardItem extends StatelessWidget {
                     .countryCode}.png',
                 package: 'country_icons'),
           ),
-          Expanded(
-            flex: 18,
+          Expanded(flex: 18,
             child: Align(
               alignment: Alignment.centerRight,
               child: AutoSizeText(
@@ -1141,7 +1118,19 @@ class SoloLeaderboardItem extends StatelessWidget {
             ),
           ),
           Expanded(flex: 16,
-            child: leaderboard[index + 3].photoUrl == null
+            child: leaderboard[index + 3].addedAvatarsUrls == null
+                ? leaderboard[index + 3].photoUrl == null
+                ? Image.asset('assets/images/user_photo_bg.png')
+                : FadeInImage.assetNetwork(
+              image: leaderboard[index + 3].photoUrl!,
+              placeholder: 'assets/images/user_photo_bg.png',
+            )
+                : leaderboard[index + 3].addedAvatarsUrls!.isNotEmpty
+                ? FadeInImage.assetNetwork(
+              image: leaderboard[index + 3].addedAvatarsUrls!.last,
+              placeholder: 'assets/images/user_photo_bg.png',
+            )
+                : leaderboard[index + 3].photoUrl == null
                 ? Image.asset('assets/images/user_photo_bg.png')
                 : FadeInImage.assetNetwork(
               image: leaderboard[index + 3].photoUrl!,
@@ -1149,10 +1138,9 @@ class SoloLeaderboardItem extends StatelessWidget {
             ),
           ),
           const Spacer(flex: 3,),
-          Expanded(
-            flex: 43,
+          Expanded(flex: 43,
             child: AutoSizeText(
-              leaderboard[index + 3].name!,
+              leaderboard[index + 3].nickName ?? leaderboard[index + 3].name!,
               style: leaderboardItemStyle,
             ),
           ),

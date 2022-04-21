@@ -1,5 +1,6 @@
 import 'package:bulls_n_cows_reloaded/data/backend_services/firebase_auth_service.dart';
 import 'package:bulls_n_cows_reloaded/data/backend_services/firestore_service.dart';
+import 'package:bulls_n_cows_reloaded/shared/rating_calculator.dart';
 import 'package:bulls_n_cows_reloaded/data/backend_services/storage_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -22,6 +23,7 @@ final FirebaseAuthService authService = FirebaseAuthService.instance;
 final FirebaseStorage fbStorage = FirebaseStorage.instance;
 final StorageService storageService = StorageService();
 
+final RatingCalculator ratingCalculator = RatingCalculator();
 final Logger logger = Logger();
 final FirebaseAuth auth = FirebaseAuth.instance;
 
@@ -94,6 +96,12 @@ const int versusModeTimePresetMillis = 300000;
 const int playerPresetRating = 1500;
 const int minSoloGamesToUnlockVsMode = 3;
 const int maxTimeAverageToUnlockVsMode = 300000;
+const int minVsGamesToStartRating = 5;
+const int kFactorForInitialRating = 40;
+const int kFactorBelow2400 = 20;
+const int kFactorAbove2400 = 10;
+const int kFactorForBlitz = 20;
+const int ratingRangeFactor = 400;
 
 const monthsEng = <String>[ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', ];
 const monthsSpa = <String>[ 'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic', ];
@@ -108,3 +116,19 @@ const List<String> testDeviceIds = [
 ];
 
 const String playerAvatarStorageTN = 'avatar_images';
+
+const Map<String, int> ratingDpTable = {
+  '0.49' : -7, '0.48' : -14, '0.47' : -21, '0.46' : -29,
+  '0.45' : -36, '0.44' : -43, '0.43' : -50, '0.42' : -57,
+  '0.41' : -65, '0.40' : -72, '0.39' : -80, '0.38' : -87,
+  '0.37' : -95, '0.36' : -102, '0.35' : -110, '0.34' : -117,
+  '0.33' : -125, '0.32' : -133, '0.31' : -141, '0.30' : -149,
+  '0.29' : -158, '0.28' : -166, '0.27' : -175, '0.26' : -184,
+  '0.25' : -193, '0.24' : -202, '0.23' : -211, '0.22' : -220,
+  '0.21' : -230, '0.20' : -240, '0.19' : -251, '0.18' : -262,
+  '0.17' : -273, '0.16' : -284, '0.15' : -296, '0.14' : -309,
+  '0.13' : -322, '0.12' : -336, '0.11' : -351, '0.10' : -366,
+  '0.09' : -383, '0.08' : -401, '0.07' : -422, '0.06' : -444,
+  '0.05' : -470, '0.04' : -501, '0.03' : -538, '0.02' : -589,
+  '0.01' : -677, '0.00' : -800,
+};

@@ -174,14 +174,14 @@ class FirestoreService {
 
   Future<void> updatePlayerNickName(String playerId, String nickName) async {
     await players.doc(playerId).update({playerNickNameFN: nickName})
-    .then((value) {
+        .then((value) {
       appController.refreshNickName(nickName);
     });
   }
 
   Future<void> addPlayerAvatarUrl(String playerId, String avatarUrl) async {
     await players.doc(playerId).update({playerAddedAvatarsUrlsFN : FieldValue.arrayUnion([avatarUrl])})
-    .then((value) {
+        .then((value) {
       appController.refreshPlayer();
     });
   }
@@ -233,6 +233,12 @@ class FirestoreService {
     return (await fetchedPlayer.get()
         .catchError((error) {logger.e('Error when fetching player from firestore: $error');})
     ).data();
+  }
+
+  Future<bool> nickNameDoesNotExist(String nickName) async {
+    logger.i('Called');
+    return await _playersConverted.where(playerNickNameFN, isEqualTo: nickName).get()
+        .then((value) => value.docs.isEmpty);
   }
 
   Future<void> falseIsNewPlayer(String playerId) {
@@ -428,13 +434,39 @@ class FirestoreService {
   }
 
   //Versus Games Database services
-  Query<VersusGame> vsGamesQuery(String playerId) =>
+  Query<VersusGame> vsGamesQueryByPlayerIdOrderByAscDate(String playerId) =>
       _firestore.collection(versusGamesTableName)
           .where(playerId, whereIn: [versusGamePlayerOneIdFN, versusGamePlayerTwoIdFN])
           .orderBy(versusGameCreatedAtFN, descending: true)
           .withConverter<VersusGame>(
           fromFirestore: (snapshot, _) => VersusGame.fromJson(snapshot.data()!),
           toFirestore: (vsGame, _) => vsGame.toJson());
+
+  Query<VersusGame> vsGamesQueryOrderedByAscDate() =>
+      _firestore.collection(versusGamesTableName)
+          .orderBy(versusGameCreatedAtFN, descending: true)
+          .withConverter<VersusGame>(
+          fromFirestore: (snapshot, _) => VersusGame.fromJson(snapshot.data()!),
+          toFirestore: (vsGame, _) => vsGame.toJson());
+
+  Future<List<VersusGame>> getVsGamesByPlayerIdOrderedByAscDate(String playerId) async {
+    return await vsGamesQueryByPlayerIdOrderByAscDate(playerId).get()
+        .then((value) => value.docs.map((e) => e.data()).toList());
+  }
+
+  Query<VersusGame> initialVsGamesQueryByPlayerId(String playerId) =>
+      _firestore.collection(versusGamesTableName)
+          .where(playerId, whereIn: [versusGamePlayerOneIdFN, versusGamePlayerTwoIdFN])
+          .orderBy(versusGameCreatedAtFN)
+          .limit(minVsGamesToStartRating)
+          .withConverter<VersusGame>(
+          fromFirestore: (snapshot, _) => VersusGame.fromJson(snapshot.data()!),
+          toFirestore: (vsGame, _) => vsGame.toJson());
+
+  Future<List<VersusGame>> getInitialVsGamesByPlayerId(String playerId) async {
+    return await initialVsGamesQueryByPlayerId(playerId).get()
+        .then((value) => value.docs.map((e) => e.data()).toList());
+  }
 
   Query<VersusGame> vsGamesByPlayerOneIdQuery(String playerId) =>
       _firestore.collection(versusGamesTableName)

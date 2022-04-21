@@ -67,6 +67,7 @@ class NeoBot {
   }
 
   void onBotTimeIsUp(bool isBotTimeUp) async {
+    logger.i('called');
     if (!isBotTimeUp) return;
     WinnerPlayer winnerPlayer = WinnerPlayer.player1;
     WinByMode winByMode = WinByMode.opponentTimeUp;
@@ -77,15 +78,17 @@ class NeoBot {
         winByMode: winByMode,
         winnerId: winnerId
     );
+    logger.i('Bot reported player 1 as winner for bot time up.');
     appController.setP2TimeIsUp = false;
   }
 
   Future<void> onGameFinished(VersusGame game) async {
+    logger.i('Called');
     if (game.winnerPlayer == null) {
       WinnerPlayer winnerPlayer;
       WinByMode winByMode;
       String winnerId;
-      if (game.playerTwoGame.moves.last.moveResult.bulls == 4) { //I found number
+      if (game.playerTwoGame.moves.last.moveResult.bulls == 4) { //Bot found number
         if (game.playerOneGame.moves.last.moveResult.bulls == 4) { // Both players found it equal in moves, need judge by time
           int playerOneTimeLeft = game.playerOneGame.moves.last.timeStampMillis ~/1000;
           int playerTwoTimeLeft = game.playerTwoGame.moves.last.timeStampMillis ~/1000;
