@@ -108,6 +108,7 @@ class FirestoreService {
     logger.i('looking for player: ${user.uid}, exists = ${firestoreUser.exists}');
 
     if (!firestoreUser.exists) { //user not yet created in firestore
+      logger.i('Creating player in firestore: $playerRef');
       await playerRef.set({
         playerIdFN: user.uid,
         playerNameFN: 'guest'.tr,
@@ -209,6 +210,7 @@ class FirestoreService {
     logger.i('looking for player: $playerId, exists = ${firestoreUser.exists}');
 
     if(firestoreUser.exists) {
+      logger.i('Updating player token...');
       await players.doc(playerId).update(
         {playerPushTokenFN: newToken,
           'tokenTimeStamp': DateTime.now(),},

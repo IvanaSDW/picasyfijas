@@ -2,6 +2,7 @@ import 'package:bulls_n_cows_reloaded/domain/firebase_auth_use_cases.dart';
 import 'package:bulls_n_cows_reloaded/shared/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import '../theme.dart';
 
@@ -69,6 +70,16 @@ class AuthController extends FullLifeCycleController with FullLifeCycleMixin{
             appController.isBusy = false;
           } else {
             logger.e('Sign in with credential returned null user');
+            Get.defaultDialog(
+                title: 'authentication_error'.tr,
+                middleText: 'Could be a time zone error in your device'.tr,
+                textConfirm: 'ok'.tr,
+                backgroundColor: Colors.green.withOpacity(0.6),
+                buttonColor: originalColors.accentColor2,
+                confirmTextColor: originalColors.textColorLight,
+                onConfirm: () => SystemNavigator.pop(animated: true)
+            );
+            appController.isBusy = false;
           }
         });
       }
