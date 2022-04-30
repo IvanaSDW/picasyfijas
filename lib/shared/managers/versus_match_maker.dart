@@ -60,11 +60,22 @@ class VersusMatchMaker {
     });
   }
 
-  void makeMatchWithRobot({required String playerId}) async {
-    logger.i('called');
+  void makeMatchWithRobot({required String playerId, required String botPlayerId}) async {
+    // logger.i('called');
     Map<String, dynamic> newBotData = await HttpService().loadRandomUserData();
-    firestoreService.updateBotPlayerRandomData(data: newBotData);
-    _acceptVersusChallengeAsBot(postedChallengeReference, botPlayerDocId);
+    newBotData.addAll({
+      playerIdFN : botPlayerId,
+      playerIsRatedFN : false,
+      playerRatingFN : 1500,
+      playerCreatedAtFN : DateTime.now(),
+    });
+    // newBotData.putIfAbsent(playerIdFN, () => botPlayerId);
+    // newBotData.putIfAbsent(playerIsRatedFN, () => false);
+    // newBotData.putIfAbsent(playerRatingFN, () => 1500);
+    // newBotData.putIfAbsent(playerCreatedAtFN, () => DateTime.now());
+    await firestoreService.createBotPlayerIfNoteExists(botPlayerId: botPlayerId, data: newBotData);
+    _acceptVersusChallengeAsBot(postedChallengeReference, botPlayerId);
+    // firestoreService.updateBotPlayerRandomData(botPlayerId: botPlayerId, data: newBotData);
   }
 
   void _postChallenge({required VersusGameChallenge challenge,}) async {
@@ -84,13 +95,13 @@ class VersusMatchMaker {
           await _createGame(challenge: challenge)
               .then((value) async {
             await _assignGameToChallenge(challengeReference: postedChallengeReference, gameId: value.id);
-            logger.i('Created game with id: ${value.id}');
+            // logger.i('Created game with id: ${value.id}');
             var gameStream = _subscribeToVersusGameRef(value);
             if (_onGameCreated != null) _onGameCreated!(gameStream, value, true);
 
           });
-          if(challenge.playerTwoId == botPlayerDocId) {
-            logger.i('Challenge accepted by bot, deleting posted challenge in firestore');
+          if(challenge.playerTwoId!.contains(botPlayerDocIdPrefix, 0)) {
+            // logger.i('Challenge accepted by bot, deleting posted challenge in firestore');
             postedChallengeReference.delete();
           }
         }
@@ -117,7 +128,7 @@ class VersusMatchMaker {
           createdAt: Timestamp.now(),
         ),
         p1Rating: challenge.p1Rating,
-        p2Rating: challenge.p2Rating!,
+        p2Rating: challenge.p2Rating ?? 1500,
         whoIsToMove: VersusPlayer.player1,
         createdAt: Timestamp.now(),
         state: VersusGameStatus.created

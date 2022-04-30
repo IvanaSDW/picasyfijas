@@ -38,7 +38,9 @@ class VersusGameHeaderWidget extends StatelessWidget {
               size: 14,
             )
                 : AutoSizeText(
-              logic.playerOneData!.rating!.toString(),
+              logic.playerOneData!.isRated!
+                  ? logic.playerOneData!.rating!.toString()
+                  : logic.playerOneData!.rating!.toString() + '?',
               style: statsText,
               textAlign: TextAlign.center,
             ),
@@ -60,7 +62,9 @@ class VersusGameHeaderWidget extends StatelessWidget {
               size: 14,
             )
                 : AutoSizeText(
-              logic.playerTwoData!.rating!.toString(),
+              logic.playerTwoData!.isRated!
+                  ? logic.playerTwoData!.rating!.toString()
+                  : logic.playerTwoData!.rating!.toString() + '?',
               style: statsText,
               textAlign: TextAlign.center,
             ),

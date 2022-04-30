@@ -9,21 +9,20 @@ import 'package:get/get.dart';
 import '../../../data/models/game_move.dart';
 import '../../../data/models/solo_game.dart';
 
-class NeoBot {
+class BotPlayer {
   DocumentReference gameReference;
   late SoloGame botGame;
   late FourDigits secretNumber;
 
-  NeoBot({
+  BotPlayer({
     required this.gameReference,
   });
 
   Future<void> initMatch() async {
-    logger.i('called for game: ${gameReference.id}');
+    // logger.i('called for game: ${gameReference.id}');
     await (firestoreService.versusGames.doc(gameReference.id) as DocumentReference<VersusGame>).get()
         .then((value) {
       if (value.exists) {
-        logger.i('Secret number to look for is: ${value.data()!.playerTwoGame.secretNum!.toString()}');
         secretNumber = value.data()!.playerTwoGame.secretNum!;
       }
     });
@@ -37,31 +36,49 @@ class NeoBot {
         List<SoloGame> whereSecretNumber = goodGames.where((element) => element.secretNum.toString() == secretNumber.toString()).toList();
 
         if (whereSecretNumber.isEmpty) {
-          logger.i('No games found with secret number: ${secretNumber.toString()}');
+          // logger.i('No games found for secret number provided');
           botGame = generateBotGameScript(secretNumber, goodGames);
-          logger.i('Converted game: ${botGame.toJson()}');
         } else {
+          logger.i('Found ${whereSecretNumber.length} games for provided secret number');
           int index = Random().nextInt(whereSecretNumber.length);
           botGame = whereSecretNumber[index];
-          logger.i('Found game: ${botGame.toJson()}');
         }
       }
     });
   }
-  Future<void> move(int moveIndex) async {
+  Future<void> move({required int moveIndex, required List<GameMove> p1Moves}) async {
     logger.i('Bot move number: $moveIndex');
     logger.i('Game status is: ${Get.find<VersusGameLogic>().gameStatus}');
-    GameMove newMove = botGame.moves[moveIndex];
-    int previousMoveTimeStamp = moveIndex == 0 ? 0 : versusModeTimePresetMillis - botGame.moves[moveIndex-1].timeStampMillis;
-    int thisMoveTimeStamp = botGame.moves[moveIndex].timeStampMillis;
-    int delayToMove = thisMoveTimeStamp - previousMoveTimeStamp;
-    newMove.timeStampMillis = versusModeTimePresetMillis - newMove.timeStampMillis;
-    logger.i('previous: $previousMoveTimeStamp, this: $thisMoveTimeStamp, delayTime: $delayToMove');
+    GameMove newBotMove = botGame.moves[moveIndex];
+    GameMove? previousBotMove = moveIndex == 0 ? null : botGame.moves[moveIndex-1];
+    logger.i('Raw bot times: this move: ${newBotMove.timeStampMillis}, previous: ${previousBotMove?.timeStampMillis}');
+    int previousBotMoveTimeStamp = moveIndex == 0 ?  versusModeTimePresetMillis : previousBotMove!.timeStampMillis;
+    int newBotMoveTimeStamp = versusModeTimePresetMillis - newBotMove.timeStampMillis;
+    int botTimeInThisMove = previousBotMoveTimeStamp - newBotMoveTimeStamp;
+    logger.i('Converted bot times: this move: $newBotMoveTimeStamp, previous: $previousBotMoveTimeStamp, took: $botTimeInThisMove');
+
+    GameMove thisP1Move = p1Moves[moveIndex];
+    GameMove? previousP1Move = moveIndex == 0 ? null : p1Moves[moveIndex-1];
+    logger.i('Raw P1 times: this move: ${thisP1Move.timeStampMillis}, previous: ${previousP1Move?.timeStampMillis}');
+    int previousP1MoveTimeStamp = moveIndex == 0 ? versusModeTimePresetMillis : previousP1Move!.timeStampMillis;
+    int thisP1MoveTimeStamp = thisP1Move.timeStampMillis;
+    int halfP1TimeInThisMove = (thisP1MoveTimeStamp - previousP1MoveTimeStamp).abs().round() ~/ 2;
+    logger.i('Converted P1 times: this move: $thisP1MoveTimeStamp, previous: $previousP1MoveTimeStamp, took half: $halfP1TimeInThisMove');
+    int delayToMove = 4000;
+
+    if (halfP1TimeInThisMove < (botTimeInThisMove - 4000)) {
+      newBotMove.timeStampMillis = versusModeTimePresetMillis - newBotMove.timeStampMillis + halfP1TimeInThisMove;
+      delayToMove = botTimeInThisMove - halfP1TimeInThisMove;
+    } else {
+      newBotMove.timeStampMillis = versusModeTimePresetMillis - newBotMove.timeStampMillis;
+      delayToMove = botTimeInThisMove;
+    }
+    logger.i('Bot final timestamp for this move: ${newBotMove.timeStampMillis}, delay to move: $delayToMove');
     await Future.delayed(Duration(milliseconds: delayToMove));
     if (Get.find<VersusGameLogic>().gameStatus == VersusGameStatus.semiFinished) {
-      firestoreService.addLastMoveToPlayerTwoInVersusGame(gameReference, newMove);
+      firestoreService.addLastMoveToPlayerTwoInVersusGame(gameReference, newBotMove);
     } else {
-      firestoreService.addMoveToPlayerTwoInVersusGame(gameReference, newMove);
+      firestoreService.addMoveToPlayerTwoInVersusGame(gameReference, newBotMove);
     }
 
   }
@@ -96,24 +113,28 @@ class NeoBot {
             winnerPlayer = WinnerPlayer.draw;
             winByMode = WinByMode.draw;
             winnerId = 'draw';
-          } else if (playerOneTimeLeft > playerTwoTimeLeft) { //Player one won by time, i lost
+          } else if (playerOneTimeLeft > playerTwoTimeLeft) { //Player one won by time, Bot lost
             winnerPlayer = WinnerPlayer.player1;
             winByMode = WinByMode.time;
             winnerId = game.playerOneId;
-          } else { //I am player two and won by time
+            appController.playEffect('audio/win-sound.wav');
+          } else { //Bot won by time
             winnerPlayer = WinnerPlayer.player2;
             winByMode = WinByMode.time;
             winnerId = game.playerTwoId;
+            appController.playEffect('audio/losing-sound.wav');
           }
-        } else { // //I found first and I am player 2, so I am winner by moves
+        } else { //Bot found first as player 2, so Bot is winner by moves
           winnerPlayer = WinnerPlayer.player2;
           winByMode = WinByMode.moves;
           winnerId = game.playerTwoId;
+          appController.playEffect('audio/losing-sound.wav');
         }
-      } else { //I fail my last shot so I lost by moves
+      } else { //Bot failed last shot so Bot lost by moves
         winnerPlayer = WinnerPlayer.player1;
         winByMode = WinByMode.moves;
         winnerId = game.playerOneId;
+        appController.playEffect('audio/win-sound.wav');
       }
       await firestoreService.addFinalResultToVersusGame(
           gameReference: gameReference,
@@ -121,82 +142,95 @@ class NeoBot {
           winByMode: winByMode,
           winnerId: winnerId
       );
-      refreshBotStats();
+      refreshBotStats(game.playerTwoId);
     } else {
       Get.find<VersusGameLogic>().showFinalResult = true;
     }
   }
 
   SoloGame generateBotGameScript(FourDigits newSecretNumber, List<SoloGame> games) {
-    logger.i('called');
+    // logger.i('called');
     List<int> newSecretDigits = newSecretNumber.toList();
     List<GameMove> newMoves = <GameMove>[];
     int index = Random().nextInt(games.length);
     SoloGame chosenGame = games[index];
-    logger.i('Chosen game: ${chosenGame.toJson()}');
+    // logger.i('Chosen game: ${chosenGame.toJson()}');
     //Refactor game to adapt it to secret number
     List<GameMove> originalMoves = List.from(chosenGame.moves);
     List<int> originalSecretDigits = List.from(chosenGame.secretNum!.toList());
     for (int i = 0; i < originalMoves.length; i++) {
-      logger.i('checking move number: $i');
-      List<int> originalGuessDigits = List.from(originalMoves[i].guess.toList());
-      List<int> cowsAvailable = List.from(newSecretDigits);
-      List<int> indexesAvailable = [0,1,2,3];
+      // logger.i('checking move number: $i, original guess is: ${originalMoves[i].guess}');
       List<int> newGuessDigits = <int>[0,0,0,0];
-      List<int> aliensAvailable = <int>[0,1,2,3,4,5,6,7,8,9];
-      aliensAvailable.removeWhere((element) => newSecretDigits.contains(element));
-      logger.i('List of alien digits: $aliensAvailable');
-
-      String thisOriginalGuess = originalMoves[i].guess.toString();
-      int? duplicatePosition = isGuessDuplicated(thisOriginalGuess, originalMoves, i);
-      if (duplicatePosition!= null) {
-        logger.i('This guess is same as a previous one');
-        newGuessDigits = newMoves[duplicatePosition].guess.toList();
-        logger.i('Move transformed from: ${originalMoves[i].guess} to: $newGuessDigits');
-        newMoves.add(originalMoves[i]);
-        newMoves.last.guess = FourDigits.fromList(newGuessDigits);
-        chosenGame.moves[i] = newMoves[i];
+      List<int> originalGuessDigits = List.from(originalMoves[i].guess.toList());
+      if (originalMoves[i].moveResult.cows == 4) { //Guess threw 4 cows, just invert the secret number
+        // logger.i('Original guess have 4 cows...');
+        newGuessDigits = [
+          newSecretDigits[3],
+          newSecretDigits[2],
+          newSecretDigits[1],
+          newSecretDigits[0],
+        ];
       } else {
-        for (int j = 0; j < 4; j++) { //Loop to identify bulls
-          if(isBull(originalGuessDigits[j], j, originalSecretDigits)) {
-            newGuessDigits[j] = newSecretDigits[j];
-            cowsAvailable.remove(newGuessDigits[j]);
-            indexesAvailable.remove(j);
+        List<int> cowsAvailable = List.from(newSecretDigits);
+        List<int> indexesAvailable = [0,1,2,3];
+        List<int> aliensAvailable = <int>[0,1,2,3,4,5,6,7,8,9];
+        aliensAvailable.removeWhere((element) => newSecretDigits.contains(element));
+        // logger.i('List of alien digits: $aliensAvailable');
+
+        String thisOriginalGuess = originalMoves[i].guess.toString();
+        int? duplicatePosition = isGuessDuplicated(thisOriginalGuess, originalMoves, i);
+        if (duplicatePosition!= null) {
+          // logger.i('This guess is same as a previous one');
+          newGuessDigits = newMoves[duplicatePosition].guess.toList();
+          // logger.i('Move transformed from: ${originalMoves[i].guess} to: $newGuessDigits');
+          newMoves.add(originalMoves[i]);
+          newMoves.last.guess = FourDigits.fromList(newGuessDigits);
+          chosenGame.moves[i] = newMoves[i];
+        } else {
+          for (int j = 0; j < 4; j++) { //Loop to identify bulls
+            if(isBull(originalGuessDigits[j], j, originalSecretDigits)) {
+              newGuessDigits[j] = newSecretDigits[j];
+              cowsAvailable.remove(newGuessDigits[j]);
+              indexesAvailable.remove(j);
+            }
           }
-        }
-        logger.i('Bulls not assigned: ${indexesAvailable.length}');
-        for (int j = 0; j < 4; j++) { //Loop to assign cows and aliens
-          if (indexesAvailable.contains(j)) {
-            if(isCow(originalGuessDigits[j], j, originalSecretDigits)) {
-              logger.i('Original guess has a cow in position $j, cowsAvailable are: $cowsAvailable');
-              int index = Random().nextInt(cowsAvailable.length);
-              logger.i('cowsAvailable chosen: ${cowsAvailable[index]}, newSecretDigit being compared: ${newSecretDigits[j]}');
-              if (cowsAvailable[index] == newSecretDigits[j]) { //Cannot use this as cow because it would become a Bull
-                if(index > 0) {
-                  logger.i('index was: $index');
-                  index--;
-                  logger.i('index is now: $index');
-                } else {
-                  index++;
+          // logger.i('Bulls not assigned: ${indexesAvailable.length}');
+          for (int j = 0; j < 4; j++) { //Loop to assign cows and aliens
+            if (indexesAvailable.contains(j)) {
+              if(isCow(originalGuessDigits[j], j, originalSecretDigits)) {
+                // logger.i('Original guess has a cow in position $j, cowsAvailable are: $cowsAvailable');
+                int index = Random().nextInt(cowsAvailable.length);
+                // logger.i('cowsAvailable chosen: ${cowsAvailable[index]}, newSecretDigit being compared: ${newSecretDigits[j]}');
+                if (cowsAvailable[index] == newSecretDigits[j]) { //Cannot use this as cow because it would become a Bull
+                  if(index > 0) {
+                    // logger.i('index was: $index');
+                    index--;
+                    // logger.i('index is now: $index');
+                  } else {
+                    if (cowsAvailable.length < 2) {
+                    } else {
+                      index++;
+                    }
+                  }
                 }
+                // logger.i('index of cowsAvailable: $index');
+                newGuessDigits[j] = cowsAvailable[index];
+                cowsAvailable.removeAt(index);
+              } else { //this digit is not bull nor cow
+                // logger.i('Original guess have alien in position: $j AliensAvailable: $aliensAvailable');
+                int index = Random().nextInt(aliensAvailable.length);
+                // logger.i('index to aliensAvailable: $index, chosen alien: ${aliensAvailable[index]}');
+                newGuessDigits[j] = aliensAvailable[index];
+                aliensAvailable.removeAt(index);
               }
-              logger.i('index of cowsAvailable: $index');
-              newGuessDigits[j] = cowsAvailable[index];
-              cowsAvailable.removeAt(index);
-            } else { //this digit is not bull nor cow
-              logger.i('Original guess have alien in position: $j AliensAvailable: $aliensAvailable');
-              int index = Random().nextInt(aliensAvailable.length);
-              logger.i('index to aliensAvailable: $index');
-              newGuessDigits[j] = aliensAvailable[index];
-              aliensAvailable.removeAt(index);
             }
           }
         }
-        logger.i('Move transformed from: ${originalMoves[i].guess} to: $newGuessDigits');
-        newMoves.add(originalMoves[i]);
-        newMoves.last.guess = FourDigits.fromList(newGuessDigits);
-        chosenGame.moves[i] = newMoves[i];
       }
+      // logger.i('Move transformed from: ${originalMoves[i].guess} to: $newGuessDigits');
+      newMoves.add(originalMoves[i]);
+      newMoves.last.guess = FourDigits.fromList(newGuessDigits);
+      chosenGame.moves[i] = newMoves[i];
     }
     return chosenGame;
   }
@@ -215,10 +249,10 @@ class NeoBot {
     return isCow;
   }
 
-  Future<void> refreshBotStats() async {
+  Future<void> refreshBotStats(String botPlayerId) async {
     logger.i('called');
     appController.needUpdateVsStats.value = true;
-    Get.find<PlayerStatsController>().refreshBotStats(botPlayerDocId);
+    Get.find<PlayerStatsController>().refreshBotStats(botPlayerId);
   }
 
   int? isGuessDuplicated(String guess, List<GameMove> moves, int lastIndex) {

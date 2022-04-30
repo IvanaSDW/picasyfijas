@@ -100,7 +100,7 @@ class PlayerStatsController extends GetxController {
   }
 
   Future<Map<String, dynamic>> getVsStats(String playerId) async {
-    logger.i('called');
+    // logger.i('called');
     int vsGamesCount = 0;
     int vsGamesWon = 0;
     int vsGamesDraw = 0;
@@ -110,10 +110,10 @@ class PlayerStatsController extends GetxController {
 
     var whereIsP1Games = await firestoreService.getVsGamesWherePlayer1(playerId);
     whereIsP1Games.removeWhere((element) => element.winnerId == null);
-    logger.i('P1 Games count: ${whereIsP1Games.length}');
+    // logger.i('P1 Games count: ${whereIsP1Games.length}');
     var whereIsP2Games = await firestoreService.getVsGamesWherePlayer2(playerId);
     whereIsP2Games.removeWhere((element) => element.winnerId == null);
-    logger.i('P2 Games count: ${whereIsP2Games.length}');
+    // logger.i('P2 Games count: ${whereIsP2Games.length}');
     var allGames = <VersusGame>[];
     allGames.addAll(whereIsP1Games);
     allGames.addAll(whereIsP2Games);
@@ -123,7 +123,7 @@ class PlayerStatsController extends GetxController {
     int rating = playerPresetRating;
     if (allGames.isNotEmpty) {  // Player has at least one vs game
       vsGamesCount = allGames.length;
-      logger.i('Games count: $vsGamesCount');
+      // logger.i('Games count: $vsGamesCount');
       for (var game in allGames) {
         if (game.winnerId == 'draw') {
           vsGamesDraw ++;
@@ -133,13 +133,13 @@ class PlayerStatsController extends GetxController {
           vsGamesLost ++;
         }
       }
-      logger.i('won: $vsGamesWon, draws: $vsGamesDraw, lost: $vsGamesLost');
+      // logger.i('won: $vsGamesWon, draws: $vsGamesDraw, lost: $vsGamesLost');
       vsWinRate = vsGamesWon / vsGamesCount;
       if (vsGamesCount <= 5) { //Player is still in initial games phase, calculate initial rating
         rating = getInitialRating(playerId, allGames);
       } else { // Player is already rated, need to calculate full rating
         isRated = true;
-        logger.i('Is rated..calculating full rating..');
+        // logger.i('Is rated..calculating full rating..');
         rating = getFullRating(playerId, allGames);
       }
     } else {
@@ -162,18 +162,18 @@ class PlayerStatsController extends GetxController {
       } else {
         sumOfOppRating += game.p1Rating;
       }
-      logger.i('winner id: ${game.winnerId}');
+      // logger.i('winner id: ${game.winnerId}');
       if (game.winnerId == 'draw') {
         score += 0.5;
       } else if (game.winnerId == playerId) {
         score += 1.0;
       }
-      logger.i('sum of opp rating: $sumOfOppRating, score: $score');
+      // logger.i('sum of opp rating: $sumOfOppRating, score: $score');
     }
     int gameCount = initialGames.length;
     int kFactor = kFactorForInitialRating;
     int averageOppRating = sumOfOppRating ~/ gameCount;
-    logger.i('Games count: $gameCount, Score: $score, Avg opp rating: $averageOppRating');
+    // logger.i('Games count: $gameCount, Score: $score, Avg opp rating: $averageOppRating');
     double scoreDiff = score - gameCount*0.5;
     int initialRating = playerPresetRating;
     if (scoreDiff < 0) {
@@ -190,12 +190,12 @@ class PlayerStatsController extends GetxController {
     var initialGames = <VersusGame>[];
     initialGames.addAll(allGames);
     initialGames.removeRange(minVsGamesToStartRating, allGames.length);
-    logger.i('Initial games: ${initialGames.map((e) => e.toJson())}');
+    // logger.i('Initial games: ${initialGames.map((e) => e.toJson())}');
     int initialRating = getInitialRating(playerId, initialGames);
-    logger.i('initial rating: $initialRating');
+    // logger.i('initial rating: $initialRating');
     int fullRating = initialRating;
     allGames.removeRange(0, minVsGamesToStartRating);
-    logger.i('Games without initial: ${allGames.length}');
+    // logger.i('Games without initial: ${allGames.length}');
     for (var game in allGames) {
       double score = 0.0;
       int playerRating = 0;
@@ -214,14 +214,14 @@ class PlayerStatsController extends GetxController {
       }
       int ratingChange = getRatingChange(playerRating, oppRating, score);
       fullRating += ratingChange;
-      logger.i('rating change: $ratingChange, new rating: $fullRating');
+      // logger.i('rating change: $ratingChange, new rating: $fullRating');
     }
     return fullRating;
   }
 
   int getRatingChange(int playerRating, int oppRating, double score) {
     int kFactor = playerRating < 2400 ? kFactorBelow2400 : kFactorAbove2400;
-    logger.i('RatA: $playerRating, RatB: $oppRating, scoreA: $score, kFactor: $kFactor');
+    // logger.i('RatA: $playerRating, RatB: $oppRating, scoreA: $score, kFactor: $kFactor');
     int ratingDelta = oppRating - playerRating;
     double deltaRatio = ratingDelta / 400;
     double expectedScore = 1 / (1 + (pow(10, deltaRatio)));

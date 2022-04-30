@@ -32,7 +32,7 @@ class VersusGameLogic extends GetxController {
 
   //Logic for playing against bot
   bool isPlayingAgainstBot = false;
-  NeoBot? neo;
+  BotPlayer? neo;
   //
 
   bool _gameIsInitialized = false;
@@ -150,7 +150,7 @@ class VersusGameLogic extends GetxController {
   late final Timer inputSecretNumberTimer;
 
   Future<void> initBotAI(Player playerTwoData) async {
-    neo = NeoBot(gameReference: gameReference,);
+    neo = BotPlayer(gameReference: gameReference,);
     await neo!.initMatch();
   }
 
@@ -178,7 +178,7 @@ class VersusGameLogic extends GetxController {
 
   Future<void> generateSecretForBot() async {
     var secretNumber = generateSecretNum();
-        await firestoreService.addPlayerOneSecretNumberToVersusGame(gameReference.id, secretNumber);
+    await firestoreService.addPlayerOneSecretNumberToVersusGame(gameReference.id, secretNumber);
   }
 
   Future<void> onSecretNumberInput(FourDigits number) async {
@@ -332,7 +332,7 @@ class VersusGameLogic extends GetxController {
               break;
           }
           if(isPlayingAgainstBot) {
-            neo!.move(playerTwoGame!.moves.length-1);
+            neo!.move(moveIndex: playerTwoGame!.moves.length-1, p1Moves: playerOneGame!.moves);
           }
         } else { // I am player 2 and is my move
           showKeyboard = true;
@@ -475,20 +475,24 @@ class VersusGameLogic extends GetxController {
               winnerPlayer = WinnerPlayer.player1;
               winByMode = WinByMode.time;
               winnerId = game.playerOneId;
+              appController.playEffect('audio/losing-sound.wav');
             } else { //I am player two and won by time
               winnerPlayer = WinnerPlayer.player2;
               winByMode = WinByMode.time;
               winnerId = game.playerTwoId;
+              appController.playEffect('audio/win-sound.wav');
             }
           } else { // //I found first and I am player 2, so I am winner by moves
             winnerPlayer = WinnerPlayer.player2;
             winByMode = WinByMode.moves;
             winnerId = game.playerTwoId;
+            appController.playEffect('audio/win-sound.wav');
           }
         } else { //I fail my last shot so I lost by moves
           winnerPlayer = WinnerPlayer.player1;
           winByMode = WinByMode.moves;
           winnerId = game.playerOneId;
+          appController.playEffect('audio/losing-sound.wav');
         }
         firestoreService.addFinalResultToVersusGame(
             gameReference: gameReference,
@@ -505,7 +509,7 @@ class VersusGameLogic extends GetxController {
 
 
   Future<bool> onBackPressed() async {
-    logger.i('called, iAmP1 = $iAmP1, p1Game = $playerOneGame');
+    // logger.i('called, iAmP1 = $iAmP1, p1Game = $playerOneGame');
     if (showFinalResult) return true;
     String middleText = '';
     if (iAmP1) {

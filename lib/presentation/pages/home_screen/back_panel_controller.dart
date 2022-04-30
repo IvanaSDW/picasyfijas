@@ -1,5 +1,4 @@
 import 'package:bulls_n_cows_reloaded/presentation/pages/home_screen/slider_switch_widget.dart';
-import 'package:bulls_n_cows_reloaded/presentation/widgets/matrix_effect/matrix_effect_controller.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:launch_review/launch_review.dart';
@@ -37,7 +36,7 @@ class BackPanelController extends GetxController {
 
   void onShare() {
     Share.share(
-        'share_message'.tr + appController.playStoreDynamicLink!,
+        'share_message'.tr + appController.playStoreDynamicLink,
       subject: 'share_subject'.tr
     );
     sliderSwitch.controller.closeDrawer();

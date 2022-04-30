@@ -26,7 +26,10 @@ class AppController extends GetxController {
 
   final FetchPlayerByIdUC _fetchPlayerById = FetchPlayerByIdUC();
 
-  String? playStoreDynamicLink;
+  //Remote Settings
+  String playStoreDynamicLink = 'https://bullsncows.page.link/u9DC';
+  int botsAllowedQty = 10;
+  int botActivateDelaySeconds = 8;
 
   final RxBool _needLand = false.obs;
   bool get needLand => _needLand.value;
@@ -100,7 +103,7 @@ class AppController extends GetxController {
   bool get getP2TimeIsUp => p2TimeIsUp.value;
 
   Future<void> checkInternet() async {
-    logger.i('called');
+    // logger.i('called');
     internetListener = InternetConnectionChecker().onStatusChange.listen((status) {
       switch (status) {
         case InternetConnectionStatus.connected:
@@ -156,17 +159,27 @@ class AppController extends GetxController {
     final prefs = await SharedPreferences.getInstance();
     volumeLevel = prefs.getDouble('volumeLevel') ?? 1.0;
     isMuted = prefs.getBool('isMuted') ?? false;
-    logger.i('Read volume level: $volumeLevel');
+    // logger.i('Read volume level: $volumeLevel');
     await checkInternet();
     countryCode = await IpLocator().getCountryCode();
     countryName = await IpLocator().getCountryName();
-    playStoreDynamicLink = await firestoreService.fetchPlayStoreDynamicLink();
+    fetchRemoteSettings();
     if(currentPlayer.pushToken == null) {
       FirebaseMessaging.instance.getToken().then((value) => {
         firestoreService.updatePlayerToken(playerId: auth.currentUser!.uid, newToken: value!)
       }
       );
     }
+  }
+
+  void fetchRemoteSettings() async {
+    await firestoreService.fetchRemoteSettings().then((value) {
+      if(value != null) {
+        playStoreDynamicLink = value[appSettingsPlayStoreDynamicLinkFN] ?? 'https://bullsncows.page.link/u9DC';
+        botsAllowedQty = value[appSettingsBotsAllowedQtyFn] ?? 10;
+        botActivateDelaySeconds = value[appSettingsBotActivateDelaySecondsFN] ?? 8;
+      }
+    });
   }
 
   Future<AudioPlayer> playEffect(String fileName) async {
@@ -176,7 +189,7 @@ class AppController extends GetxController {
 
   void playSplashEffect(String fileName, double volume) async {
     splashCache = AudioCache(fixedPlayer: splashPlayer);
-    logger.i('Volume at start: $volumeLevel, is mute: $isMuted');
+    // logger.i('Volume at start: $volumeLevel, is mute: $isMuted');
     splashPlayer = await splashCache?.play(fileName, volume: volume,);
   }
 

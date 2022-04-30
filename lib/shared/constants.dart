@@ -91,6 +91,8 @@ const String appGlobalsVersusGamesCountFN = 'vs_games_count';
 
 const String appGlobalsSettingsDN = 'settings';
 const String appSettingsPlayStoreDynamicLinkFN = 'play_store_dynamic_link';
+const String appSettingsBotsAllowedQtyFn = 'bots_allowed_qty';
+const String appSettingsBotActivateDelaySecondsFN = 'bot_activate_delay_seconds';
 
 const int versusModeTimePresetMillis = 300000;
 const int playerPresetRating = 1500;
@@ -106,7 +108,7 @@ const int ratingRangeFactor = 400;
 const monthsEng = <String>[ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', ];
 const monthsSpa = <String>[ 'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic', ];
 
-const String botPlayerDocId = 'botplayer';
+const String botPlayerDocIdPrefix = 'botplayer';
 const String botPlayerAvatarUrl = 'https://source.unsplash.com/random/200x200/?face';
 const String randomUserUrl = 'https://randomuser.me/api/?results=1';
 

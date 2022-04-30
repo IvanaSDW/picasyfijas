@@ -54,7 +54,6 @@ class VolumeWidgetController extends GetxController {
     minThumbX = -thumbWidth*0.72;
     volInterval = maxThumbX - minThumbX;
     thumbX.value = volInterval * appController.volumeLevel + minThumbX;
-    logger.i('ThumbX value = ${thumbX.value}');
   }
 
   @override

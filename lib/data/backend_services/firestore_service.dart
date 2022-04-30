@@ -207,10 +207,10 @@ class FirestoreService {
 
     DocumentReference playerRef = players.doc(playerId);
     DocumentSnapshot firestoreUser = await playerRef.get();
-    logger.i('looking for player: $playerId, exists = ${firestoreUser.exists}');
+    // logger.i('looking for player: $playerId, exists = ${firestoreUser.exists}');
 
     if(firestoreUser.exists) {
-      logger.i('Updating player token...');
+      // logger.i('Updating player token...');
       await players.doc(playerId).update(
         {playerPushTokenFN: newToken,
           'tokenTimeStamp': DateTime.now(),},
@@ -220,11 +220,20 @@ class FirestoreService {
   }
 
   Future<void> updateBotPlayerRandomData({
-    required Map<String,dynamic> data
+    required String botPlayerId, required Map<String,dynamic> data
   }) async {
-    await players.doc(botPlayerDocId).update(data);
+    await players.doc(botPlayerId).update(data);
   }
 
+  Future<void> createBotPlayerIfNoteExists({
+    required String botPlayerId, required Map<String,dynamic> data
+  }) async {
+    await players.doc(botPlayerId).get().then((value) async {
+      if (!value.exists) {
+        await players.doc(botPlayerId).set(data, SetOptions(merge: true));
+      }
+    });
+  }
 
   Future<Player?> fetchPlayer(String playerId) async {
     final fetchedPlayer = players
@@ -627,6 +636,11 @@ class FirestoreService {
     });
     logger.i('Returning link: $link');
     return link;
+  }
+
+  Future<Map<String, dynamic>?> fetchRemoteSettings() async {
+    return await _firestore.collection(appGlobalsTableName).doc(appGlobalsSettingsDN)
+        .get().then((value) => value.data());
   }
 
 }

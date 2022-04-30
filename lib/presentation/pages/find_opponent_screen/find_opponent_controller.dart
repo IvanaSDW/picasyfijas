@@ -1,8 +1,11 @@
+import 'dart:math';
+
 import 'package:bulls_n_cows_reloaded/data/models/player.dart';
 import 'package:bulls_n_cows_reloaded/navigation/routes.dart';
 import 'package:bulls_n_cows_reloaded/presentation/widgets/matrix_effect/matrix_effect_controller.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+
 import '../../../shared/constants.dart';
 import '../../../shared/managers/versus_match_maker.dart';
 
@@ -61,16 +64,17 @@ class FindOpponentController extends GetxController {
       _matrixVisible.value = false;
       Get.delete<MatrixEffectController>(tag: 'find_opponent');
     });
-    Future.delayed(const Duration(seconds: 6), () {
+    Future.delayed(Duration(seconds: appController.botActivateDelaySeconds), () {
       activateBot();
     });
   }
 
   void activateBot () {
-    logger.i('called');
-    // appController.botPlayerImage.evict();
+    // logger.i('called');
     isPlayingAgainstBot = true;
-    matchMaker.makeMatchWithRobot(playerId: appController.currentPlayer.id!);
+    int botIndex = Random().nextInt(appController.botsAllowedQty);
+    String botPlayerId = '$botPlayerDocIdPrefix$botIndex';
+    matchMaker.makeMatchWithRobot(playerId: appController.currentPlayer.id!, botPlayerId: botPlayerId);
   }
 
   void onChallengeCanceled() {

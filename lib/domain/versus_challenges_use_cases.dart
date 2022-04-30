@@ -33,9 +33,9 @@ class AcceptVersusChallengeUC {
 class AcceptVersusChallengeAsBotUC {
   final VersusChallengesRepository _repository = VersusChallengeRepositoryImpl();
   Future<void> call(DocumentReference challengeReference, String acceptedById) async {
-    await FetchPlayerByIdUC().call(botPlayerDocId).then((botData) async {
+    await FetchPlayerByIdUC().call(acceptedById).then((botData) async {
       await _repository.updateVersusChallenge(challengeReference,
-          {versusChallengeOpponentIdFN: acceptedById, vsChallengeP2RatingFN: botData!.rating}
+          {versusChallengeOpponentIdFN: acceptedById, vsChallengeP2RatingFN: botData?.rating}
       );
     });
   }
